@@ -9,7 +9,7 @@ and interact with their input and output.
 # for most interactions with external programs
 import subprocess
 # for sys.stdout.buffer
-import sys
+# import sys
 
 # Target psudo program:
 #
@@ -22,4 +22,8 @@ PROC = subprocess.Popen(["ls"], stdout=subprocess.PIPE)
 # mostly just trying out the with statement
 with subprocess.Popen(["grep", "t"], stdin=PROC.stdout, stdout=subprocess.PIPE) as PROC2:
     # using the buffer here allows for the byte stream to be output correctly
-    sys.stdout.buffer.write(PROC2.stdout.read())
+    # sys.stdout.buffer.write(PROC2.stdout.read())
+
+    # alternative method using communicate
+    # How does this compare on efficiency?
+    print(PROC2.communicate()[0].decode("utf-8"), end="")
