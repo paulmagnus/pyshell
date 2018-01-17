@@ -1,0 +1,11 @@
+# Created by https://www.gitignore.io/api/emacs
+
+### Emacs ###
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*

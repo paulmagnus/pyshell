@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# This script simply runs a pylint check on the python code before
+# actually calling python.
+
+# check for only one argument
+if [ $# != 1 ]; then
+    echo "testpython takes one argument - the filename of the python program"
+    exit 1
+fi
+
+# run pylint check on the code and if it passes, run python
+if pylint $1; then
+    echo "Program passed pylint check"
+    echo
+    echo "-------------------- Beginning program --------------------"
+    /usr/bin/python3 $1
+fi
