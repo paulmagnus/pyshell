@@ -13,14 +13,14 @@ import subprocess
 
 # Target psudo program:
 #
-# ls | grep t
+# ls | grep 2.py
 
 # Need to do something about the number of variables
 
 PROC = subprocess.Popen(["ls"], stdout=subprocess.PIPE)
 
 # mostly just trying out the with statement
-with subprocess.Popen(["grep", "t"], stdin=PROC.stdout, stdout=subprocess.PIPE) as PROC2:
+with subprocess.Popen(["grep", "2.py"], stdin=PROC.stdout, stdout=subprocess.PIPE) as PROC2:
     # using the buffer here allows for the byte stream to be output correctly
     # sys.stdout.buffer.write(PROC2.stdout.read())
 
