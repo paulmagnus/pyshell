@@ -5,14 +5,17 @@
 
 # check for only one argument
 if [ $# != 1 ]; then
-    echo "testpython takes one argument - the filename of the python program"
+    echo "testpython takes one argument - the filename of the python program" >&2
     exit 1
 fi
 
 # run pylint check on the code and if it passes, run python
-if pylint $1; then
-    echo "Program passed pylint check"
-    echo
-    echo "-------------------- Beginning program --------------------"
+if pylint $1 &>/dev/null; then
+    # echo "Program passed pylint check"
+    # echo
+    # echo "-------------------- Beginning program --------------------"
     /usr/bin/python3 $1
+else
+    # This time actually print out the pylint errors
+    pylint $1
 fi

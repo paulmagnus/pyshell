@@ -1,0 +1,38 @@
+def test_echo(argv):
+    $echo 'hello'$
+    $echo 'error'$
+    return 0
+
+def try_cat(argv):
+    $cat$
+    return 0
+
+def loop_test(argv):
+    for arg in argv:
+        $echo arg$
+    return 0
+
+def remove_temp(argv):
+    if $test '-d', argv[0]$:
+        $rm '-r', argv[0]$
+    return 0
+
+tmpdir = './tmp'
+folder = './myfolder'
+
+if verbose:
+    print("\nCopying required files\n")
+ 
+files $< projectDir + '/required_files'$
+for f in files:
+    filepath = folder + '/' + f
+    if f == '*':
+        $cp -R, @folder + /., @tmpdir$
+        break
+
+    if $test '-f', filepath$:
+        $cp @filepath @tmpdir + '/' + f$
+
+$A | B => @a$
+
+$ls => ls$

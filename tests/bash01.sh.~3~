@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# File descriptors:
+# &0 stdin
+# &1 stdout
+# &2 stderr
+# &3 to &9 for additional files
+
+(>&2 echo "hi"; echo "hello") 2>&1 >/dev/null | grep .
+echo "--------"
+(>&2 echo "hi"; echo "hello") 2>/dev/null
+echo "--------"
+{ { echo 'stdout'; echo >&2 'stderr'; } 2>&3 | grep out; } 3>&1 1>&2 | grep err
+echo "--------"

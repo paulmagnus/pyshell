@@ -1,0 +1,6 @@
+def my_function(argv):
+    print("hi")
+    return 0
+
+x = my_function(["param"])
+y = x + "hi"

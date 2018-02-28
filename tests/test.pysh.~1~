@@ -1,0 +1,7 @@
+def test(_, _):
+    out, _ = $echo hello
+    _, err = $echo error
+    return (out, err)
+
+def try_cat(_, instream):
+    return $cat < instream
