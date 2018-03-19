@@ -1,0 +1,39 @@
+PROC            : PROC_IN
+                | PROC_NO_IN
+
+PROC_NO_IN      : CMD
+                | CMD PROC_OUT
+
+CMD             : IDENTIFIER
+                | IDENTIFIER = IDENTIFIER
+
+FILES_&_STREAMS : STREAM
+                | FILE
+                | STREAM & FILES_&_STREAMS
+                | FILE & FILES_&_STREAMS
+
+PROC_IN         : CMD < FILES_&_STREAMS
+                | CMD < FILES_&_STREAMS PROC_OUT
+
+PROC_OUT        : > FILES_&_STREAMS
+                | !> FILES_&_STREAMS
+                | > (FILES_&_STREAMS, FILES_&_STREAMS)
+                | &> FILES_&_STREAMS
+                | | PROC_NO_IN
+                | !| PROC_NO_IN
+                | | (PROC_NO_IN, PROC_NO_IN)
+                | &| PROC_NO_IN
+                | >> FILES
+                | !>> FILES
+                | &> FILES
+                | >> (FILES, FILES)
+
+FILES           : FILE
+                | FILE & FILES
+
+STREAM          : @VARNAME
+
+FILE            : IDENTIFIER
+
+CMD             : @VARNAME
+                | IDENTIFIER

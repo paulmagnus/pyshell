@@ -1,0 +1,3 @@
+#!/bin/bash
+echo 'Hi how are you?'
+echo 'I am doing well.'

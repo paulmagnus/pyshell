@@ -10,6 +10,7 @@ import sys
 import io
 import os
 import inspect
+from pyshell.stream import OutStream
 
 # __all__ = ['Process',
 #            # Errors
@@ -125,13 +126,85 @@ def redirect(function, *args,
     sys.stdout = old_stdout
     sys.stderr = old_stderr
 
-    if type(result) != int:
+    if not isinstance(result, int):
         # TODO: Write a better error message
         raise TypeError("Return code from '" +
                         str(function.__name__) +
                         "' must be an integer")
 
     return result
+
+# TODO: Change name to Process
+class Process2:
+    def __init__(self, process_name: str, *args):
+        self._proc_list = [process_name] + list(args)
+
+        # I might not need this anymore
+        self._proc = None
+
+        ## Stream controls
+        self._source = None
+        self._out_target = None
+        self._err_target = None
+
+        self._return_code = None
+
+    def run(self):
+        # I'm done with this object
+        pass
+
+    def pipe(self, out_target=None, err_target=None):
+        # send stdout and stderr of this process to specific locations
+        self.stdout = out_target
+        self.stderr = err_target
+
+    @property
+    def stdin(self):
+        return self._source
+
+    @stdin.setter
+    def stdin(self, source):
+        self._source = source
+
+    @property
+    def stdout(self):
+        return self._out_target
+
+    @stdout.setter
+    def stdout(self, target):
+        self._out_target = target
+
+    @property
+    def stderr(self):
+        return self._err_target
+
+    @stderr.setter
+    def stderr(self, target):
+        self._err_target = target
+
+    def __iter__(self):
+        # make this work like a generator
+        pass
+
+    @property
+    def return_code(self):
+        pass
+
+    @property
+    def state(self):
+        pass
+
+    # Control statements for the Popen objects being used
+    def kill(self):
+        pass
+
+    def terminate(self):
+        pass
+
+    def send_signal(self, signal):
+        pass
+
+    
 
 class Process:
     """ Instance of a single shell process. """
@@ -277,8 +350,10 @@ class Process:
         
         # Wait can be dangerous but I think we're fine in this case.
         # self._proc.wait()
-        
-        return self.stdout
+
+        # TODO: Build this stream class as a generator of strings
+        return OutStream(self.stdout)
+        # return self.stdout
 
     @property
     def return_code(self):
@@ -301,10 +376,9 @@ class Process:
         """ Returns the current state of the process. """
         if self._proc is None:
             return INIT
-        elif self._return_code is None:
+        if self._return_code is None:
             return RUNNING
-        else:
-            return TERMINATED
+        return TERMINATED
 
     def is_running(self):
         """
