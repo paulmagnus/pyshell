@@ -1,0 +1,3 @@
+#!/bin/bash
+
+python3 pyshell_master.py $1
