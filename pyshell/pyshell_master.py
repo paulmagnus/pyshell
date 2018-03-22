@@ -4,11 +4,13 @@ import sys, os
 
 from pyshell_lexer import *
 from pyshell_parser import *
+from pyshell_translate import translate
+from pyshell_run import run
 
 def usage():
     ''' Prints out how to use the pyshell system. '''
     print("Error: Pyshell translator takes one argument - the name of the file"
-          " to be translated.\n", file=sys.stderr)
+          " to be translated.", file=sys.stderr)
     sys.exit(1)
 
 def find_column(input, token):
@@ -46,12 +48,20 @@ def main():
     filename = sys.argv[1]
     if len(filename) < 6 or filename[-5:] != ".pysh":
         print("Error: file must be a pysh file.\n"
-              "File given: '" + filename + "'\n", file=sys.stderr)
+              "File given: '" + filename + "'", file=sys.stderr)
         sys.exit(1)
 
     # Process and execute
     parsetree = parse_file(filename)
+    print("Parsetree---------------------------")
     print(parsetree)
+    print("------------------------------------")
+    translate(parsetree, filename)
+    run(filename)
 
 if __name__ == "__main__":
     main()
+
+# Notes:
+# Consider imports
+# Do we handle Python errors like in cspy?

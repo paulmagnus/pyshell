@@ -19,7 +19,6 @@ tokens = [
     "BOTHPIPE",     # &|
     "ERROUT",       # !>
     "BOTHOUT",      # &>
-    "SPACE",        # space/tab
 
     # MISC
     "VARNAME",      # Python variable name

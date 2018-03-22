@@ -13,10 +13,14 @@ precedence = (
 )
 
 # Start rule
-start = "shellblock"
+start = "programfile"
 
 def opt_arg(p, num):
     return p[num] if len(p) > num else None
+
+def p_programfile(p):
+    '''programfile : shellblock'''
+    p[0] = ast(p, "PROGRAMFILE", 1)
 
 def p_shellblock(p):
     '''shellblock : DELIMITER statement DELIMITER NL'''
@@ -24,7 +28,7 @@ def p_shellblock(p):
 
 def p_empty(p):
     '''empty : %prec EPSILON'''
-    pass
+    p[0] = ast(p, "EMPTY")
 
 def p_statement(p):
     '''statement : proc
@@ -42,21 +46,14 @@ def p_proc(p):
     p[0] = ast(p, "PROC", 1, 2)
 
 def p_command(p):
-    '''command : WORD arglist'''
+    '''command : WORD arglist
+               | WORD empty'''
     p[0] = ast(p, "COMMAND", 1, 2)
 
 def p_arglist(p):
-    '''arglist : nonempty_arglist
-               | empty'''
-    p[0] = ast(p, "ARGLIST", 1)
-
-def p_arglist_single(p):
-    '''nonempty_arglist : arg'''
-    p[0] = ast(p, "ARGLIST_SINGLE", 1)
-
-def p_arglist_multi(p):
-    '''nonempty_arglist : arg nonempty_arglist'''
-    p[0] = ast(p, "ARGLIST_MULTI", 1, 2)
+    '''arglist : arg empty
+               | arg arglist'''
+    p[0] = ast(p, "ARGLIST", 1, 2)
 
 def p_arg(p):
     '''arg : WORD
