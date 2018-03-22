@@ -1,0 +1,972 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> programfile
+Rule 1     programfile -> shellblock
+Rule 2     shellblock -> DELIMITER statement DELIMITER NL
+Rule 3     empty -> <empty>
+Rule 4     statement -> proc
+Rule 5     statement -> procin
+Rule 6     procin -> command IN instream procout
+Rule 7     procin -> command IN instream empty
+Rule 8     proc -> command empty
+Rule 9     proc -> command procout
+Rule 10    command -> WORD arglist
+Rule 11    command -> WORD empty
+Rule 12    arglist -> arg empty
+Rule 13    arglist -> arg arglist
+Rule 14    arg -> WORD
+Rule 15    arg -> var
+Rule 16    arg -> STRING
+Rule 17    procout -> pipeout
+Rule 18    procout -> streamout
+Rule 19    procout -> fileout
+Rule 20    pipeout -> PIPE empty proc empty empty empty
+Rule 21    pipeout -> PIPE LPAREN proc COMMA proc RPAREN
+Rule 22    pipeout -> ERRPIPE empty empty empty proc empty
+Rule 23    pipeout -> BOTHPIPE proc
+Rule 24    streamout -> OUT VARNAME
+Rule 25    streamout -> OUT LPAREN VARNAME COMMA VARNAME RPAREN
+Rule 26    streamout -> ERROUT VARNAME
+Rule 27    streamout -> BOTHOUT VARNAME
+Rule 28    fileout -> FILEOUT file
+Rule 29    fileout -> FILEAPPEND file
+Rule 30    instream -> WORD
+Rule 31    instream -> var
+Rule 32    instream -> STRING
+Rule 33    file -> WORD
+Rule 34    file -> var
+Rule 35    file -> STRING
+Rule 36    var -> VARNAME
+
+Terminals, with rules where they appear
+
+BOTHOUT              : 27
+BOTHPIPE             : 23
+COMMA                : 21 25
+DELIMITER            : 2 2
+ERROUT               : 26
+ERRPIPE              : 22
+FILEAPPEND           : 29
+FILEOUT              : 28
+IN                   : 6 7
+LPAREN               : 21 25
+NL                   : 2
+OUT                  : 24 25
+PIPE                 : 20 21
+RPAREN               : 21 25
+STRING               : 16 32 35
+VARNAME              : 24 25 25 26 27 36
+WORD                 : 10 11 14 30 33
+error                : 
+
+Nonterminals, with rules where they appear
+
+arg                  : 12 13
+arglist              : 10 13
+command              : 6 7 8 9
+empty                : 7 8 11 12 20 20 20 20 22 22 22 22
+file                 : 28 29
+fileout              : 19
+instream             : 6 7
+pipeout              : 17
+proc                 : 4 20 21 21 22 23
+procin               : 5
+procout              : 6 9
+programfile          : 0
+shellblock           : 1
+statement            : 2
+streamout            : 18
+var                  : 15 31 34
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . programfile
+    (1) programfile -> . shellblock
+    (2) shellblock -> . DELIMITER statement DELIMITER NL
+
+    DELIMITER       shift and go to state 1
+
+    programfile                    shift and go to state 2
+    shellblock                     shift and go to state 3
+
+state 1
+
+    (2) shellblock -> DELIMITER . statement DELIMITER NL
+    (4) statement -> . proc
+    (5) statement -> . procin
+    (8) proc -> . command empty
+    (9) proc -> . command procout
+    (6) procin -> . command IN instream procout
+    (7) procin -> . command IN instream empty
+    (10) command -> . WORD arglist
+    (11) command -> . WORD empty
+
+    WORD            shift and go to state 8
+
+    statement                      shift and go to state 4
+    proc                           shift and go to state 7
+    command                        shift and go to state 5
+    procin                         shift and go to state 6
+
+state 2
+
+    (0) S' -> programfile .
+
+
+
+state 3
+
+    (1) programfile -> shellblock .
+
+    $end            reduce using rule 1 (programfile -> shellblock .)
+
+
+state 4
+
+    (2) shellblock -> DELIMITER statement . DELIMITER NL
+
+    DELIMITER       shift and go to state 9
+
+
+state 5
+
+    (8) proc -> command . empty
+    (9) proc -> command . procout
+    (6) procin -> command . IN instream procout
+    (7) procin -> command . IN instream empty
+    (3) empty -> .
+    (17) procout -> . pipeout
+    (18) procout -> . streamout
+    (19) procout -> . fileout
+    (20) pipeout -> . PIPE empty proc empty empty empty
+    (21) pipeout -> . PIPE LPAREN proc COMMA proc RPAREN
+    (22) pipeout -> . ERRPIPE empty empty empty proc empty
+    (23) pipeout -> . BOTHPIPE proc
+    (24) streamout -> . OUT VARNAME
+    (25) streamout -> . OUT LPAREN VARNAME COMMA VARNAME RPAREN
+    (26) streamout -> . ERROUT VARNAME
+    (27) streamout -> . BOTHOUT VARNAME
+    (28) fileout -> . FILEOUT file
+    (29) fileout -> . FILEAPPEND file
+
+    IN              shift and go to state 13
+    DELIMITER       reduce using rule 3 (empty -> .)
+    PIPE            shift and go to state 20
+    ERRPIPE         shift and go to state 21
+    BOTHPIPE        shift and go to state 18
+    OUT             shift and go to state 15
+    ERROUT          shift and go to state 19
+    BOTHOUT         shift and go to state 22
+    FILEOUT         shift and go to state 16
+    FILEAPPEND      shift and go to state 23
+
+    procout                        shift and go to state 14
+    streamout                      shift and go to state 10
+    pipeout                        shift and go to state 11
+    empty                          shift and go to state 17
+    fileout                        shift and go to state 12
+
+state 6
+
+    (5) statement -> procin .
+
+    DELIMITER       reduce using rule 5 (statement -> procin .)
+
+
+state 7
+
+    (4) statement -> proc .
+
+    DELIMITER       reduce using rule 4 (statement -> proc .)
+
+
+state 8
+
+    (10) command -> WORD . arglist
+    (11) command -> WORD . empty
+    (12) arglist -> . arg empty
+    (13) arglist -> . arg arglist
+    (3) empty -> .
+    (14) arg -> . WORD
+    (15) arg -> . var
+    (16) arg -> . STRING
+    (36) var -> . VARNAME
+
+    IN              reduce using rule 3 (empty -> .)
+    PIPE            reduce using rule 3 (empty -> .)
+    ERRPIPE         reduce using rule 3 (empty -> .)
+    BOTHPIPE        reduce using rule 3 (empty -> .)
+    OUT             reduce using rule 3 (empty -> .)
+    ERROUT          reduce using rule 3 (empty -> .)
+    BOTHOUT         reduce using rule 3 (empty -> .)
+    FILEOUT         reduce using rule 3 (empty -> .)
+    FILEAPPEND      reduce using rule 3 (empty -> .)
+    DELIMITER       reduce using rule 3 (empty -> .)
+    COMMA           reduce using rule 3 (empty -> .)
+    RPAREN          reduce using rule 3 (empty -> .)
+    WORD            shift and go to state 29
+    STRING          shift and go to state 24
+    VARNAME         shift and go to state 28
+
+    empty                          shift and go to state 30
+    arg                            shift and go to state 26
+    arglist                        shift and go to state 27
+    var                            shift and go to state 25
+
+state 9
+
+    (2) shellblock -> DELIMITER statement DELIMITER . NL
+
+    NL              shift and go to state 31
+
+
+state 10
+
+    (18) procout -> streamout .
+
+    DELIMITER       reduce using rule 18 (procout -> streamout .)
+    COMMA           reduce using rule 18 (procout -> streamout .)
+    RPAREN          reduce using rule 18 (procout -> streamout .)
+
+
+state 11
+
+    (17) procout -> pipeout .
+
+    DELIMITER       reduce using rule 17 (procout -> pipeout .)
+    COMMA           reduce using rule 17 (procout -> pipeout .)
+    RPAREN          reduce using rule 17 (procout -> pipeout .)
+
+
+state 12
+
+    (19) procout -> fileout .
+
+    DELIMITER       reduce using rule 19 (procout -> fileout .)
+    COMMA           reduce using rule 19 (procout -> fileout .)
+    RPAREN          reduce using rule 19 (procout -> fileout .)
+
+
+state 13
+
+    (6) procin -> command IN . instream procout
+    (7) procin -> command IN . instream empty
+    (30) instream -> . WORD
+    (31) instream -> . var
+    (32) instream -> . STRING
+    (36) var -> . VARNAME
+
+    WORD            shift and go to state 33
+    STRING          shift and go to state 32
+    VARNAME         shift and go to state 28
+
+    instream                       shift and go to state 34
+    var                            shift and go to state 35
+
+state 14
+
+    (9) proc -> command procout .
+
+    DELIMITER       reduce using rule 9 (proc -> command procout .)
+    RPAREN          reduce using rule 9 (proc -> command procout .)
+    COMMA           reduce using rule 9 (proc -> command procout .)
+
+
+state 15
+
+    (24) streamout -> OUT . VARNAME
+    (25) streamout -> OUT . LPAREN VARNAME COMMA VARNAME RPAREN
+
+    VARNAME         shift and go to state 37
+    LPAREN          shift and go to state 36
+
+
+state 16
+
+    (28) fileout -> FILEOUT . file
+    (33) file -> . WORD
+    (34) file -> . var
+    (35) file -> . STRING
+    (36) var -> . VARNAME
+
+    WORD            shift and go to state 40
+    STRING          shift and go to state 38
+    VARNAME         shift and go to state 28
+
+    var                            shift and go to state 39
+    file                           shift and go to state 41
+
+state 17
+
+    (8) proc -> command empty .
+
+    DELIMITER       reduce using rule 8 (proc -> command empty .)
+    RPAREN          reduce using rule 8 (proc -> command empty .)
+    COMMA           reduce using rule 8 (proc -> command empty .)
+
+
+state 18
+
+    (23) pipeout -> BOTHPIPE . proc
+    (8) proc -> . command empty
+    (9) proc -> . command procout
+    (10) command -> . WORD arglist
+    (11) command -> . WORD empty
+
+    WORD            shift and go to state 8
+
+    command                        shift and go to state 43
+    proc                           shift and go to state 42
+
+state 19
+
+    (26) streamout -> ERROUT . VARNAME
+
+    VARNAME         shift and go to state 44
+
+
+state 20
+
+    (20) pipeout -> PIPE . empty proc empty empty empty
+    (21) pipeout -> PIPE . LPAREN proc COMMA proc RPAREN
+    (3) empty -> .
+
+    LPAREN          shift and go to state 45
+    WORD            reduce using rule 3 (empty -> .)
+
+    empty                          shift and go to state 46
+
+state 21
+
+    (22) pipeout -> ERRPIPE . empty empty empty proc empty
+    (3) empty -> .
+
+    WORD            reduce using rule 3 (empty -> .)
+
+    empty                          shift and go to state 47
+
+state 22
+
+    (27) streamout -> BOTHOUT . VARNAME
+
+    VARNAME         shift and go to state 48
+
+
+state 23
+
+    (29) fileout -> FILEAPPEND . file
+    (33) file -> . WORD
+    (34) file -> . var
+    (35) file -> . STRING
+    (36) var -> . VARNAME
+
+    WORD            shift and go to state 40
+    STRING          shift and go to state 38
+    VARNAME         shift and go to state 28
+
+    var                            shift and go to state 39
+    file                           shift and go to state 49
+
+state 24
+
+    (16) arg -> STRING .
+
+    WORD            reduce using rule 16 (arg -> STRING .)
+    STRING          reduce using rule 16 (arg -> STRING .)
+    VARNAME         reduce using rule 16 (arg -> STRING .)
+    IN              reduce using rule 16 (arg -> STRING .)
+    PIPE            reduce using rule 16 (arg -> STRING .)
+    ERRPIPE         reduce using rule 16 (arg -> STRING .)
+    BOTHPIPE        reduce using rule 16 (arg -> STRING .)
+    OUT             reduce using rule 16 (arg -> STRING .)
+    ERROUT          reduce using rule 16 (arg -> STRING .)
+    BOTHOUT         reduce using rule 16 (arg -> STRING .)
+    FILEOUT         reduce using rule 16 (arg -> STRING .)
+    FILEAPPEND      reduce using rule 16 (arg -> STRING .)
+    DELIMITER       reduce using rule 16 (arg -> STRING .)
+    COMMA           reduce using rule 16 (arg -> STRING .)
+    RPAREN          reduce using rule 16 (arg -> STRING .)
+
+
+state 25
+
+    (15) arg -> var .
+
+    WORD            reduce using rule 15 (arg -> var .)
+    STRING          reduce using rule 15 (arg -> var .)
+    VARNAME         reduce using rule 15 (arg -> var .)
+    IN              reduce using rule 15 (arg -> var .)
+    PIPE            reduce using rule 15 (arg -> var .)
+    ERRPIPE         reduce using rule 15 (arg -> var .)
+    BOTHPIPE        reduce using rule 15 (arg -> var .)
+    OUT             reduce using rule 15 (arg -> var .)
+    ERROUT          reduce using rule 15 (arg -> var .)
+    BOTHOUT         reduce using rule 15 (arg -> var .)
+    FILEOUT         reduce using rule 15 (arg -> var .)
+    FILEAPPEND      reduce using rule 15 (arg -> var .)
+    DELIMITER       reduce using rule 15 (arg -> var .)
+    COMMA           reduce using rule 15 (arg -> var .)
+    RPAREN          reduce using rule 15 (arg -> var .)
+
+
+state 26
+
+    (12) arglist -> arg . empty
+    (13) arglist -> arg . arglist
+    (3) empty -> .
+    (12) arglist -> . arg empty
+    (13) arglist -> . arg arglist
+    (14) arg -> . WORD
+    (15) arg -> . var
+    (16) arg -> . STRING
+    (36) var -> . VARNAME
+
+    IN              reduce using rule 3 (empty -> .)
+    PIPE            reduce using rule 3 (empty -> .)
+    ERRPIPE         reduce using rule 3 (empty -> .)
+    BOTHPIPE        reduce using rule 3 (empty -> .)
+    OUT             reduce using rule 3 (empty -> .)
+    ERROUT          reduce using rule 3 (empty -> .)
+    BOTHOUT         reduce using rule 3 (empty -> .)
+    FILEOUT         reduce using rule 3 (empty -> .)
+    FILEAPPEND      reduce using rule 3 (empty -> .)
+    DELIMITER       reduce using rule 3 (empty -> .)
+    COMMA           reduce using rule 3 (empty -> .)
+    RPAREN          reduce using rule 3 (empty -> .)
+    WORD            shift and go to state 29
+    STRING          shift and go to state 24
+    VARNAME         shift and go to state 28
+
+    arglist                        shift and go to state 50
+    arg                            shift and go to state 26
+    empty                          shift and go to state 51
+    var                            shift and go to state 25
+
+state 27
+
+    (10) command -> WORD arglist .
+
+    PIPE            reduce using rule 10 (command -> WORD arglist .)
+    ERRPIPE         reduce using rule 10 (command -> WORD arglist .)
+    BOTHPIPE        reduce using rule 10 (command -> WORD arglist .)
+    OUT             reduce using rule 10 (command -> WORD arglist .)
+    ERROUT          reduce using rule 10 (command -> WORD arglist .)
+    BOTHOUT         reduce using rule 10 (command -> WORD arglist .)
+    FILEOUT         reduce using rule 10 (command -> WORD arglist .)
+    FILEAPPEND      reduce using rule 10 (command -> WORD arglist .)
+    RPAREN          reduce using rule 10 (command -> WORD arglist .)
+    DELIMITER       reduce using rule 10 (command -> WORD arglist .)
+    COMMA           reduce using rule 10 (command -> WORD arglist .)
+    IN              reduce using rule 10 (command -> WORD arglist .)
+
+
+state 28
+
+    (36) var -> VARNAME .
+
+    WORD            reduce using rule 36 (var -> VARNAME .)
+    STRING          reduce using rule 36 (var -> VARNAME .)
+    VARNAME         reduce using rule 36 (var -> VARNAME .)
+    IN              reduce using rule 36 (var -> VARNAME .)
+    PIPE            reduce using rule 36 (var -> VARNAME .)
+    ERRPIPE         reduce using rule 36 (var -> VARNAME .)
+    BOTHPIPE        reduce using rule 36 (var -> VARNAME .)
+    OUT             reduce using rule 36 (var -> VARNAME .)
+    ERROUT          reduce using rule 36 (var -> VARNAME .)
+    BOTHOUT         reduce using rule 36 (var -> VARNAME .)
+    FILEOUT         reduce using rule 36 (var -> VARNAME .)
+    FILEAPPEND      reduce using rule 36 (var -> VARNAME .)
+    DELIMITER       reduce using rule 36 (var -> VARNAME .)
+    COMMA           reduce using rule 36 (var -> VARNAME .)
+    RPAREN          reduce using rule 36 (var -> VARNAME .)
+
+
+state 29
+
+    (14) arg -> WORD .
+
+    WORD            reduce using rule 14 (arg -> WORD .)
+    STRING          reduce using rule 14 (arg -> WORD .)
+    VARNAME         reduce using rule 14 (arg -> WORD .)
+    IN              reduce using rule 14 (arg -> WORD .)
+    PIPE            reduce using rule 14 (arg -> WORD .)
+    ERRPIPE         reduce using rule 14 (arg -> WORD .)
+    BOTHPIPE        reduce using rule 14 (arg -> WORD .)
+    OUT             reduce using rule 14 (arg -> WORD .)
+    ERROUT          reduce using rule 14 (arg -> WORD .)
+    BOTHOUT         reduce using rule 14 (arg -> WORD .)
+    FILEOUT         reduce using rule 14 (arg -> WORD .)
+    FILEAPPEND      reduce using rule 14 (arg -> WORD .)
+    DELIMITER       reduce using rule 14 (arg -> WORD .)
+    COMMA           reduce using rule 14 (arg -> WORD .)
+    RPAREN          reduce using rule 14 (arg -> WORD .)
+
+
+state 30
+
+    (11) command -> WORD empty .
+
+    PIPE            reduce using rule 11 (command -> WORD empty .)
+    ERRPIPE         reduce using rule 11 (command -> WORD empty .)
+    BOTHPIPE        reduce using rule 11 (command -> WORD empty .)
+    OUT             reduce using rule 11 (command -> WORD empty .)
+    ERROUT          reduce using rule 11 (command -> WORD empty .)
+    BOTHOUT         reduce using rule 11 (command -> WORD empty .)
+    FILEOUT         reduce using rule 11 (command -> WORD empty .)
+    FILEAPPEND      reduce using rule 11 (command -> WORD empty .)
+    RPAREN          reduce using rule 11 (command -> WORD empty .)
+    DELIMITER       reduce using rule 11 (command -> WORD empty .)
+    COMMA           reduce using rule 11 (command -> WORD empty .)
+    IN              reduce using rule 11 (command -> WORD empty .)
+
+
+state 31
+
+    (2) shellblock -> DELIMITER statement DELIMITER NL .
+
+    $end            reduce using rule 2 (shellblock -> DELIMITER statement DELIMITER NL .)
+
+
+state 32
+
+    (32) instream -> STRING .
+
+    PIPE            reduce using rule 32 (instream -> STRING .)
+    ERRPIPE         reduce using rule 32 (instream -> STRING .)
+    BOTHPIPE        reduce using rule 32 (instream -> STRING .)
+    OUT             reduce using rule 32 (instream -> STRING .)
+    ERROUT          reduce using rule 32 (instream -> STRING .)
+    BOTHOUT         reduce using rule 32 (instream -> STRING .)
+    FILEOUT         reduce using rule 32 (instream -> STRING .)
+    FILEAPPEND      reduce using rule 32 (instream -> STRING .)
+    DELIMITER       reduce using rule 32 (instream -> STRING .)
+
+
+state 33
+
+    (30) instream -> WORD .
+
+    PIPE            reduce using rule 30 (instream -> WORD .)
+    ERRPIPE         reduce using rule 30 (instream -> WORD .)
+    BOTHPIPE        reduce using rule 30 (instream -> WORD .)
+    OUT             reduce using rule 30 (instream -> WORD .)
+    ERROUT          reduce using rule 30 (instream -> WORD .)
+    BOTHOUT         reduce using rule 30 (instream -> WORD .)
+    FILEOUT         reduce using rule 30 (instream -> WORD .)
+    FILEAPPEND      reduce using rule 30 (instream -> WORD .)
+    DELIMITER       reduce using rule 30 (instream -> WORD .)
+
+
+state 34
+
+    (6) procin -> command IN instream . procout
+    (7) procin -> command IN instream . empty
+    (17) procout -> . pipeout
+    (18) procout -> . streamout
+    (19) procout -> . fileout
+    (3) empty -> .
+    (20) pipeout -> . PIPE empty proc empty empty empty
+    (21) pipeout -> . PIPE LPAREN proc COMMA proc RPAREN
+    (22) pipeout -> . ERRPIPE empty empty empty proc empty
+    (23) pipeout -> . BOTHPIPE proc
+    (24) streamout -> . OUT VARNAME
+    (25) streamout -> . OUT LPAREN VARNAME COMMA VARNAME RPAREN
+    (26) streamout -> . ERROUT VARNAME
+    (27) streamout -> . BOTHOUT VARNAME
+    (28) fileout -> . FILEOUT file
+    (29) fileout -> . FILEAPPEND file
+
+    DELIMITER       reduce using rule 3 (empty -> .)
+    PIPE            shift and go to state 20
+    ERRPIPE         shift and go to state 21
+    BOTHPIPE        shift and go to state 18
+    OUT             shift and go to state 15
+    ERROUT          shift and go to state 19
+    BOTHOUT         shift and go to state 22
+    FILEOUT         shift and go to state 16
+    FILEAPPEND      shift and go to state 23
+
+    procout                        shift and go to state 52
+    streamout                      shift and go to state 10
+    pipeout                        shift and go to state 11
+    empty                          shift and go to state 53
+    fileout                        shift and go to state 12
+
+state 35
+
+    (31) instream -> var .
+
+    PIPE            reduce using rule 31 (instream -> var .)
+    ERRPIPE         reduce using rule 31 (instream -> var .)
+    BOTHPIPE        reduce using rule 31 (instream -> var .)
+    OUT             reduce using rule 31 (instream -> var .)
+    ERROUT          reduce using rule 31 (instream -> var .)
+    BOTHOUT         reduce using rule 31 (instream -> var .)
+    FILEOUT         reduce using rule 31 (instream -> var .)
+    FILEAPPEND      reduce using rule 31 (instream -> var .)
+    DELIMITER       reduce using rule 31 (instream -> var .)
+
+
+state 36
+
+    (25) streamout -> OUT LPAREN . VARNAME COMMA VARNAME RPAREN
+
+    VARNAME         shift and go to state 54
+
+
+state 37
+
+    (24) streamout -> OUT VARNAME .
+
+    DELIMITER       reduce using rule 24 (streamout -> OUT VARNAME .)
+    COMMA           reduce using rule 24 (streamout -> OUT VARNAME .)
+    RPAREN          reduce using rule 24 (streamout -> OUT VARNAME .)
+
+
+state 38
+
+    (35) file -> STRING .
+
+    DELIMITER       reduce using rule 35 (file -> STRING .)
+    COMMA           reduce using rule 35 (file -> STRING .)
+    RPAREN          reduce using rule 35 (file -> STRING .)
+
+
+state 39
+
+    (34) file -> var .
+
+    DELIMITER       reduce using rule 34 (file -> var .)
+    COMMA           reduce using rule 34 (file -> var .)
+    RPAREN          reduce using rule 34 (file -> var .)
+
+
+state 40
+
+    (33) file -> WORD .
+
+    DELIMITER       reduce using rule 33 (file -> WORD .)
+    COMMA           reduce using rule 33 (file -> WORD .)
+    RPAREN          reduce using rule 33 (file -> WORD .)
+
+
+state 41
+
+    (28) fileout -> FILEOUT file .
+
+    DELIMITER       reduce using rule 28 (fileout -> FILEOUT file .)
+    COMMA           reduce using rule 28 (fileout -> FILEOUT file .)
+    RPAREN          reduce using rule 28 (fileout -> FILEOUT file .)
+
+
+state 42
+
+    (23) pipeout -> BOTHPIPE proc .
+
+    DELIMITER       reduce using rule 23 (pipeout -> BOTHPIPE proc .)
+    COMMA           reduce using rule 23 (pipeout -> BOTHPIPE proc .)
+    RPAREN          reduce using rule 23 (pipeout -> BOTHPIPE proc .)
+
+
+state 43
+
+    (8) proc -> command . empty
+    (9) proc -> command . procout
+    (3) empty -> .
+    (17) procout -> . pipeout
+    (18) procout -> . streamout
+    (19) procout -> . fileout
+    (20) pipeout -> . PIPE empty proc empty empty empty
+    (21) pipeout -> . PIPE LPAREN proc COMMA proc RPAREN
+    (22) pipeout -> . ERRPIPE empty empty empty proc empty
+    (23) pipeout -> . BOTHPIPE proc
+    (24) streamout -> . OUT VARNAME
+    (25) streamout -> . OUT LPAREN VARNAME COMMA VARNAME RPAREN
+    (26) streamout -> . ERROUT VARNAME
+    (27) streamout -> . BOTHOUT VARNAME
+    (28) fileout -> . FILEOUT file
+    (29) fileout -> . FILEAPPEND file
+
+    DELIMITER       reduce using rule 3 (empty -> .)
+    COMMA           reduce using rule 3 (empty -> .)
+    RPAREN          reduce using rule 3 (empty -> .)
+    PIPE            shift and go to state 20
+    ERRPIPE         shift and go to state 21
+    BOTHPIPE        shift and go to state 18
+    OUT             shift and go to state 15
+    ERROUT          shift and go to state 19
+    BOTHOUT         shift and go to state 22
+    FILEOUT         shift and go to state 16
+    FILEAPPEND      shift and go to state 23
+
+    procout                        shift and go to state 14
+    streamout                      shift and go to state 10
+    pipeout                        shift and go to state 11
+    empty                          shift and go to state 17
+    fileout                        shift and go to state 12
+
+state 44
+
+    (26) streamout -> ERROUT VARNAME .
+
+    DELIMITER       reduce using rule 26 (streamout -> ERROUT VARNAME .)
+    COMMA           reduce using rule 26 (streamout -> ERROUT VARNAME .)
+    RPAREN          reduce using rule 26 (streamout -> ERROUT VARNAME .)
+
+
+state 45
+
+    (21) pipeout -> PIPE LPAREN . proc COMMA proc RPAREN
+    (8) proc -> . command empty
+    (9) proc -> . command procout
+    (10) command -> . WORD arglist
+    (11) command -> . WORD empty
+
+    WORD            shift and go to state 8
+
+    command                        shift and go to state 43
+    proc                           shift and go to state 55
+
+state 46
+
+    (20) pipeout -> PIPE empty . proc empty empty empty
+    (8) proc -> . command empty
+    (9) proc -> . command procout
+    (10) command -> . WORD arglist
+    (11) command -> . WORD empty
+
+    WORD            shift and go to state 8
+
+    command                        shift and go to state 43
+    proc                           shift and go to state 56
+
+state 47
+
+    (22) pipeout -> ERRPIPE empty . empty empty proc empty
+    (3) empty -> .
+
+    WORD            reduce using rule 3 (empty -> .)
+
+    empty                          shift and go to state 57
+
+state 48
+
+    (27) streamout -> BOTHOUT VARNAME .
+
+    DELIMITER       reduce using rule 27 (streamout -> BOTHOUT VARNAME .)
+    COMMA           reduce using rule 27 (streamout -> BOTHOUT VARNAME .)
+    RPAREN          reduce using rule 27 (streamout -> BOTHOUT VARNAME .)
+
+
+state 49
+
+    (29) fileout -> FILEAPPEND file .
+
+    DELIMITER       reduce using rule 29 (fileout -> FILEAPPEND file .)
+    COMMA           reduce using rule 29 (fileout -> FILEAPPEND file .)
+    RPAREN          reduce using rule 29 (fileout -> FILEAPPEND file .)
+
+
+state 50
+
+    (13) arglist -> arg arglist .
+
+    IN              reduce using rule 13 (arglist -> arg arglist .)
+    PIPE            reduce using rule 13 (arglist -> arg arglist .)
+    ERRPIPE         reduce using rule 13 (arglist -> arg arglist .)
+    BOTHPIPE        reduce using rule 13 (arglist -> arg arglist .)
+    OUT             reduce using rule 13 (arglist -> arg arglist .)
+    ERROUT          reduce using rule 13 (arglist -> arg arglist .)
+    BOTHOUT         reduce using rule 13 (arglist -> arg arglist .)
+    FILEOUT         reduce using rule 13 (arglist -> arg arglist .)
+    FILEAPPEND      reduce using rule 13 (arglist -> arg arglist .)
+    DELIMITER       reduce using rule 13 (arglist -> arg arglist .)
+    COMMA           reduce using rule 13 (arglist -> arg arglist .)
+    RPAREN          reduce using rule 13 (arglist -> arg arglist .)
+
+
+state 51
+
+    (12) arglist -> arg empty .
+
+    IN              reduce using rule 12 (arglist -> arg empty .)
+    PIPE            reduce using rule 12 (arglist -> arg empty .)
+    ERRPIPE         reduce using rule 12 (arglist -> arg empty .)
+    BOTHPIPE        reduce using rule 12 (arglist -> arg empty .)
+    OUT             reduce using rule 12 (arglist -> arg empty .)
+    ERROUT          reduce using rule 12 (arglist -> arg empty .)
+    BOTHOUT         reduce using rule 12 (arglist -> arg empty .)
+    FILEOUT         reduce using rule 12 (arglist -> arg empty .)
+    FILEAPPEND      reduce using rule 12 (arglist -> arg empty .)
+    DELIMITER       reduce using rule 12 (arglist -> arg empty .)
+    COMMA           reduce using rule 12 (arglist -> arg empty .)
+    RPAREN          reduce using rule 12 (arglist -> arg empty .)
+
+
+state 52
+
+    (6) procin -> command IN instream procout .
+
+    DELIMITER       reduce using rule 6 (procin -> command IN instream procout .)
+
+
+state 53
+
+    (7) procin -> command IN instream empty .
+
+    DELIMITER       reduce using rule 7 (procin -> command IN instream empty .)
+
+
+state 54
+
+    (25) streamout -> OUT LPAREN VARNAME . COMMA VARNAME RPAREN
+
+    COMMA           shift and go to state 58
+
+
+state 55
+
+    (21) pipeout -> PIPE LPAREN proc . COMMA proc RPAREN
+
+    COMMA           shift and go to state 59
+
+
+state 56
+
+    (20) pipeout -> PIPE empty proc . empty empty empty
+    (3) empty -> .
+
+    DELIMITER       reduce using rule 3 (empty -> .)
+    COMMA           reduce using rule 3 (empty -> .)
+    RPAREN          reduce using rule 3 (empty -> .)
+
+    empty                          shift and go to state 60
+
+state 57
+
+    (22) pipeout -> ERRPIPE empty empty . empty proc empty
+    (3) empty -> .
+
+    WORD            reduce using rule 3 (empty -> .)
+
+    empty                          shift and go to state 61
+
+state 58
+
+    (25) streamout -> OUT LPAREN VARNAME COMMA . VARNAME RPAREN
+
+    VARNAME         shift and go to state 62
+
+
+state 59
+
+    (21) pipeout -> PIPE LPAREN proc COMMA . proc RPAREN
+    (8) proc -> . command empty
+    (9) proc -> . command procout
+    (10) command -> . WORD arglist
+    (11) command -> . WORD empty
+
+    WORD            shift and go to state 8
+
+    command                        shift and go to state 43
+    proc                           shift and go to state 63
+
+state 60
+
+    (20) pipeout -> PIPE empty proc empty . empty empty
+    (3) empty -> .
+
+    DELIMITER       reduce using rule 3 (empty -> .)
+    COMMA           reduce using rule 3 (empty -> .)
+    RPAREN          reduce using rule 3 (empty -> .)
+
+    empty                          shift and go to state 64
+
+state 61
+
+    (22) pipeout -> ERRPIPE empty empty empty . proc empty
+    (8) proc -> . command empty
+    (9) proc -> . command procout
+    (10) command -> . WORD arglist
+    (11) command -> . WORD empty
+
+    WORD            shift and go to state 8
+
+    command                        shift and go to state 43
+    proc                           shift and go to state 65
+
+state 62
+
+    (25) streamout -> OUT LPAREN VARNAME COMMA VARNAME . RPAREN
+
+    RPAREN          shift and go to state 66
+
+
+state 63
+
+    (21) pipeout -> PIPE LPAREN proc COMMA proc . RPAREN
+
+    RPAREN          shift and go to state 67
+
+
+state 64
+
+    (20) pipeout -> PIPE empty proc empty empty . empty
+    (3) empty -> .
+
+    DELIMITER       reduce using rule 3 (empty -> .)
+    COMMA           reduce using rule 3 (empty -> .)
+    RPAREN          reduce using rule 3 (empty -> .)
+
+    empty                          shift and go to state 68
+
+state 65
+
+    (22) pipeout -> ERRPIPE empty empty empty proc . empty
+    (3) empty -> .
+
+    DELIMITER       reduce using rule 3 (empty -> .)
+    COMMA           reduce using rule 3 (empty -> .)
+    RPAREN          reduce using rule 3 (empty -> .)
+
+    empty                          shift and go to state 69
+
+state 66
+
+    (25) streamout -> OUT LPAREN VARNAME COMMA VARNAME RPAREN .
+
+    DELIMITER       reduce using rule 25 (streamout -> OUT LPAREN VARNAME COMMA VARNAME RPAREN .)
+    COMMA           reduce using rule 25 (streamout -> OUT LPAREN VARNAME COMMA VARNAME RPAREN .)
+    RPAREN          reduce using rule 25 (streamout -> OUT LPAREN VARNAME COMMA VARNAME RPAREN .)
+
+
+state 67
+
+    (21) pipeout -> PIPE LPAREN proc COMMA proc RPAREN .
+
+    DELIMITER       reduce using rule 21 (pipeout -> PIPE LPAREN proc COMMA proc RPAREN .)
+    COMMA           reduce using rule 21 (pipeout -> PIPE LPAREN proc COMMA proc RPAREN .)
+    RPAREN          reduce using rule 21 (pipeout -> PIPE LPAREN proc COMMA proc RPAREN .)
+
+
+state 68
+
+    (20) pipeout -> PIPE empty proc empty empty empty .
+
+    DELIMITER       reduce using rule 20 (pipeout -> PIPE empty proc empty empty empty .)
+    COMMA           reduce using rule 20 (pipeout -> PIPE empty proc empty empty empty .)
+    RPAREN          reduce using rule 20 (pipeout -> PIPE empty proc empty empty empty .)
+
+
+state 69
+
+    (22) pipeout -> ERRPIPE empty empty empty proc empty .
+
+    DELIMITER       reduce using rule 22 (pipeout -> ERRPIPE empty empty empty proc empty .)
+    COMMA           reduce using rule 22 (pipeout -> ERRPIPE empty empty empty proc empty .)
+    RPAREN          reduce using rule 22 (pipeout -> ERRPIPE empty empty empty proc empty .)
+
