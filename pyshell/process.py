@@ -10,7 +10,7 @@ import sys
 import io
 import os
 import inspect
-from pyshell.stream import OutStream
+# from pyshell.stream import OutStream
 
 # __all__ = ['Process',
 #            # Errors
@@ -157,6 +157,7 @@ class Process2:
         # send stdout and stderr of this process to specific locations
         self.stdout = out_target
         self.stderr = err_target
+        return self
 
     @property
     def stdin(self):
@@ -273,6 +274,7 @@ class Process:
             out_proc.stdin = self._out_stream
         if err_proc is not None:
             err_proc.stdin = self._err_stream
+        return out_proc
 
     @property
     def stdin(self):
