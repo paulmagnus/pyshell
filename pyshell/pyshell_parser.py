@@ -15,9 +15,6 @@ precedence = (
 # Start rule
 start = "programfile"
 
-def opt_arg(p, num):
-    return p[num] if len(p) > num else None
-
 def p_programfile(p):
     '''programfile : shellblock'''
     p[0] = ast(p, "PROGRAMFILE", 1)

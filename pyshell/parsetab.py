@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'programfilenonassocEPSILONBOTHOUT BOTHPIPE COMMA DELIMITER ERROUT ERRPIPE FILEAPPEND FILEOUT IN LPAREN NL OUT PIPE RPAREN STRING VARNAME WORDprogramfile : shellblockshellblock : DELIMITER statement DELIMITER NLempty : %prec EPSILONstatement : proc\n                 | procinprocin : command IN instream procout\n              | command IN instream emptyproc : command empty\n            | command procoutcommand : WORD arglist\n               | WORD emptyarglist : arg empty\n               | arg arglistarg : WORD\n           | var\n           | STRINGprocout : pipeout\n               | streamout\n               | fileoutpipeout : PIPE empty proc empty empty empty\n               | PIPE LPAREN proc COMMA proc RPAREN\n               | ERRPIPE empty empty empty proc emptypipeout : BOTHPIPE procstreamout : OUT VARNAME\n                 | OUT LPAREN VARNAME COMMA VARNAME RPAREN\n                 | ERROUT VARNAME\n                 | BOTHOUT VARNAMEfileout : FILEOUT file\n               | FILEAPPEND fileinstream : WORD\n                | var\n                | STRINGfile : WORD\n            | var\n            | STRINGvar : VARNAME'
+_lr_signature = 'programfilenonassocEPSILONBOTHOUT BOTHPIPE COMMA DELIMITER ELSE ERROUT ERRPIPE FILEAPPEND FILEOUT FOR IF IN LPAREN NL OUT PIPE RPAREN STRING VARNAME WHILE WORDprogramfile : shellblockshellblock : DELIMITER statement DELIMITER NLempty : %prec EPSILONstatement : proc\n                 | procinprocin : command IN instream procout\n              | command IN instream emptyproc : command empty\n            | command procoutcommand : WORD arglist\n               | WORD emptyarglist : arg empty\n               | arg arglistarg : WORD\n           | var\n           | STRINGprocout : pipeout\n               | streamout\n               | fileoutpipeout : PIPE empty proc empty empty empty\n               | PIPE LPAREN proc COMMA proc RPAREN\n               | ERRPIPE empty empty empty proc emptypipeout : BOTHPIPE procstreamout : OUT VARNAME\n                 | OUT LPAREN VARNAME COMMA VARNAME RPAREN\n                 | ERROUT VARNAME\n                 | BOTHOUT VARNAMEfileout : FILEOUT file\n               | FILEAPPEND fileinstream : WORD\n                | var\n                | STRINGfile : WORD\n            | var\n            | STRINGvar : VARNAME'
     
-_lr_action_items = {'DELIMITER':([0,4,5,6,7,8,10,11,12,14,17,24,25,26,27,28,29,30,32,33,34,35,37,38,39,40,41,42,43,44,48,49,50,51,52,53,56,60,64,65,66,67,68,69,],[1,9,-3,-5,-4,-3,-18,-17,-19,-9,-8,-16,-15,-3,-10,-36,-14,-11,-32,-30,-3,-31,-24,-35,-34,-33,-28,-23,-3,-26,-27,-29,-13,-12,-6,-7,-3,-3,-3,-3,-25,-21,-20,-22,]),'COMMA':([8,10,11,12,14,17,24,25,26,27,28,29,30,37,38,39,40,41,42,43,44,48,49,50,51,54,55,56,60,64,65,66,67,68,69,],[-3,-18,-17,-19,-9,-8,-16,-15,-3,-10,-36,-14,-11,-24,-35,-34,-33,-28,-23,-3,-26,-27,-29,-13,-12,58,59,-3,-3,-3,-3,-25,-21,-20,-22,]),'RPAREN':([8,10,11,12,14,17,24,25,26,27,28,29,30,37,38,39,40,41,42,43,44,48,49,50,51,56,60,62,63,64,65,66,67,68,69,],[-3,-18,-17,-19,-9,-8,-16,-15,-3,-10,-36,-14,-11,-24,-35,-34,-33,-28,-23,-3,-26,-27,-29,-13,-12,-3,-3,66,67,-3,-3,-25,-21,-20,-22,]),'ERROUT':([5,8,24,25,26,27,28,29,30,32,33,34,35,43,50,51,],[19,-3,-16,-15,-3,-10,-36,-14,-11,-32,-30,19,-31,19,-13,-12,]),'LPAREN':([15,20,],[36,45,]),'BOTHPIPE':([5,8,24,25,26,27,28,29,30,32,33,34,35,43,50,51,],[18,-3,-16,-15,-3,-10,-36,-14,-11,-32,-30,18,-31,18,-13,-12,]),'PIPE':([5,8,24,25,26,27,28,29,30,32,33,34,35,43,50,51,],[20,-3,-16,-15,-3,-10,-36,-14,-11,-32,-30,20,-31,20,-13,-12,]),'NL':([9,],[31,]),'STRING':([8,13,16,23,24,25,26,28,29,],[24,32,38,38,-16,-15,24,-36,-14,]),'IN':([5,8,24,25,26,27,28,29,30,50,51,],[13,-3,-16,-15,-3,-10,-36,-14,-11,-13,-12,]),'ERRPIPE':([5,8,24,25,26,27,28,29,30,32,33,34,35,43,50,51,],[21,-3,-16,-15,-3,-10,-36,-14,-11,-32,-30,21,-31,21,-13,-12,]),'OUT':([5,8,24,25,26,27,28,29,30,32,33,34,35,43,50,51,],[15,-3,-16,-15,-3,-10,-36,-14,-11,-32,-30,15,-31,15,-13,-12,]),'FILEOUT':([5,8,24,25,26,27,28,29,30,32,33,34,35,43,50,51,],[16,-3,-16,-15,-3,-10,-36,-14,-11,-32,-30,16,-31,16,-13,-12,]),'BOTHOUT':([5,8,24,25,26,27,28,29,30,32,33,34,35,43,50,51,],[22,-3,-16,-15,-3,-10,-36,-14,-11,-32,-30,22,-31,22,-13,-12,]),'$end':([2,3,31,],[0,-1,-2,]),'WORD':([1,8,13,16,18,20,21,23,24,25,26,28,29,45,46,47,57,59,61,],[8,29,33,40,8,-3,-3,40,-16,-15,29,-36,-14,8,8,-3,-3,8,8,]),'VARNAME':([8,13,15,16,19,22,23,24,25,26,28,29,36,58,],[28,28,37,28,44,48,28,-16,-15,28,-36,-14,54,62,]),'FILEAPPEND':([5,8,24,25,26,27,28,29,30,32,33,34,35,43,50,51,],[23,-3,-16,-15,-3,-10,-36,-14,-11,-32,-30,23,-31,23,-13,-12,]),}
+_lr_action_items = {'OUT':([5,6,10,11,12,13,14,15,16,32,33,44,46,47,48,49,],[-3,19,-15,-10,-3,-14,-36,-16,-11,-13,-12,19,-31,-30,-32,19,]),'FILEOUT':([5,6,10,11,12,13,14,15,16,32,33,44,46,47,48,49,],[-3,24,-15,-10,-3,-14,-36,-16,-11,-13,-12,24,-31,-30,-32,24,]),'WORD':([2,5,10,12,13,14,15,20,22,24,26,28,29,41,50,51,53,59,60,],[5,13,-15,13,-14,-36,-16,37,-3,37,5,47,-3,-3,5,5,-3,5,5,]),'RPAREN':([5,10,11,12,13,14,15,16,17,18,23,25,30,32,33,34,36,37,38,39,40,42,43,44,45,57,61,62,63,64,65,66,67,68,69,],[-3,-15,-10,-3,-14,-36,-16,-11,-17,-9,-19,-8,-18,-13,-12,-24,-34,-33,-35,-29,-27,-28,-23,-3,-26,-3,-3,66,-3,68,-3,-25,-22,-21,-20,]),'BOTHPIPE':([5,6,10,11,12,13,14,15,16,32,33,44,46,47,48,49,],[-3,26,-15,-10,-3,-14,-36,-16,-11,-13,-12,26,-31,-30,-32,26,]),'$end':([1,3,31,],[0,-1,-2,]),'STRING':([5,10,12,13,14,15,20,24,28,],[15,-15,15,-14,-36,-16,38,38,48,]),'BOTHOUT':([5,6,10,11,12,13,14,15,16,32,33,44,46,47,48,49,],[-3,21,-15,-10,-3,-14,-36,-16,-11,-13,-12,21,-31,-30,-32,21,]),'ERRPIPE':([5,6,10,11,12,13,14,15,16,32,33,44,46,47,48,49,],[-3,22,-15,-10,-3,-14,-36,-16,-11,-13,-12,22,-31,-30,-32,22,]),'VARNAME':([5,10,12,13,14,15,19,20,21,24,27,28,35,58,],[14,-15,14,-14,-36,-16,34,14,40,14,45,14,52,62,]),'ERROUT':([5,6,10,11,12,13,14,15,16,32,33,44,46,47,48,49,],[-3,27,-15,-10,-3,-14,-36,-16,-11,-13,-12,27,-31,-30,-32,27,]),'COMMA':([5,10,11,12,13,14,15,16,17,18,23,25,30,32,33,34,36,37,38,39,40,42,43,44,45,52,56,57,61,63,65,66,67,68,69,],[-3,-15,-10,-3,-14,-36,-16,-11,-17,-9,-19,-8,-18,-13,-12,-24,-34,-33,-35,-29,-27,-28,-23,-3,-26,58,60,-3,-3,-3,-3,-25,-22,-21,-20,]),'FILEAPPEND':([5,6,10,11,12,13,14,15,16,32,33,44,46,47,48,49,],[-3,20,-15,-10,-3,-14,-36,-16,-11,-13,-12,20,-31,-30,-32,20,]),'NL':([9,],[31,]),'PIPE':([5,6,10,11,12,13,14,15,16,32,33,44,46,47,48,49,],[-3,29,-15,-10,-3,-14,-36,-16,-11,-13,-12,29,-31,-30,-32,29,]),'LPAREN':([19,29,],[35,50,]),'DELIMITER':([0,4,5,6,7,8,10,11,12,13,14,15,16,17,18,23,25,30,32,33,34,36,37,38,39,40,42,43,44,45,46,47,48,49,54,55,57,61,63,65,66,67,68,69,],[2,9,-3,-3,-5,-4,-15,-10,-3,-14,-36,-16,-11,-17,-9,-19,-8,-18,-13,-12,-24,-34,-33,-35,-29,-27,-28,-23,-3,-26,-31,-30,-32,-3,-6,-7,-3,-3,-3,-3,-25,-22,-21,-20,]),'IN':([5,6,10,11,12,13,14,15,16,32,33,],[-3,28,-15,-10,-3,-14,-36,-16,-11,-13,-12,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'arg':([8,26,],[26,26,]),'shellblock':([0,],[3,]),'var':([8,13,16,23,26,],[25,35,39,39,25,]),'streamout':([5,34,43,],[10,10,10,]),'pipeout':([5,34,43,],[11,11,11,]),'command':([1,18,45,46,59,61,],[5,43,43,43,43,43,]),'file':([16,23,],[41,49,]),'fileout':([5,34,43,],[12,12,12,]),'instream':([13,],[34,]),'statement':([1,],[4,]),'procout':([5,34,43,],[14,52,14,]),'programfile':([0,],[2,]),'procin':([1,],[6,]),'proc':([1,18,45,46,59,61,],[7,42,55,56,63,65,]),'arglist':([8,26,],[27,50,]),'empty':([5,8,20,21,26,34,43,47,56,57,60,64,65,],[17,30,46,47,51,53,17,57,60,61,64,68,69,]),}
+_lr_goto_items = {'statement':([2,],[4,]),'arglist':([5,12,],[11,32,]),'file':([20,24,],[39,42,]),'procout':([6,44,49,],[18,18,54,]),'pipeout':([6,44,49,],[17,17,17,]),'command':([2,26,50,51,59,60,],[6,44,44,44,44,44,]),'instream':([28,],[49,]),'var':([5,12,20,24,28,],[10,10,36,36,46,]),'procin':([2,],[7,]),'arg':([5,12,],[12,12,]),'shellblock':([0,],[3,]),'fileout':([6,44,49,],[23,23,23,]),'streamout':([6,44,49,],[30,30,30,]),'programfile':([0,],[1,]),'proc':([2,26,50,51,59,60,],[8,43,56,57,63,64,]),'empty':([5,6,12,22,29,41,44,49,53,57,61,63,65,],[16,25,33,41,51,53,25,55,59,61,65,67,69,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,40 +27,40 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> programfile","S'",1,None,None,None),
-  ('programfile -> shellblock','programfile',1,'p_programfile','pyshell_parser.py',22),
-  ('shellblock -> DELIMITER statement DELIMITER NL','shellblock',4,'p_shellblock','pyshell_parser.py',26),
-  ('empty -> <empty>','empty',0,'p_empty','pyshell_parser.py',30),
-  ('statement -> proc','statement',1,'p_statement','pyshell_parser.py',34),
-  ('statement -> procin','statement',1,'p_statement','pyshell_parser.py',35),
-  ('procin -> command IN instream procout','procin',4,'p_procin','pyshell_parser.py',39),
-  ('procin -> command IN instream empty','procin',4,'p_procin','pyshell_parser.py',40),
-  ('proc -> command empty','proc',2,'p_proc','pyshell_parser.py',44),
-  ('proc -> command procout','proc',2,'p_proc','pyshell_parser.py',45),
-  ('command -> WORD arglist','command',2,'p_command','pyshell_parser.py',49),
-  ('command -> WORD empty','command',2,'p_command','pyshell_parser.py',50),
-  ('arglist -> arg empty','arglist',2,'p_arglist','pyshell_parser.py',54),
-  ('arglist -> arg arglist','arglist',2,'p_arglist','pyshell_parser.py',55),
-  ('arg -> WORD','arg',1,'p_arg','pyshell_parser.py',59),
-  ('arg -> var','arg',1,'p_arg','pyshell_parser.py',60),
-  ('arg -> STRING','arg',1,'p_arg','pyshell_parser.py',61),
-  ('procout -> pipeout','procout',1,'p_procout','pyshell_parser.py',65),
-  ('procout -> streamout','procout',1,'p_procout','pyshell_parser.py',66),
-  ('procout -> fileout','procout',1,'p_procout','pyshell_parser.py',67),
-  ('pipeout -> PIPE empty proc empty empty empty','pipeout',6,'p_pipe','pyshell_parser.py',71),
-  ('pipeout -> PIPE LPAREN proc COMMA proc RPAREN','pipeout',6,'p_pipe','pyshell_parser.py',72),
-  ('pipeout -> ERRPIPE empty empty empty proc empty','pipeout',6,'p_pipe','pyshell_parser.py',73),
-  ('pipeout -> BOTHPIPE proc','pipeout',2,'p_bothpipe','pyshell_parser.py',77),
-  ('streamout -> OUT VARNAME','streamout',2,'p_streamout','pyshell_parser.py',81),
-  ('streamout -> OUT LPAREN VARNAME COMMA VARNAME RPAREN','streamout',6,'p_streamout','pyshell_parser.py',82),
-  ('streamout -> ERROUT VARNAME','streamout',2,'p_streamout','pyshell_parser.py',83),
-  ('streamout -> BOTHOUT VARNAME','streamout',2,'p_streamout','pyshell_parser.py',84),
-  ('fileout -> FILEOUT file','fileout',2,'p_fileout','pyshell_parser.py',88),
-  ('fileout -> FILEAPPEND file','fileout',2,'p_fileout','pyshell_parser.py',89),
-  ('instream -> WORD','instream',1,'p_instream','pyshell_parser.py',93),
-  ('instream -> var','instream',1,'p_instream','pyshell_parser.py',94),
-  ('instream -> STRING','instream',1,'p_instream','pyshell_parser.py',95),
-  ('file -> WORD','file',1,'p_file','pyshell_parser.py',99),
-  ('file -> var','file',1,'p_file','pyshell_parser.py',100),
-  ('file -> STRING','file',1,'p_file','pyshell_parser.py',101),
-  ('var -> VARNAME','var',1,'p_var','pyshell_parser.py',105),
+  ('programfile -> shellblock','programfile',1,'p_programfile','pyshell_parser.py',19),
+  ('shellblock -> DELIMITER statement DELIMITER NL','shellblock',4,'p_shellblock','pyshell_parser.py',23),
+  ('empty -> <empty>','empty',0,'p_empty','pyshell_parser.py',27),
+  ('statement -> proc','statement',1,'p_statement','pyshell_parser.py',31),
+  ('statement -> procin','statement',1,'p_statement','pyshell_parser.py',32),
+  ('procin -> command IN instream procout','procin',4,'p_procin','pyshell_parser.py',36),
+  ('procin -> command IN instream empty','procin',4,'p_procin','pyshell_parser.py',37),
+  ('proc -> command empty','proc',2,'p_proc','pyshell_parser.py',41),
+  ('proc -> command procout','proc',2,'p_proc','pyshell_parser.py',42),
+  ('command -> WORD arglist','command',2,'p_command','pyshell_parser.py',46),
+  ('command -> WORD empty','command',2,'p_command','pyshell_parser.py',47),
+  ('arglist -> arg empty','arglist',2,'p_arglist','pyshell_parser.py',51),
+  ('arglist -> arg arglist','arglist',2,'p_arglist','pyshell_parser.py',52),
+  ('arg -> WORD','arg',1,'p_arg','pyshell_parser.py',56),
+  ('arg -> var','arg',1,'p_arg','pyshell_parser.py',57),
+  ('arg -> STRING','arg',1,'p_arg','pyshell_parser.py',58),
+  ('procout -> pipeout','procout',1,'p_procout','pyshell_parser.py',62),
+  ('procout -> streamout','procout',1,'p_procout','pyshell_parser.py',63),
+  ('procout -> fileout','procout',1,'p_procout','pyshell_parser.py',64),
+  ('pipeout -> PIPE empty proc empty empty empty','pipeout',6,'p_pipe','pyshell_parser.py',68),
+  ('pipeout -> PIPE LPAREN proc COMMA proc RPAREN','pipeout',6,'p_pipe','pyshell_parser.py',69),
+  ('pipeout -> ERRPIPE empty empty empty proc empty','pipeout',6,'p_pipe','pyshell_parser.py',70),
+  ('pipeout -> BOTHPIPE proc','pipeout',2,'p_bothpipe','pyshell_parser.py',74),
+  ('streamout -> OUT VARNAME','streamout',2,'p_streamout','pyshell_parser.py',78),
+  ('streamout -> OUT LPAREN VARNAME COMMA VARNAME RPAREN','streamout',6,'p_streamout','pyshell_parser.py',79),
+  ('streamout -> ERROUT VARNAME','streamout',2,'p_streamout','pyshell_parser.py',80),
+  ('streamout -> BOTHOUT VARNAME','streamout',2,'p_streamout','pyshell_parser.py',81),
+  ('fileout -> FILEOUT file','fileout',2,'p_fileout','pyshell_parser.py',85),
+  ('fileout -> FILEAPPEND file','fileout',2,'p_fileout','pyshell_parser.py',86),
+  ('instream -> WORD','instream',1,'p_instream','pyshell_parser.py',90),
+  ('instream -> var','instream',1,'p_instream','pyshell_parser.py',91),
+  ('instream -> STRING','instream',1,'p_instream','pyshell_parser.py',92),
+  ('file -> WORD','file',1,'p_file','pyshell_parser.py',96),
+  ('file -> var','file',1,'p_file','pyshell_parser.py',97),
+  ('file -> STRING','file',1,'p_file','pyshell_parser.py',98),
+  ('var -> VARNAME','var',1,'p_var','pyshell_parser.py',102),
 ]
