@@ -8,9 +8,9 @@ def run(filename):
     found_path = find_path.search(filename)
 
     if found_path:
-        name = tmp_path + "/" + found_path.group("n") + ".py"
+        name = tmp_path + "/." + found_path.group("n") + ".py"
     else:
-        name = tmp_path + "/" + filename[:-5] + ".py"
+        name = tmp_path + "/." + filename[:-5] + ".py"
 
     if not os.path.isfile(name):
         print("Error: Python executable does not exist", file=sys.stderr)

@@ -14,10 +14,10 @@ def translate(parsetree, filename):
 
     global path
     if found_path:
-        filename = found_path.group('n') + '.py'
+        filename = '.' + found_path.group('n') + '.py'
         path = found_path.group("p") + "/"
     else:
-        filename = filename[:-5] + '.py'
+        filename = '.' + filename[:-5] + '.py'
         path = ""
 
     if path != "":
@@ -88,13 +88,16 @@ def c_STATEMENT_NO_RESULT(child, f, tabs):
     toPython(child[0], f, tabs)
     f.write('\n')
 
+def c_SHELLBLOCK_RUN(child, f, tabs):
+    # 0: shellblock
+
+    toPython(child[0], f, tabs)
+    f.write('.run()')
+    
 def c_SHELLBLOCK(child, f, tabs):
     # 0: statement
 
     toPython(child[0], f, tabs)
-
-    f.write(".run()")
-    advance(child)
 
 def c_STATEMENT(child, f, tabs):
     toPython(child[0], f, tabs)
@@ -174,7 +177,17 @@ def c_SUITE_BLOCK(child, f, tabs):
 def c_PYTHON(child, f, tabs):
     # 0: python code 1: further python code
     f.write(child[0])
+    f.write(' ')
     toPython(child[1], f, tabs)
+
+def c_FOR(child, f, tabs):
+    # 0: python 1: expression 2: suite
+
+    f.write(tabs + 'for ' + child[0] + ' in ')
+    toPython(child[1], f, tabs)
+    f.write(':\n')
+    advance(child)
+    toPython(child[2], f, tabs+'\t')
 
 functions = {
     "EMPTY"              : c_EMPTY,
@@ -194,4 +207,6 @@ functions = {
     "CONDITIONAL"        : c_CONDITIONAL,
     "SUITE_BLOCK"        : c_SUITE_BLOCK,
     "PYTHON"             : c_PYTHON,
+    "FORLOOP"            : c_FOR,
+    "SHELLBLOCK_RUN"     : c_SHELLBLOCK_RUN,
 }

@@ -354,8 +354,12 @@ class Process:
         # self._proc.wait()
 
         # TODO: Build this stream class as a generator of strings
-        return OutStream(self.stdout)
+        # return OutStream(self.stdout)
         # return self.stdout
+        return self
+
+    def __next__(self):
+        return str(self.stdout.__next__(), encoding='utf-8').rstrip()
 
     @property
     def return_code(self):

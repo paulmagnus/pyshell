@@ -38,7 +38,9 @@ def parse_file(filename):
 
     parser = yacc.yacc()
     lexer.parser = parser
-    parsetree = parser.parse(tracking = True, debug=True)
+    parsetree = parser.parse(tracking = True,
+                             # debug=True
+    )
 
     return parsetree
 
@@ -56,9 +58,9 @@ def main():
 
     # Process and execute
     parsetree = parse_file(filename)
-    print("Parsetree---------------------------")
-    print(parsetree)
-    print("------------------------------------")
+    # print("Parsetree---------------------------")
+    # print(parsetree)
+    # print("------------------------------------")
     if not parsetree:
         print('Parse failed')
     else:

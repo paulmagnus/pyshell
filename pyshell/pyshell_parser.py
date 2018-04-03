@@ -53,7 +53,7 @@ def p_statement_result(p):
     p[0] = ast(p, "STATEMENT_RESULT", 1)
 
 def p_statement_no_result(p):
-    '''statement_no_result : shellblock
+    '''statement_no_result : shellblock_run
                            | python_code'''
     p[0] = ast(p, "STATEMENT_NO_RESULT", 1)
 
@@ -64,25 +64,25 @@ def p_loop(p):
     p[0] = p[1]
 
 def p_while(p):
-    '''while_loop : WHILE expression COLON suite'''
+    '''while_loop : WHILE expression END_COLON suite'''
     p[0] = ast(p, "WHILELOOP", 2, 4)
 
 def p_for(p):
-    '''for_loop : FOR PYTHON IN expression COLON suite'''
+    '''for_loop : FOR PYTHON IN expression END_COLON suite'''
     p[0] = ast(p, "FORLOOP", 2, 4, 6)
 
 # Conditionals
 def p_conditional(p):
-    '''conditional : IF expression COLON suite conditional_extension
-                   | IF expression COLON suite empty'''
+    '''conditional : IF expression END_COLON suite conditional_extension
+                   | IF expression END_COLON suite empty'''
     p[0] = ast(p, "CONDITIONAL", 2, 4, 5)
 
 def p_conditional_extension_elif(p):
-    '''conditional_extension : ELIF expression COLON suite conditional_extension'''
+    '''conditional_extension : ELIF expression END_COLON suite conditional_extension'''
     p[0] = ast(p, "CONDITIONAL_ELIF", 2, 4, 5)
 
 def p_conditional_extension_else(p):
-    '''conditional_extension : ELSE COLON suite'''
+    '''conditional_extension : ELSE END_COLON suite'''
     p[0] = ast(p, "CONDITIONAL_ELSE", 3)
 
 # ASSIGNMENT
@@ -112,6 +112,7 @@ def p_python_code(p):
     '''python_code : PYTHON python_code
                    | STRING python_code
                    | DOCSTRING python_code
+                   | COLON python_code
                    | PYTHON empty
                    | STRING empty
                    | DOCSTRING empty'''
@@ -124,6 +125,10 @@ def p_suite_block(p):
 def p_suite_inline(p):
     '''suite : statement_simple NL'''
     p[0] = ast(p, "SUITE_INLINE", 1)
+
+def p_shellblock_run(p):
+    '''shellblock_run : shellblock'''
+    p[0] = ast(p, "SHELLBLOCK_RUN", 1)
     
 def p_shellblock(p):
     '''shellblock : SHELL_DELIMITER statement SHELL_DELIMITER'''

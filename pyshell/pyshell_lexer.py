@@ -133,6 +133,7 @@ tokens = list(python_reserved.values()) + [
     "NL",
     "INDENT",
     "DEDENT",
+    "END_COLON",
     # "ISNOT",
     # "NOTIN"
 ]
@@ -176,7 +177,7 @@ t_ANY_NL = r'\n'
 # t_RBRACKET = r']'
 # t_BITOR = r'\|'
 # t_DIVIDE = r'/'
-t_COLON = r':'
+# t_COLON = r':'
 t_SEMICOLON = r';'
 # t_LT = r'<'
 # t_GT = r'>'
@@ -213,17 +214,17 @@ t_ANY_ignore_WS =  r'[ \t]'
 
 t_ANY_STRING = r'((?<!\\)\'.*?(?<!\\)\')|((?<!\\)\".*?(?<!\\)\")'
 
-t_PYTHON = r'[^\$\'\";:=\s]+'
+t_PYTHON = r'[^\$\'\";:\s]+'
 
 t_ASSIGNMENT_OPERATOR = r'='
 
-# def t_ISNOT(t):
-#     r'is[ ]+not'
-#     return t
+def t_END_COLON(t):
+    r':(?=\n)'
+    return t
 
-# def t_NOTIN(t):
-#     r'not[ ]+in'
-#     return t
+def t_COLON(t):
+    r':'
+    return t
 
 def t_FOR(t):
     r'for'

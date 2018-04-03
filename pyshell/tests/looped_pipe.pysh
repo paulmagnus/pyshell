@@ -1,0 +1,5 @@
+import os
+
+for f in $ls$:
+    if f != 'looped_pipe.pysh' and f != 'run_tests.pysh' and f[-5:] == '.pysh':
+        $../bin/pyshell @f < @s > @s$
