@@ -16,11 +16,117 @@ precedence = (
 start = "programfile"
 
 def p_programfile(p):
-    '''programfile : shellblock'''
+    '''programfile : nonempty_block
+                   | empty'''
     p[0] = ast(p, "PROGRAMFILE", 1)
 
+def p_nonempty_block(p):
+    '''nonempty_block : statement_complex empty
+                      | statement_complex nonempty_block'''
+    p[0] = ast(p, "BLOCK", 1, 2)
+
+def p_statement_complex(p):
+    '''statement_complex : loop
+                         | conditional
+                         | statement_multi NL
+                         | statement_multi SEMICOLON NL'''
+    p[0] = p[1]
+
+def p_statement_multi(p):
+    '''statement_multi : statement_multi SEMICOLON statement_multi'''
+    p[0] = ast(p, "STATEMENT_MULTI", 1, 3)
+
+def p_statement_single(p):
+    '''statement_multi : statement_simple'''
+    p[0] = p[1]
+    
+def p_statement_simple(p):
+    '''statement_simple : statement_result
+                        | statement_no_result'''
+    p[0] = p[1]
+
+def p_statement_result(p):
+    '''statement_result : assignment
+                        | return
+                        | assert
+                        | yield'''
+    p[0] = ast(p, "STATEMENT_RESULT", 1)
+
+def p_statement_no_result(p):
+    '''statement_no_result : shellblock
+                           | python_code'''
+    p[0] = ast(p, "STATEMENT_NO_RESULT", 1)
+
+# LOOPS
+def p_loop(p):
+    '''loop : while_loop
+            | for_loop'''
+    p[0] = p[1]
+
+def p_while(p):
+    '''while_loop : WHILE expression COLON suite'''
+    p[0] = ast(p, "WHILELOOP", 2, 4)
+
+def p_for(p):
+    '''for_loop : FOR PYTHON IN expression COLON suite'''
+    p[0] = ast(p, "FORLOOP", 2, 4, 6)
+
+# Conditionals
+def p_conditional(p):
+    '''conditional : IF expression COLON suite conditional_extension
+                   | IF expression COLON suite empty'''
+    p[0] = ast(p, "CONDITIONAL", 2, 4, 5)
+
+def p_conditional_extension_elif(p):
+    '''conditional_extension : ELIF expression COLON suite conditional_extension'''
+    p[0] = ast(p, "CONDITIONAL_ELIF", 2, 4, 5)
+
+def p_conditional_extension_else(p):
+    '''conditional_extension : ELSE COLON suite'''
+    p[0] = ast(p, "CONDITIONAL_ELSE", 3)
+
+# ASSIGNMENT
+def p_assignment(p):
+    '''assignment : python_code ASSIGNMENT_OPERATOR expression'''
+    p[0] = ast(p, "ASSIGNMENT", 1, 2, 3)
+
+def p_return(p):
+    '''return : RETURN empty
+              | RETURN expression'''
+    p[0] = ast(p, "RETURN", 2)
+
+def p_assert(p):
+    '''assert : ASSERT expression'''
+    p[0] = ast(p, "ASSERT", 2)
+
+def p_yield(p):
+    '''yield : YIELD expression'''
+    p[0] = ast(p, "YIELD", 2)
+
+def p_expression(p):
+    '''expression : shellblock
+                  | python_code'''
+    p[0] = p[1]
+
+def p_python_code(p):
+    '''python_code : PYTHON python_code
+                   | STRING python_code
+                   | DOCSTRING python_code
+                   | PYTHON empty
+                   | STRING empty
+                   | DOCSTRING empty'''
+    p[0] = ast(p, "PYTHON", 1, 2)
+
+def p_suite_block(p):
+    '''suite : NL INDENT nonempty_block DEDENT'''
+    p[0] = ast(p, "SUITE_BLOCK", 3, 4)
+
+def p_suite_inline(p):
+    '''suite : statement_simple NL'''
+    p[0] = ast(p, "SUITE_INLINE", 1)
+    
 def p_shellblock(p):
-    '''shellblock : DELIMITER statement DELIMITER NL'''
+    '''shellblock : SHELL_DELIMITER statement SHELL_DELIMITER'''
     p[0] = ast(p, "SHELLBLOCK", 2)
 
 def p_empty(p):
@@ -33,8 +139,8 @@ def p_statement(p):
     p[0] = ast(p, "STATEMENT", 1)
 
 def p_procin(p):
-    '''procin : command IN instream procout
-              | command IN instream empty'''
+    '''procin : command STREAM_IN instream procout
+              | command STREAM_IN instream empty'''
     p[0] = ast(p, "PROCIN", 1, 3, 4)
 
 def p_proc(p):
@@ -75,8 +181,8 @@ def p_bothpipe(p):
     p[0] = ast(p, "BOTHPIPE", 2)
 
 def p_streamout(p):
-    '''streamout : OUT VARNAME
-                 | OUT LPAREN VARNAME COMMA VARNAME RPAREN
+    '''streamout : STREAM_OUT VARNAME
+                 | STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN
                  | ERROUT VARNAME
                  | BOTHOUT VARNAME'''
     pass
@@ -104,7 +210,9 @@ def p_var(p):
 
 def p_error(p):
     # Invalid character - Lexer takes care of this error
+    print('p =',p)
     if not p:
+        print("Invalid character")
         return
 
     print("pyshell : Syntax Error", file=sys.stderr)

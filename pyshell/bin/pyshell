@@ -9,4 +9,4 @@ while [ -h "$SOURCE" ]; do
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-python3 "$DIR/pyshell_master.py" $1
+python3 "$DIR/../pyshell_master.py" $1

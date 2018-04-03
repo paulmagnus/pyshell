@@ -1,0 +1,6 @@
+import os
+
+for f in $ls$:
+    if (f != os.path.basename(__file__) and
+        f[-5:] == '.pysh'):
+        $pyshell @f$

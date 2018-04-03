@@ -294,7 +294,7 @@ class Process:
 
     @property
     def stdout(self):
-        """ The standard output stream of the process. """
+        """ The standard output stream of the process. """ 
         return self._out_stream
 
     @stdout.setter

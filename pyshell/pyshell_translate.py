@@ -77,12 +77,23 @@ def c_PROGRAMFILE(child, f, tabs):
 
     toPython(child[0], f, tabs)
 
+def c_BLOCK(child, f, tabs):
+    # 0: statment_complex 1: nonempty_block
+    toPython(child[0], f, tabs)
+    toPython(child[1], f, tabs)
+
+def c_STATEMENT_NO_RESULT(child, f, tabs):
+    # 0: statement
+    f.write(tabs)
+    toPython(child[0], f, tabs)
+    f.write('\n')
+
 def c_SHELLBLOCK(child, f, tabs):
     # 0: statement
 
     toPython(child[0], f, tabs)
 
-    f.write(".run()\n")
+    f.write(".run()")
     advance(child)
 
 def c_STATEMENT(child, f, tabs):
@@ -118,7 +129,10 @@ def c_ARGLIST(child, f, tabs):
 
 def c_ARG(child, f, tabs):
     # 0: argument
-    f.write("'" + child[0] + "'")
+    if not isinstance(child[0], ast):
+        f.write("'" + child[0] + "'")
+    else:
+        toPython(child[0], f, tabs)
 
 def c_PROCOUT(child, f, tabs):
     # 0: output
@@ -139,6 +153,29 @@ def c_PIPE(child, f, tabs):
     
     f.write(")")
 
+def c_VAR(child, f, tabs):
+    # 0: VARNAME
+    f.write(child[0])
+
+def c_CONDITIONAL(child, f, tabs):
+    # 0: expression 1: suite 2: conditional_extension
+
+    f.write(tabs + 'if (')
+    toPython(child[0], f, tabs)
+    f.write('):\n')
+    advance(child)
+    toPython(child[1], f, tabs+'\t')
+    toPython(child[2], f, tabs)
+
+def c_SUITE_BLOCK(child, f, tabs):
+    # 0: block
+    toPython(child[0], f, tabs)
+
+def c_PYTHON(child, f, tabs):
+    # 0: python code 1: further python code
+    f.write(child[0])
+    toPython(child[1], f, tabs)
+
 functions = {
     "EMPTY"              : c_EMPTY,
     "PROGRAMFILE"        : c_PROGRAMFILE,
@@ -151,4 +188,10 @@ functions = {
     "ARG"                : c_ARG,
     "PROCOUT"            : c_PROCOUT,
     "PIPE"               : c_PIPE,
+    "BLOCK"              : c_BLOCK,
+    "STATEMENT_NO_RESULT": c_STATEMENT_NO_RESULT,
+    "VAR"                : c_VAR,
+    "CONDITIONAL"        : c_CONDITIONAL,
+    "SUITE_BLOCK"        : c_SUITE_BLOCK,
+    "PYTHON"             : c_PYTHON,
 }

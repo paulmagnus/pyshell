@@ -31,11 +31,14 @@ def parse_file(filename):
     pyshellfile = open(filename, 'rU').read()
 
     lexer = lex.lex()
+    lexer.indentwidth = None
+    lexer.indentedline = None
+    lexer.indentstack = [0]
     lexer.input(pyshellfile)
 
     parser = yacc.yacc()
     lexer.parser = parser
-    parsetree = parser.parse(tracking = True)
+    parsetree = parser.parse(tracking = True, debug=True)
 
     return parsetree
 
@@ -56,8 +59,11 @@ def main():
     print("Parsetree---------------------------")
     print(parsetree)
     print("------------------------------------")
-    translate(parsetree, filename)
-    run(filename)
+    if not parsetree:
+        print('Parse failed')
+    else:
+        translate(parsetree, filename)
+        run(filename)
 
 if __name__ == "__main__":
     main()
