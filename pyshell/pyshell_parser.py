@@ -26,110 +26,38 @@ def p_nonempty_block(p):
     p[0] = ast(p, "BLOCK", 1, 2)
 
 def p_statement_complex(p):
-    '''statement_complex : loop
-                         | conditional
-                         | statement_multi NL
-                         | statement_multi SEMICOLON NL'''
+    '''statement_complex : suite
+                         | statement_multi NL'''
+    p[0] = p[1]
+
+def p_statement_single(p):
+    '''statement_multi : shellblock
+                       | python_code'''
     p[0] = p[1]
 
 def p_statement_multi(p):
-    '''statement_multi : statement_multi SEMICOLON statement_multi'''
-    p[0] = ast(p, "STATEMENT_MULTI", 1, 3)
+    '''statement_multi : python_code statement_shell'''
+    p[0] = ast(p, "STATEMENT_MULTI", 1, 2)
 
-def p_statement_single(p):
-    '''statement_multi : statement_simple'''
-    p[0] = p[1]
-    
-def p_statement_simple(p):
-    '''statement_simple : statement_result
-                        | statement_no_result'''
-    p[0] = p[1]
-
-def p_statement_result(p):
-    '''statement_result : assignment
-                        | return
-                        | assert
-                        | yield'''
-    p[0] = ast(p, "STATEMENT_RESULT", 1)
-
-def p_statement_no_result(p):
-    '''statement_no_result : shellblock_run
-                           | python_code'''
-    p[0] = ast(p, "STATEMENT_NO_RESULT", 1)
-
-# LOOPS
-def p_loop(p):
-    '''loop : while_loop
-            | for_loop'''
-    p[0] = p[1]
-
-def p_while(p):
-    '''while_loop : WHILE expression END_COLON suite'''
-    p[0] = ast(p, "WHILELOOP", 2, 4)
-
-def p_for(p):
-    '''for_loop : FOR PYTHON IN expression END_COLON suite'''
-    p[0] = ast(p, "FORLOOP", 2, 4, 6)
-
-# Conditionals
-def p_conditional(p):
-    '''conditional : IF expression END_COLON suite conditional_extension
-                   | IF expression END_COLON suite empty'''
-    p[0] = ast(p, "CONDITIONAL", 2, 4, 5)
-
-def p_conditional_extension_elif(p):
-    '''conditional_extension : ELIF expression END_COLON suite conditional_extension'''
-    p[0] = ast(p, "CONDITIONAL_ELIF", 2, 4, 5)
-
-def p_conditional_extension_else(p):
-    '''conditional_extension : ELSE END_COLON suite'''
-    p[0] = ast(p, "CONDITIONAL_ELSE", 3)
-
-# ASSIGNMENT
-def p_assignment(p):
-    '''assignment : python_code ASSIGNMENT_OPERATOR expression'''
-    p[0] = ast(p, "ASSIGNMENT", 1, 2, 3)
-
-def p_return(p):
-    '''return : RETURN empty
-              | RETURN expression'''
-    p[0] = ast(p, "RETURN", 2)
-
-def p_assert(p):
-    '''assert : ASSERT expression'''
-    p[0] = ast(p, "ASSERT", 2)
-
-def p_yield(p):
-    '''yield : YIELD expression'''
-    p[0] = ast(p, "YIELD", 2)
-
-def p_expression(p):
-    '''expression : shellblock
-                  | python_code'''
-    p[0] = p[1]
+def p_statement_shell(p):
+    '''statement_shell : shellblock statement_multi'''
+    p[0] = ast(p, "STATEMENT_MULTI", 1, 2)
 
 def p_python_code(p):
-    '''python_code : PYTHON python_code
-                   | STRING python_code
-                   | DOCSTRING python_code
-                   | COLON python_code
-                   | PYTHON empty
-                   | STRING empty
-                   | DOCSTRING empty'''
+    '''python_code : PYTHON opt_python
+                   | STRING opt_python
+                   | DOCSTRING opt_python'''
     p[0] = ast(p, "PYTHON", 1, 2)
 
+def p_opt_python(p):
+    '''opt_python : python_code
+                  | empty'''
+    p[0] = p[1]
+
 def p_suite_block(p):
-    '''suite : NL INDENT nonempty_block DEDENT'''
-    p[0] = ast(p, "SUITE_BLOCK", 3, 4)
+    '''suite : INDENT nonempty_block DEDENT'''
+    p[0] = ast(p, "SUITE_BLOCK", 2)
 
-def p_suite_inline(p):
-    '''suite : statement_simple NL'''
-    p[0] = ast(p, "SUITE_INLINE", 1)
-
-def p_shellblock_run(p):
-    '''shellblock_run : shellblock'''
-    p[0] = ast(p, "SHELLBLOCK_RUN", 1)
-    
 def p_shellblock(p):
     '''shellblock : SHELL_DELIMITER statement SHELL_DELIMITER'''
     p[0] = ast(p, "SHELLBLOCK", 2)
@@ -186,16 +114,22 @@ def p_bothpipe(p):
     p[0] = ast(p, "BOTHPIPE", 2)
 
 def p_streamout(p):
-    '''streamout : STREAM_OUT VARNAME
+    '''streamout : STREAM_OUT empty VARNAME empty empty empty
                  | STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN
-                 | ERROUT VARNAME
-                 | BOTHOUT VARNAME'''
-    pass
+                 | ERROUT empty empty empty VARNAME empty'''
+    p[0] = ast(p, "STREAMOUT", 3, 5)
+
+def p_streamout_both(p):
+    '''streamout : BOTHOUT VARNAME'''
+    p[0] = ast(p, "BOTHOUT", 2)
 
 def p_fileout(p):
-    '''fileout : FILEOUT file
-               | FILEAPPEND file'''
-    pass
+    '''fileout : FILEOUT file'''
+    p[0] = ast(p, "FILEOUT", 2)
+
+def p_file_append(p):
+    '''fileout : FILEAPPEND file'''
+    p[0] = ast(p, "FILEAPPEND", 2)
 
 def p_instream(p):
     '''instream : WORD
@@ -207,7 +141,7 @@ def p_file(p):
     '''file : WORD
             | var
             | STRING'''
-    p[0] = ast(p, "STREAMLIST", 1)
+    p[0] = ast(p, "FILE", 1)
 
 def p_var(p):
     '''var : VARNAME'''
@@ -217,7 +151,8 @@ def p_error(p):
     # Invalid character - Lexer takes care of this error
     print('p =',p)
     if not p:
-        print("Invalid character")
+        # TODO: Remove this print statement when done debugging
+        print("Debugging: Invalid character")
         return
 
     print("pyshell : Syntax Error", file=sys.stderr)
@@ -234,21 +169,36 @@ def p_error(p):
         lineno = lineno - 1
         line = source[lineno - 1]
 
-    error_length = len(p.value)
+    if p.type == 'DEDENT' or p.type == 'INDENT':
+        error_length = p.value
+    else:
+        error_length = len(p.value)
 
     # Find the column of the token in the source code
-    last_nl = p.lexer.lexdata.rfind('\n', 0 , p.lexpos)
-    if last_nl < 0:
-        last_nl = -1
+    if p.type == 'NL':
+        col = len(line) + 1
+    elif p.type == 'INDENT' or p.type == 'DEDENT':
+        col = 1
+    else:
+        last_nl = p.lexer.lexdata.rfind('\n', 0 , p.lexpos)
+        if last_nl < 0:
+            last_nl = -1
     
-    next_nl = p.lexer.lexdata.find('\n', p.lexpos + error_length,
-                                   len(p.lexer.lexdata))
-    if next_nl < 0:
-        next_nl = len(p.lexer.lexdata)
-    col = p.lexpos - last_nl
+        next_nl = p.lexer.lexdata.find('\n', p.lexpos + error_length,
+                                       len(p.lexer.lexdata))
+        if next_nl < 0:
+            next_nl = len(p.lexer.lexdata)
+        col = p.lexpos - last_nl
 
     message = "Line " + str(lineno) + ", Column " + str(col) + "\n\n" + \
               line + "\n" + " " * (col - 1) + "^" * (error_length)
     print(message, file=sys.stderr)
 
-parser = yacc.yacc()
+    if p.type == 'DEDENT' or p.type == 'INDENT':
+        print('IndentationError: outer indentation and unindentation do '
+              'not match\n', file=sys.stderr)
+
+    if p.type == 'NL':
+        print('Unexpected new line.', file=sys.stderr)
+        
+    exit(1)

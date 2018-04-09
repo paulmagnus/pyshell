@@ -1,10 +1,5 @@
 import sys
 
-# Significant portions of this lexer as it relates to standard Python
-# syntax originates from a project called CSPy which was created by
-# Alex Dennis, Eric Collins, Lyndsay LaBarge, Maya Montgomery, Paul Magnus
-# Ines Ayara, and Matthew Jenkins at Hamilton College.
-
 # These are the lexing states. Each state controls which
 # tokens are used.
 states = (
@@ -12,41 +7,7 @@ states = (
     ('indent', 'exclusive'),
 )
 
-python_reserved = {
-    # "None":"NONE",
-    # "and":"AND",
-    # "as":"AS",
-    "assert":"ASSERT",
-    # "break":"BREAK",
-    # "class":"CLASS",
-    # "continue":"CONTINUE",
-    # "def":"DEF",
-    # "del":"DEL",
-    "elif":"ELIF",
-    "else":"ELSE",
-    # "except":"EXCEPT",
-    # "extends":"EXTENDS",
-    # "finally":"FINALLY",
-    "for":"FOR",
-    # "from":"FROM",
-    "if":"IF",
-    # "import":"IMPORT",
-    "in":"IN",
-    # "is":"IS",
-    # "lambda":"LAMBDA",
-    # "not":"NOT",
-    # "of":"OF",
-    # "or":"OR",
-    # "pass":"PASS",
-    # "proc":"PROC",
-    # "raise":"RAISE",
-    "return":"RETURN",
-    # "try":"TRY",
-    "while":"WHILE",
-    "yield":"YIELD",
-}
-
-tokens = list(python_reserved.values()) + [
+tokens = [
     # SHELL TOKENS
     "PIPE",                     # |
     "STREAM_OUT",               # >
@@ -71,71 +32,10 @@ tokens = list(python_reserved.values()) + [
     
     # PYTHON
     "PYTHON",
-    "ASSIGNMENT_OPERATOR",
-    
-    # # BASIC TOKENS
-    # "TILDE",        # ~ Invert Bits
-    # "EXMARK",       # ! 
-    # "PERCENT",      # %
-    # "CARET",        # ^ Bitwise xor
-    # "BITAND",       # &
-    # "TIMES",        # *
-    # "MINUS",        # -
-    # "PLUS",         # +
-    # "EQUALS",       # =
-    # "LCURLY",       # {
-    # "RCURLY",       # }
-    # "LBRACKET",     # [
-    # "RBRACKET",     # ]
-    # "BITOR",        # | Bitwise or
-    # "DIVIDE",       # /
-    "COLON",        # :
-    "SEMICOLON",    # ;
-    # "COMMA",        # ,
-    # "LT",           # <
-    # "GT",           # >
-    # "DOT",          # .
-    # "QMARK",        # ?
-
-    # # COMPLEX TOKENS
-    # "DOTDOT",       # ..
-    # "INTDIV",       # //
-    # "POW",          # **
-    # "LSHIFT",       # <<
-    # "RSHIFT",       # >>
-    # "GE",           # >=
-    # "LE",           # <=
-    # "EQUALTO",      # ==
-    # "NEQUALTO",     # !=
-    # "REQUALTO",     # ~=
-    # "ARROW",        # ->
-    # "PLUSEQU",      # +=
-    # "TIMESEQU",     # *=
-    # "DIVEQU",       # /=
-    # "MINUSEQU",     # -=
-    # "MODEQU",       # %=
-    # "BITANDEQU",    # &=
-    # "BITOREQU",     # |=
-    # "BITXOREQU",    # ^=
-    # "LSHIFTEQU",    # <<=
-    # "RSHIFTEQU",    # >>=
-    # "POWEQU",       # **=
-    # "INTDIVEQU",    # //=
-    # "BOOLOR",       # ||
-    # "BOOLAND",      # &&
-
-    # # MISC
-    # "IDENTIFIER",
-    # "NUMBERLITERAL",
-    # "BOOLLITERAL",
-    # # "STRINGLITERAL",
     "DOCSTRING",
     "NL",
     "INDENT",
     "DEDENT",
-    "END_COLON",
-    # "ISNOT",
-    # "NOTIN"
 ]
 
 # SHELL TOKENS
@@ -163,100 +63,11 @@ t_shell_WORD = r'(([^\s\|><\(\),\-\!\&\$])|' + \
 
 t_ANY_NL = r'\n'
 
-# t_TILDE = r'~'
-# t_EXMARK = r'!'
-# t_PERCENT = r'%'
-# t_CARET = r'\^'
-# t_BITAND = r'&'
-# t_TIMES = r'\*'
-# t_RPAREN = r'\)'
-# t_MINUS = r'\-'
-# t_PLUS = r'\+'
-# t_EQUALS = r'='
-# t_RCURLY = r'}'
-# t_RBRACKET = r']'
-# t_BITOR = r'\|'
-# t_DIVIDE = r'/'
-# t_COLON = r':'
-t_SEMICOLON = r';'
-# t_LT = r'<'
-# t_GT = r'>'
-# t_DOT = r'\.'
-# t_QMARK = r'\?'
-# t_DOTDOT = r'\.\.'
-# t_INTDIV = r'//'
-# t_POW = r'\*\*'
-# t_LSHIFT = r'<<'
-# t_RSHIFT = r'>>'
-# t_GE = r'>='
-# t_LE = r'<='
-# t_EQUALTO = r'=='
-# t_NEQUALTO = r'!='
-# t_REQUALTO = r'~='
-# t_ARROW = r'\->'
-# t_PLUSEQU = r'\+='
-# t_TIMESEQU = r'\*='
-# t_DIVEQU = r'/='
-# t_MINUSEQU = r'\-='
-# t_MODEQU = r'%='
-# t_BITANDEQU = r'&='
-# t_BITOREQU = r'\|='
-# t_BITXOREQU = r'\^='
-# t_LSHIFTEQU = r'<<='
-# t_RSHIFTEQU = r'>>='
-# t_POWEQU = r'\*\*='
-# t_INTDIVEQU = r'//='
-# t_BOOLOR = r'\|\|'
-# t_BOOLAND = r'&&'
-# # t_STRINGLITERAL = r'(\"(\\.|[^"\n])*\")|(\'(\\.|[^\'\n])*\')'
-# t_NUMBERLITERAL = r'([0-9]*\.[0-9]+)|([0-9]+)'
 t_ANY_ignore_WS =  r'[ \t]'
 
 t_ANY_STRING = r'((?<!\\)\'.*?(?<!\\)\')|((?<!\\)\".*?(?<!\\)\")'
 
-t_PYTHON = r'[^\$\'\";:\s]+'
-
-t_ASSIGNMENT_OPERATOR = r'='
-
-def t_END_COLON(t):
-    r':(?=\n)'
-    return t
-
-def t_COLON(t):
-    r':'
-    return t
-
-def t_FOR(t):
-    r'for'
-    return t
-
-def t_IN(t):
-    r'in'
-    return t
-
-def t_IF(t):
-    r'if'
-    return t
-
-def t_ELIF(t):
-    r'elif'
-    return t
-
-def t_ELSE(t):
-    r'else'
-    return t
-
-def t_WHILE(t):
-    r'while'
-    return t
-
-def t_YIELD(t):
-    r'yield'
-    return t
-
-def t_RETURN(t):
-    r'return'
-    return t
+t_PYTHON = r'[^\$\'\"\s]+'
 
 def t_DOCSTRING(t):
     r'((?<!\\)"""(?s).*?(?<!\\)""")|((?<!\\)\'\'\'(?s).*?(?<!\\)\'\'\')'

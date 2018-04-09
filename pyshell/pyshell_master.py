@@ -28,7 +28,7 @@ def parse_file(filename):
         print("Error:", filename, "could not be found", file=sys.stderr)
         sys.exit(1)
 
-    pyshellfile = open(filename, 'rU').read()
+    pyshellfile = open(filename, 'rU').read() + '\n'
 
     lexer = lex.lex()
     lexer.indentwidth = None

@@ -576,4 +576,8 @@ class Process:
         # TODO: Implement __lt__
         raise NotImplementedError
 
+    def __del__(self):
+        if not self.started:
+            self.run()
+
 

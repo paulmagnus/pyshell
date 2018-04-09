@@ -7,156 +7,104 @@ Rule 1     programfile -> nonempty_block
 Rule 2     programfile -> empty
 Rule 3     nonempty_block -> statement_complex empty
 Rule 4     nonempty_block -> statement_complex nonempty_block
-Rule 5     statement_complex -> loop
-Rule 6     statement_complex -> conditional
-Rule 7     statement_complex -> statement_multi NL
-Rule 8     statement_complex -> statement_multi SEMICOLON NL
-Rule 9     statement_multi -> statement_multi SEMICOLON statement_multi
-Rule 10    statement_multi -> statement_simple
-Rule 11    statement_simple -> statement_result
-Rule 12    statement_simple -> statement_no_result
-Rule 13    statement_result -> assignment
-Rule 14    statement_result -> return
-Rule 15    statement_result -> assert
-Rule 16    statement_result -> yield
-Rule 17    statement_no_result -> shellblock_run
-Rule 18    statement_no_result -> python_code
-Rule 19    loop -> while_loop
-Rule 20    loop -> for_loop
-Rule 21    while_loop -> WHILE expression END_COLON suite
-Rule 22    for_loop -> FOR PYTHON IN expression END_COLON suite
-Rule 23    conditional -> IF expression END_COLON suite conditional_extension
-Rule 24    conditional -> IF expression END_COLON suite empty
-Rule 25    conditional_extension -> ELIF expression END_COLON suite conditional_extension
-Rule 26    conditional_extension -> ELSE END_COLON suite
-Rule 27    assignment -> python_code ASSIGNMENT_OPERATOR expression
-Rule 28    return -> RETURN empty
-Rule 29    return -> RETURN expression
-Rule 30    assert -> ASSERT expression
-Rule 31    yield -> YIELD expression
-Rule 32    expression -> shellblock
-Rule 33    expression -> python_code
-Rule 34    python_code -> PYTHON python_code
-Rule 35    python_code -> STRING python_code
-Rule 36    python_code -> DOCSTRING python_code
-Rule 37    python_code -> COLON python_code
-Rule 38    python_code -> PYTHON empty
-Rule 39    python_code -> STRING empty
-Rule 40    python_code -> DOCSTRING empty
-Rule 41    suite -> NL INDENT nonempty_block DEDENT
-Rule 42    suite -> statement_simple NL
-Rule 43    shellblock_run -> shellblock
-Rule 44    shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER
-Rule 45    empty -> <empty>
-Rule 46    statement -> proc
-Rule 47    statement -> procin
-Rule 48    procin -> command STREAM_IN instream procout
-Rule 49    procin -> command STREAM_IN instream empty
-Rule 50    proc -> command empty
-Rule 51    proc -> command procout
-Rule 52    command -> WORD arglist
-Rule 53    command -> WORD empty
-Rule 54    arglist -> arg empty
-Rule 55    arglist -> arg arglist
-Rule 56    arg -> WORD
-Rule 57    arg -> var
-Rule 58    arg -> STRING
-Rule 59    procout -> pipeout
-Rule 60    procout -> streamout
-Rule 61    procout -> fileout
-Rule 62    pipeout -> PIPE empty proc empty empty empty
-Rule 63    pipeout -> PIPE LPAREN proc COMMA proc RPAREN
-Rule 64    pipeout -> ERRPIPE empty empty empty proc empty
-Rule 65    pipeout -> BOTHPIPE proc
-Rule 66    streamout -> STREAM_OUT VARNAME
-Rule 67    streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN
-Rule 68    streamout -> ERROUT VARNAME
-Rule 69    streamout -> BOTHOUT VARNAME
-Rule 70    fileout -> FILEOUT file
-Rule 71    fileout -> FILEAPPEND file
-Rule 72    instream -> WORD
-Rule 73    instream -> var
-Rule 74    instream -> STRING
-Rule 75    file -> WORD
-Rule 76    file -> var
-Rule 77    file -> STRING
-Rule 78    var -> VARNAME
+Rule 5     statement_complex -> suite
+Rule 6     statement_complex -> statement_multi NL
+Rule 7     statement_multi -> shellblock
+Rule 8     statement_multi -> python_code
+Rule 9     statement_multi -> python_code statement_shell
+Rule 10    statement_shell -> shellblock statement_multi
+Rule 11    python_code -> PYTHON opt_python
+Rule 12    python_code -> STRING opt_python
+Rule 13    python_code -> DOCSTRING opt_python
+Rule 14    opt_python -> python_code
+Rule 15    opt_python -> empty
+Rule 16    suite -> INDENT nonempty_block DEDENT
+Rule 17    shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER
+Rule 18    empty -> <empty>
+Rule 19    statement -> proc
+Rule 20    statement -> procin
+Rule 21    procin -> command STREAM_IN instream procout
+Rule 22    procin -> command STREAM_IN instream empty
+Rule 23    proc -> command empty
+Rule 24    proc -> command procout
+Rule 25    command -> WORD arglist
+Rule 26    command -> WORD empty
+Rule 27    arglist -> arg empty
+Rule 28    arglist -> arg arglist
+Rule 29    arg -> WORD
+Rule 30    arg -> var
+Rule 31    arg -> STRING
+Rule 32    procout -> pipeout
+Rule 33    procout -> streamout
+Rule 34    procout -> fileout
+Rule 35    pipeout -> PIPE empty proc empty empty empty
+Rule 36    pipeout -> PIPE LPAREN proc COMMA proc RPAREN
+Rule 37    pipeout -> ERRPIPE empty empty empty proc empty
+Rule 38    pipeout -> BOTHPIPE proc
+Rule 39    streamout -> STREAM_OUT empty VARNAME empty empty empty
+Rule 40    streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN
+Rule 41    streamout -> ERROUT empty empty empty VARNAME empty
+Rule 42    streamout -> BOTHOUT VARNAME
+Rule 43    fileout -> FILEOUT file
+Rule 44    fileout -> FILEAPPEND file
+Rule 45    instream -> WORD
+Rule 46    instream -> var
+Rule 47    instream -> STRING
+Rule 48    file -> WORD
+Rule 49    file -> var
+Rule 50    file -> STRING
+Rule 51    var -> VARNAME
 
 Terminals, with rules where they appear
 
-ASSERT               : 30
-ASSIGNMENT_OPERATOR  : 27
-BOTHOUT              : 69
-BOTHPIPE             : 65
-COLON                : 37
-COMMA                : 63 67
-DEDENT               : 41
-DOCSTRING            : 36 40
-ELIF                 : 25
-ELSE                 : 26
-END_COLON            : 21 22 23 24 25 26
-ERROUT               : 68
-ERRPIPE              : 64
-FILEAPPEND           : 71
-FILEOUT              : 70
-FOR                  : 22
-IF                   : 23 24
-IN                   : 22
-INDENT               : 41
-LPAREN               : 63 67
-NL                   : 7 8 41 42
-PIPE                 : 62 63
-PYTHON               : 22 34 38
-RETURN               : 28 29
-RPAREN               : 63 67
-SEMICOLON            : 8 9
-SHELL_DELIMITER      : 44 44
-STREAM_IN            : 48 49
-STREAM_OUT           : 66 67
-STRING               : 35 39 58 74 77
-VARNAME              : 66 67 67 68 69 78
-WHILE                : 21
-WORD                 : 52 53 56 72 75
-YIELD                : 31
+BOTHOUT              : 42
+BOTHPIPE             : 38
+COMMA                : 36 40
+DEDENT               : 16
+DOCSTRING            : 13
+ERROUT               : 41
+ERRPIPE              : 37
+FILEAPPEND           : 44
+FILEOUT              : 43
+INDENT               : 16
+LPAREN               : 36 40
+NL                   : 6
+PIPE                 : 35 36
+PYTHON               : 11
+RPAREN               : 36 40
+SHELL_DELIMITER      : 17 17
+STREAM_IN            : 21 22
+STREAM_OUT           : 39 40
+STRING               : 12 31 47 50
+VARNAME              : 39 40 40 41 42 51
+WORD                 : 25 26 29 45 48
 error                : 
 
 Nonterminals, with rules where they appear
 
-arg                  : 54 55
-arglist              : 52 55
-assert               : 15
-assignment           : 13
-command              : 48 49 50 51
-conditional          : 6
-conditional_extension : 23 25
-empty                : 2 3 24 28 38 39 40 49 50 53 54 62 62 62 62 64 64 64 64
-expression           : 21 22 23 24 25 27 29 30 31
-file                 : 70 71
-fileout              : 61
-for_loop             : 20
-instream             : 48 49
-loop                 : 5
-nonempty_block       : 1 4 41
-pipeout              : 59
-proc                 : 46 62 63 63 64 65
-procin               : 47
-procout              : 48 51
+arg                  : 27 28
+arglist              : 25 28
+command              : 21 22 23 24
+empty                : 2 3 15 22 23 26 27 35 35 35 35 37 37 37 37 39 39 39 39 41 41 41 41
+file                 : 43 44
+fileout              : 34
+instream             : 21 22
+nonempty_block       : 1 4 16
+opt_python           : 11 12 13
+pipeout              : 32
+proc                 : 19 35 36 36 37 38
+procin               : 20
+procout              : 21 24
 programfile          : 0
-python_code          : 18 27 33 34 35 36 37
-return               : 14
-shellblock           : 32 43
-shellblock_run       : 17
-statement            : 44
+python_code          : 8 9 14
+shellblock           : 7 10
+statement            : 17
 statement_complex    : 3 4
-statement_multi      : 7 8 9 9
-statement_no_result  : 12
-statement_result     : 11
-statement_simple     : 10 42
-streamout            : 60
-suite                : 21 22 23 24 25 26
-var                  : 57 73 76
-while_loop           : 19
-yield                : 16
+statement_multi      : 6 10
+statement_shell      : 9
+streamout            : 33
+suite                : 5
+var                  : 30 46 49
 
 Parsing method: LALR
 
@@ -167,2369 +115,1278 @@ state 0
     (2) programfile -> . empty
     (3) nonempty_block -> . statement_complex empty
     (4) nonempty_block -> . statement_complex nonempty_block
-    (45) empty -> .
-    (5) statement_complex -> . loop
-    (6) statement_complex -> . conditional
-    (7) statement_complex -> . statement_multi NL
-    (8) statement_complex -> . statement_multi SEMICOLON NL
-    (19) loop -> . while_loop
-    (20) loop -> . for_loop
-    (23) conditional -> . IF expression END_COLON suite conditional_extension
-    (24) conditional -> . IF expression END_COLON suite empty
-    (9) statement_multi -> . statement_multi SEMICOLON statement_multi
-    (10) statement_multi -> . statement_simple
-    (21) while_loop -> . WHILE expression END_COLON suite
-    (22) for_loop -> . FOR PYTHON IN expression END_COLON suite
-    (11) statement_simple -> . statement_result
-    (12) statement_simple -> . statement_no_result
-    (13) statement_result -> . assignment
-    (14) statement_result -> . return
-    (15) statement_result -> . assert
-    (16) statement_result -> . yield
-    (17) statement_no_result -> . shellblock_run
-    (18) statement_no_result -> . python_code
-    (27) assignment -> . python_code ASSIGNMENT_OPERATOR expression
-    (28) return -> . RETURN empty
-    (29) return -> . RETURN expression
-    (30) assert -> . ASSERT expression
-    (31) yield -> . YIELD expression
-    (43) shellblock_run -> . shellblock
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
+    (18) empty -> .
+    (5) statement_complex -> . suite
+    (6) statement_complex -> . statement_multi NL
+    (16) suite -> . INDENT nonempty_block DEDENT
+    (7) statement_multi -> . shellblock
+    (8) statement_multi -> . python_code
+    (9) statement_multi -> . python_code statement_shell
+    (17) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
+    (11) python_code -> . PYTHON opt_python
+    (12) python_code -> . STRING opt_python
+    (13) python_code -> . DOCSTRING opt_python
 
-    $end            reduce using rule 45 (empty -> .)
-    IF              shift and go to state 25
-    WHILE           shift and go to state 13
-    FOR             shift and go to state 4
-    RETURN          shift and go to state 26
-    ASSERT          shift and go to state 17
-    YIELD           shift and go to state 24
-    PYTHON          shift and go to state 1
+    $end            reduce using rule 18 (empty -> .)
+    INDENT          shift and go to state 3
+    SHELL_DELIMITER shift and go to state 2
+    PYTHON          shift and go to state 12
     STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    SHELL_DELIMITER shift and go to state 19
+    DOCSTRING       shift and go to state 9
 
-    shellblock_run                 shift and go to state 29
-    nonempty_block                 shift and go to state 5
-    statement_complex              shift and go to state 6
-    statement_multi                shift and go to state 7
-    conditional                    shift and go to state 9
-    for_loop                       shift and go to state 11
-    assert                         shift and go to state 12
-    programfile                    shift and go to state 14
-    statement_result               shift and go to state 27
-    yield                          shift and go to state 16
-    assignment                     shift and go to state 18
-    while_loop                     shift and go to state 21
-    loop                           shift and go to state 28
-    return                         shift and go to state 22
-    shellblock                     shift and go to state 23
-    python_code                    shift and go to state 20
-    empty                          shift and go to state 3
-    statement_simple               shift and go to state 15
-    statement_no_result            shift and go to state 30
+    suite                          shift and go to state 1
+    python_code                    shift and go to state 7
+    shellblock                     shift and go to state 10
+    nonempty_block                 shift and go to state 4
+    statement_multi                shift and go to state 13
+    programfile                    shift and go to state 5
+    statement_complex              shift and go to state 11
+    empty                          shift and go to state 6
 
 state 1
 
-    (34) python_code -> PYTHON . python_code
-    (38) python_code -> PYTHON . empty
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (45) empty -> .
+    (5) statement_complex -> suite .
 
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    ASSIGNMENT_OPERATOR reduce using rule 45 (empty -> .)
-    NL              reduce using rule 45 (empty -> .)
-    SEMICOLON       reduce using rule 45 (empty -> .)
-    END_COLON       reduce using rule 45 (empty -> .)
+    INDENT          reduce using rule 5 (statement_complex -> suite .)
+    SHELL_DELIMITER reduce using rule 5 (statement_complex -> suite .)
+    PYTHON          reduce using rule 5 (statement_complex -> suite .)
+    STRING          reduce using rule 5 (statement_complex -> suite .)
+    DOCSTRING       reduce using rule 5 (statement_complex -> suite .)
+    $end            reduce using rule 5 (statement_complex -> suite .)
+    DEDENT          reduce using rule 5 (statement_complex -> suite .)
 
-    python_code                    shift and go to state 32
-    empty                          shift and go to state 31
 
 state 2
 
-    (36) python_code -> DOCSTRING . python_code
-    (40) python_code -> DOCSTRING . empty
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (45) empty -> .
+    (17) shellblock -> SHELL_DELIMITER . statement SHELL_DELIMITER
+    (19) statement -> . proc
+    (20) statement -> . procin
+    (23) proc -> . command empty
+    (24) proc -> . command procout
+    (21) procin -> . command STREAM_IN instream procout
+    (22) procin -> . command STREAM_IN instream empty
+    (25) command -> . WORD arglist
+    (26) command -> . WORD empty
 
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    ASSIGNMENT_OPERATOR reduce using rule 45 (empty -> .)
-    NL              reduce using rule 45 (empty -> .)
-    SEMICOLON       reduce using rule 45 (empty -> .)
-    END_COLON       reduce using rule 45 (empty -> .)
+    WORD            shift and go to state 18
 
-    python_code                    shift and go to state 34
-    empty                          shift and go to state 33
+    procin                         shift and go to state 14
+    statement                      shift and go to state 15
+    proc                           shift and go to state 16
+    command                        shift and go to state 17
 
 state 3
 
-    (2) programfile -> empty .
+    (16) suite -> INDENT . nonempty_block DEDENT
+    (3) nonempty_block -> . statement_complex empty
+    (4) nonempty_block -> . statement_complex nonempty_block
+    (5) statement_complex -> . suite
+    (6) statement_complex -> . statement_multi NL
+    (16) suite -> . INDENT nonempty_block DEDENT
+    (7) statement_multi -> . shellblock
+    (8) statement_multi -> . python_code
+    (9) statement_multi -> . python_code statement_shell
+    (17) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
+    (11) python_code -> . PYTHON opt_python
+    (12) python_code -> . STRING opt_python
+    (13) python_code -> . DOCSTRING opt_python
 
-    $end            reduce using rule 2 (programfile -> empty .)
+    INDENT          shift and go to state 3
+    SHELL_DELIMITER shift and go to state 2
+    PYTHON          shift and go to state 12
+    STRING          shift and go to state 8
+    DOCSTRING       shift and go to state 9
 
+    suite                          shift and go to state 1
+    python_code                    shift and go to state 7
+    nonempty_block                 shift and go to state 19
+    shellblock                     shift and go to state 10
+    statement_complex              shift and go to state 11
+    statement_multi                shift and go to state 13
 
 state 4
-
-    (22) for_loop -> FOR . PYTHON IN expression END_COLON suite
-
-    PYTHON          shift and go to state 35
-
-
-state 5
 
     (1) programfile -> nonempty_block .
 
     $end            reduce using rule 1 (programfile -> nonempty_block .)
 
 
-state 6
-
-    (3) nonempty_block -> statement_complex . empty
-    (4) nonempty_block -> statement_complex . nonempty_block
-    (45) empty -> .
-    (3) nonempty_block -> . statement_complex empty
-    (4) nonempty_block -> . statement_complex nonempty_block
-    (5) statement_complex -> . loop
-    (6) statement_complex -> . conditional
-    (7) statement_complex -> . statement_multi NL
-    (8) statement_complex -> . statement_multi SEMICOLON NL
-    (19) loop -> . while_loop
-    (20) loop -> . for_loop
-    (23) conditional -> . IF expression END_COLON suite conditional_extension
-    (24) conditional -> . IF expression END_COLON suite empty
-    (9) statement_multi -> . statement_multi SEMICOLON statement_multi
-    (10) statement_multi -> . statement_simple
-    (21) while_loop -> . WHILE expression END_COLON suite
-    (22) for_loop -> . FOR PYTHON IN expression END_COLON suite
-    (11) statement_simple -> . statement_result
-    (12) statement_simple -> . statement_no_result
-    (13) statement_result -> . assignment
-    (14) statement_result -> . return
-    (15) statement_result -> . assert
-    (16) statement_result -> . yield
-    (17) statement_no_result -> . shellblock_run
-    (18) statement_no_result -> . python_code
-    (27) assignment -> . python_code ASSIGNMENT_OPERATOR expression
-    (28) return -> . RETURN empty
-    (29) return -> . RETURN expression
-    (30) assert -> . ASSERT expression
-    (31) yield -> . YIELD expression
-    (43) shellblock_run -> . shellblock
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-
-    $end            reduce using rule 45 (empty -> .)
-    DEDENT          reduce using rule 45 (empty -> .)
-    IF              shift and go to state 25
-    WHILE           shift and go to state 13
-    FOR             shift and go to state 4
-    RETURN          shift and go to state 26
-    ASSERT          shift and go to state 17
-    YIELD           shift and go to state 24
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    SHELL_DELIMITER shift and go to state 19
-
-    shellblock_run                 shift and go to state 29
-    nonempty_block                 shift and go to state 37
-    statement_complex              shift and go to state 6
-    statement_multi                shift and go to state 7
-    conditional                    shift and go to state 9
-    for_loop                       shift and go to state 11
-    assert                         shift and go to state 12
-    shellblock                     shift and go to state 23
-    statement_result               shift and go to state 27
-    yield                          shift and go to state 16
-    assignment                     shift and go to state 18
-    while_loop                     shift and go to state 21
-    loop                           shift and go to state 28
-    return                         shift and go to state 22
-    python_code                    shift and go to state 20
-    empty                          shift and go to state 36
-    statement_simple               shift and go to state 15
-    statement_no_result            shift and go to state 30
-
-state 7
-
-    (7) statement_complex -> statement_multi . NL
-    (8) statement_complex -> statement_multi . SEMICOLON NL
-    (9) statement_multi -> statement_multi . SEMICOLON statement_multi
-
-    NL              shift and go to state 38
-    SEMICOLON       shift and go to state 39
-
-
-state 8
-
-    (35) python_code -> STRING . python_code
-    (39) python_code -> STRING . empty
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (45) empty -> .
-
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    ASSIGNMENT_OPERATOR reduce using rule 45 (empty -> .)
-    NL              reduce using rule 45 (empty -> .)
-    SEMICOLON       reduce using rule 45 (empty -> .)
-    END_COLON       reduce using rule 45 (empty -> .)
-
-    python_code                    shift and go to state 41
-    empty                          shift and go to state 40
-
-state 9
-
-    (6) statement_complex -> conditional .
-
-    IF              reduce using rule 6 (statement_complex -> conditional .)
-    WHILE           reduce using rule 6 (statement_complex -> conditional .)
-    FOR             reduce using rule 6 (statement_complex -> conditional .)
-    RETURN          reduce using rule 6 (statement_complex -> conditional .)
-    ASSERT          reduce using rule 6 (statement_complex -> conditional .)
-    YIELD           reduce using rule 6 (statement_complex -> conditional .)
-    PYTHON          reduce using rule 6 (statement_complex -> conditional .)
-    STRING          reduce using rule 6 (statement_complex -> conditional .)
-    DOCSTRING       reduce using rule 6 (statement_complex -> conditional .)
-    COLON           reduce using rule 6 (statement_complex -> conditional .)
-    SHELL_DELIMITER reduce using rule 6 (statement_complex -> conditional .)
-    DEDENT          reduce using rule 6 (statement_complex -> conditional .)
-    $end            reduce using rule 6 (statement_complex -> conditional .)
-
-
-state 10
-
-    (37) python_code -> COLON . python_code
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-
-    python_code                    shift and go to state 42
-
-state 11
-
-    (20) loop -> for_loop .
-
-    IF              reduce using rule 20 (loop -> for_loop .)
-    WHILE           reduce using rule 20 (loop -> for_loop .)
-    FOR             reduce using rule 20 (loop -> for_loop .)
-    RETURN          reduce using rule 20 (loop -> for_loop .)
-    ASSERT          reduce using rule 20 (loop -> for_loop .)
-    YIELD           reduce using rule 20 (loop -> for_loop .)
-    PYTHON          reduce using rule 20 (loop -> for_loop .)
-    STRING          reduce using rule 20 (loop -> for_loop .)
-    DOCSTRING       reduce using rule 20 (loop -> for_loop .)
-    COLON           reduce using rule 20 (loop -> for_loop .)
-    SHELL_DELIMITER reduce using rule 20 (loop -> for_loop .)
-    $end            reduce using rule 20 (loop -> for_loop .)
-    DEDENT          reduce using rule 20 (loop -> for_loop .)
-
-
-state 12
-
-    (15) statement_result -> assert .
-
-    NL              reduce using rule 15 (statement_result -> assert .)
-    SEMICOLON       reduce using rule 15 (statement_result -> assert .)
-
-
-state 13
-
-    (21) while_loop -> WHILE . expression END_COLON suite
-    (32) expression -> . shellblock
-    (33) expression -> . python_code
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-
-    SHELL_DELIMITER shift and go to state 19
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-
-    expression                     shift and go to state 44
-    python_code                    shift and go to state 43
-    shellblock                     shift and go to state 45
-
-state 14
+state 5
 
     (0) S' -> programfile .
 
 
 
+state 6
+
+    (2) programfile -> empty .
+
+    $end            reduce using rule 2 (programfile -> empty .)
+
+
+state 7
+
+    (8) statement_multi -> python_code .
+    (9) statement_multi -> python_code . statement_shell
+    (10) statement_shell -> . shellblock statement_multi
+    (17) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
+
+    NL              reduce using rule 8 (statement_multi -> python_code .)
+    SHELL_DELIMITER shift and go to state 2
+
+    shellblock                     shift and go to state 20
+    statement_shell                shift and go to state 21
+
+state 8
+
+    (12) python_code -> STRING . opt_python
+    (14) opt_python -> . python_code
+    (15) opt_python -> . empty
+    (11) python_code -> . PYTHON opt_python
+    (12) python_code -> . STRING opt_python
+    (13) python_code -> . DOCSTRING opt_python
+    (18) empty -> .
+
+    PYTHON          shift and go to state 12
+    STRING          shift and go to state 8
+    DOCSTRING       shift and go to state 9
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    NL              reduce using rule 18 (empty -> .)
+
+    opt_python                     shift and go to state 22
+    python_code                    shift and go to state 23
+    empty                          shift and go to state 24
+
+state 9
+
+    (13) python_code -> DOCSTRING . opt_python
+    (14) opt_python -> . python_code
+    (15) opt_python -> . empty
+    (11) python_code -> . PYTHON opt_python
+    (12) python_code -> . STRING opt_python
+    (13) python_code -> . DOCSTRING opt_python
+    (18) empty -> .
+
+    PYTHON          shift and go to state 12
+    STRING          shift and go to state 8
+    DOCSTRING       shift and go to state 9
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    NL              reduce using rule 18 (empty -> .)
+
+    opt_python                     shift and go to state 25
+    python_code                    shift and go to state 23
+    empty                          shift and go to state 24
+
+state 10
+
+    (7) statement_multi -> shellblock .
+
+    NL              reduce using rule 7 (statement_multi -> shellblock .)
+
+
+state 11
+
+    (3) nonempty_block -> statement_complex . empty
+    (4) nonempty_block -> statement_complex . nonempty_block
+    (18) empty -> .
+    (3) nonempty_block -> . statement_complex empty
+    (4) nonempty_block -> . statement_complex nonempty_block
+    (5) statement_complex -> . suite
+    (6) statement_complex -> . statement_multi NL
+    (16) suite -> . INDENT nonempty_block DEDENT
+    (7) statement_multi -> . shellblock
+    (8) statement_multi -> . python_code
+    (9) statement_multi -> . python_code statement_shell
+    (17) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
+    (11) python_code -> . PYTHON opt_python
+    (12) python_code -> . STRING opt_python
+    (13) python_code -> . DOCSTRING opt_python
+
+    $end            reduce using rule 18 (empty -> .)
+    DEDENT          reduce using rule 18 (empty -> .)
+    INDENT          shift and go to state 3
+    SHELL_DELIMITER shift and go to state 2
+    PYTHON          shift and go to state 12
+    STRING          shift and go to state 8
+    DOCSTRING       shift and go to state 9
+
+    suite                          shift and go to state 1
+    python_code                    shift and go to state 7
+    statement_complex              shift and go to state 11
+    empty                          shift and go to state 26
+    shellblock                     shift and go to state 10
+    nonempty_block                 shift and go to state 27
+    statement_multi                shift and go to state 13
+
+state 12
+
+    (11) python_code -> PYTHON . opt_python
+    (14) opt_python -> . python_code
+    (15) opt_python -> . empty
+    (11) python_code -> . PYTHON opt_python
+    (12) python_code -> . STRING opt_python
+    (13) python_code -> . DOCSTRING opt_python
+    (18) empty -> .
+
+    PYTHON          shift and go to state 12
+    STRING          shift and go to state 8
+    DOCSTRING       shift and go to state 9
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    NL              reduce using rule 18 (empty -> .)
+
+    opt_python                     shift and go to state 28
+    python_code                    shift and go to state 23
+    empty                          shift and go to state 24
+
+state 13
+
+    (6) statement_complex -> statement_multi . NL
+
+    NL              shift and go to state 29
+
+
+state 14
+
+    (20) statement -> procin .
+
+    SHELL_DELIMITER reduce using rule 20 (statement -> procin .)
+
+
 state 15
 
-    (10) statement_multi -> statement_simple .
+    (17) shellblock -> SHELL_DELIMITER statement . SHELL_DELIMITER
 
-    NL              reduce using rule 10 (statement_multi -> statement_simple .)
-    SEMICOLON       reduce using rule 10 (statement_multi -> statement_simple .)
+    SHELL_DELIMITER shift and go to state 30
 
 
 state 16
 
-    (16) statement_result -> yield .
+    (19) statement -> proc .
 
-    NL              reduce using rule 16 (statement_result -> yield .)
-    SEMICOLON       reduce using rule 16 (statement_result -> yield .)
+    SHELL_DELIMITER reduce using rule 19 (statement -> proc .)
 
 
 state 17
 
-    (30) assert -> ASSERT . expression
-    (32) expression -> . shellblock
-    (33) expression -> . python_code
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
+    (23) proc -> command . empty
+    (24) proc -> command . procout
+    (21) procin -> command . STREAM_IN instream procout
+    (22) procin -> command . STREAM_IN instream empty
+    (18) empty -> .
+    (32) procout -> . pipeout
+    (33) procout -> . streamout
+    (34) procout -> . fileout
+    (35) pipeout -> . PIPE empty proc empty empty empty
+    (36) pipeout -> . PIPE LPAREN proc COMMA proc RPAREN
+    (37) pipeout -> . ERRPIPE empty empty empty proc empty
+    (38) pipeout -> . BOTHPIPE proc
+    (39) streamout -> . STREAM_OUT empty VARNAME empty empty empty
+    (40) streamout -> . STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN
+    (41) streamout -> . ERROUT empty empty empty VARNAME empty
+    (42) streamout -> . BOTHOUT VARNAME
+    (43) fileout -> . FILEOUT file
+    (44) fileout -> . FILEAPPEND file
 
-    SHELL_DELIMITER shift and go to state 19
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
+    STREAM_IN       shift and go to state 37
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    PIPE            shift and go to state 35
+    ERRPIPE         shift and go to state 36
+    BOTHPIPE        shift and go to state 34
+    STREAM_OUT      shift and go to state 40
+    ERROUT          shift and go to state 33
+    BOTHOUT         shift and go to state 42
+    FILEOUT         shift and go to state 43
+    FILEAPPEND      shift and go to state 44
 
-    python_code                    shift and go to state 43
-    shellblock                     shift and go to state 45
-    expression                     shift and go to state 46
+    pipeout                        shift and go to state 31
+    fileout                        shift and go to state 38
+    procout                        shift and go to state 32
+    streamout                      shift and go to state 39
+    empty                          shift and go to state 41
 
 state 18
 
-    (13) statement_result -> assignment .
+    (25) command -> WORD . arglist
+    (26) command -> WORD . empty
+    (27) arglist -> . arg empty
+    (28) arglist -> . arg arglist
+    (18) empty -> .
+    (29) arg -> . WORD
+    (30) arg -> . var
+    (31) arg -> . STRING
+    (51) var -> . VARNAME
 
-    NL              reduce using rule 13 (statement_result -> assignment .)
-    SEMICOLON       reduce using rule 13 (statement_result -> assignment .)
+    STREAM_IN       reduce using rule 18 (empty -> .)
+    PIPE            reduce using rule 18 (empty -> .)
+    ERRPIPE         reduce using rule 18 (empty -> .)
+    BOTHPIPE        reduce using rule 18 (empty -> .)
+    STREAM_OUT      reduce using rule 18 (empty -> .)
+    ERROUT          reduce using rule 18 (empty -> .)
+    BOTHOUT         reduce using rule 18 (empty -> .)
+    FILEOUT         reduce using rule 18 (empty -> .)
+    FILEAPPEND      reduce using rule 18 (empty -> .)
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    COMMA           reduce using rule 18 (empty -> .)
+    RPAREN          reduce using rule 18 (empty -> .)
+    WORD            shift and go to state 46
+    STRING          shift and go to state 50
+    VARNAME         shift and go to state 47
 
+    arg                            shift and go to state 45
+    arglist                        shift and go to state 48
+    var                            shift and go to state 49
+    empty                          shift and go to state 51
 
 state 19
 
-    (44) shellblock -> SHELL_DELIMITER . statement SHELL_DELIMITER
-    (46) statement -> . proc
-    (47) statement -> . procin
-    (50) proc -> . command empty
-    (51) proc -> . command procout
-    (48) procin -> . command STREAM_IN instream procout
-    (49) procin -> . command STREAM_IN instream empty
-    (52) command -> . WORD arglist
-    (53) command -> . WORD empty
+    (16) suite -> INDENT nonempty_block . DEDENT
 
-    WORD            shift and go to state 50
+    DEDENT          shift and go to state 52
 
-    procin                         shift and go to state 47
-    statement                      shift and go to state 48
-    command                        shift and go to state 49
-    proc                           shift and go to state 51
 
 state 20
 
-    (18) statement_no_result -> python_code .
-    (27) assignment -> python_code . ASSIGNMENT_OPERATOR expression
+    (10) statement_shell -> shellblock . statement_multi
+    (7) statement_multi -> . shellblock
+    (8) statement_multi -> . python_code
+    (9) statement_multi -> . python_code statement_shell
+    (17) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
+    (11) python_code -> . PYTHON opt_python
+    (12) python_code -> . STRING opt_python
+    (13) python_code -> . DOCSTRING opt_python
 
-    NL              reduce using rule 18 (statement_no_result -> python_code .)
-    SEMICOLON       reduce using rule 18 (statement_no_result -> python_code .)
-    ASSIGNMENT_OPERATOR shift and go to state 52
+    SHELL_DELIMITER shift and go to state 2
+    PYTHON          shift and go to state 12
+    STRING          shift and go to state 8
+    DOCSTRING       shift and go to state 9
 
+    python_code                    shift and go to state 7
+    shellblock                     shift and go to state 10
+    statement_multi                shift and go to state 53
 
 state 21
 
-    (19) loop -> while_loop .
+    (9) statement_multi -> python_code statement_shell .
 
-    IF              reduce using rule 19 (loop -> while_loop .)
-    WHILE           reduce using rule 19 (loop -> while_loop .)
-    FOR             reduce using rule 19 (loop -> while_loop .)
-    RETURN          reduce using rule 19 (loop -> while_loop .)
-    ASSERT          reduce using rule 19 (loop -> while_loop .)
-    YIELD           reduce using rule 19 (loop -> while_loop .)
-    PYTHON          reduce using rule 19 (loop -> while_loop .)
-    STRING          reduce using rule 19 (loop -> while_loop .)
-    DOCSTRING       reduce using rule 19 (loop -> while_loop .)
-    COLON           reduce using rule 19 (loop -> while_loop .)
-    SHELL_DELIMITER reduce using rule 19 (loop -> while_loop .)
-    $end            reduce using rule 19 (loop -> while_loop .)
-    DEDENT          reduce using rule 19 (loop -> while_loop .)
+    NL              reduce using rule 9 (statement_multi -> python_code statement_shell .)
 
 
 state 22
 
-    (14) statement_result -> return .
+    (12) python_code -> STRING opt_python .
 
-    NL              reduce using rule 14 (statement_result -> return .)
-    SEMICOLON       reduce using rule 14 (statement_result -> return .)
+    SHELL_DELIMITER reduce using rule 12 (python_code -> STRING opt_python .)
+    NL              reduce using rule 12 (python_code -> STRING opt_python .)
 
 
 state 23
 
-    (43) shellblock_run -> shellblock .
+    (14) opt_python -> python_code .
 
-    NL              reduce using rule 43 (shellblock_run -> shellblock .)
-    SEMICOLON       reduce using rule 43 (shellblock_run -> shellblock .)
+    SHELL_DELIMITER reduce using rule 14 (opt_python -> python_code .)
+    NL              reduce using rule 14 (opt_python -> python_code .)
 
 
 state 24
 
-    (31) yield -> YIELD . expression
-    (32) expression -> . shellblock
-    (33) expression -> . python_code
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
+    (15) opt_python -> empty .
 
-    SHELL_DELIMITER shift and go to state 19
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
+    SHELL_DELIMITER reduce using rule 15 (opt_python -> empty .)
+    NL              reduce using rule 15 (opt_python -> empty .)
 
-    python_code                    shift and go to state 43
-    shellblock                     shift and go to state 45
-    expression                     shift and go to state 53
 
 state 25
 
-    (23) conditional -> IF . expression END_COLON suite conditional_extension
-    (24) conditional -> IF . expression END_COLON suite empty
-    (32) expression -> . shellblock
-    (33) expression -> . python_code
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
+    (13) python_code -> DOCSTRING opt_python .
 
-    SHELL_DELIMITER shift and go to state 19
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
+    SHELL_DELIMITER reduce using rule 13 (python_code -> DOCSTRING opt_python .)
+    NL              reduce using rule 13 (python_code -> DOCSTRING opt_python .)
 
-    python_code                    shift and go to state 43
-    expression                     shift and go to state 54
-    shellblock                     shift and go to state 45
 
 state 26
 
-    (28) return -> RETURN . empty
-    (29) return -> RETURN . expression
-    (45) empty -> .
-    (32) expression -> . shellblock
-    (33) expression -> . python_code
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
+    (3) nonempty_block -> statement_complex empty .
 
-    NL              reduce using rule 45 (empty -> .)
-    SEMICOLON       reduce using rule 45 (empty -> .)
-    SHELL_DELIMITER shift and go to state 19
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
+    $end            reduce using rule 3 (nonempty_block -> statement_complex empty .)
+    DEDENT          reduce using rule 3 (nonempty_block -> statement_complex empty .)
 
-    python_code                    shift and go to state 43
-    expression                     shift and go to state 56
-    empty                          shift and go to state 55
-    shellblock                     shift and go to state 45
 
 state 27
 
-    (11) statement_simple -> statement_result .
+    (4) nonempty_block -> statement_complex nonempty_block .
 
-    SEMICOLON       reduce using rule 11 (statement_simple -> statement_result .)
-    NL              reduce using rule 11 (statement_simple -> statement_result .)
+    $end            reduce using rule 4 (nonempty_block -> statement_complex nonempty_block .)
+    DEDENT          reduce using rule 4 (nonempty_block -> statement_complex nonempty_block .)
 
 
 state 28
 
-    (5) statement_complex -> loop .
+    (11) python_code -> PYTHON opt_python .
 
-    IF              reduce using rule 5 (statement_complex -> loop .)
-    WHILE           reduce using rule 5 (statement_complex -> loop .)
-    FOR             reduce using rule 5 (statement_complex -> loop .)
-    RETURN          reduce using rule 5 (statement_complex -> loop .)
-    ASSERT          reduce using rule 5 (statement_complex -> loop .)
-    YIELD           reduce using rule 5 (statement_complex -> loop .)
-    PYTHON          reduce using rule 5 (statement_complex -> loop .)
-    STRING          reduce using rule 5 (statement_complex -> loop .)
-    DOCSTRING       reduce using rule 5 (statement_complex -> loop .)
-    COLON           reduce using rule 5 (statement_complex -> loop .)
-    SHELL_DELIMITER reduce using rule 5 (statement_complex -> loop .)
-    DEDENT          reduce using rule 5 (statement_complex -> loop .)
-    $end            reduce using rule 5 (statement_complex -> loop .)
+    SHELL_DELIMITER reduce using rule 11 (python_code -> PYTHON opt_python .)
+    NL              reduce using rule 11 (python_code -> PYTHON opt_python .)
 
 
 state 29
 
-    (17) statement_no_result -> shellblock_run .
+    (6) statement_complex -> statement_multi NL .
 
-    NL              reduce using rule 17 (statement_no_result -> shellblock_run .)
-    SEMICOLON       reduce using rule 17 (statement_no_result -> shellblock_run .)
+    INDENT          reduce using rule 6 (statement_complex -> statement_multi NL .)
+    SHELL_DELIMITER reduce using rule 6 (statement_complex -> statement_multi NL .)
+    PYTHON          reduce using rule 6 (statement_complex -> statement_multi NL .)
+    STRING          reduce using rule 6 (statement_complex -> statement_multi NL .)
+    DOCSTRING       reduce using rule 6 (statement_complex -> statement_multi NL .)
+    $end            reduce using rule 6 (statement_complex -> statement_multi NL .)
+    DEDENT          reduce using rule 6 (statement_complex -> statement_multi NL .)
 
 
 state 30
 
-    (12) statement_simple -> statement_no_result .
+    (17) shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER .
 
-    SEMICOLON       reduce using rule 12 (statement_simple -> statement_no_result .)
-    NL              reduce using rule 12 (statement_simple -> statement_no_result .)
+    NL              reduce using rule 17 (shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER .)
+    SHELL_DELIMITER reduce using rule 17 (shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER .)
+    PYTHON          reduce using rule 17 (shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER .)
+    STRING          reduce using rule 17 (shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER .)
+    DOCSTRING       reduce using rule 17 (shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER .)
 
 
 state 31
 
-    (38) python_code -> PYTHON empty .
+    (32) procout -> pipeout .
 
-    NL              reduce using rule 38 (python_code -> PYTHON empty .)
-    SEMICOLON       reduce using rule 38 (python_code -> PYTHON empty .)
-    END_COLON       reduce using rule 38 (python_code -> PYTHON empty .)
-    ASSIGNMENT_OPERATOR reduce using rule 38 (python_code -> PYTHON empty .)
+    SHELL_DELIMITER reduce using rule 32 (procout -> pipeout .)
+    COMMA           reduce using rule 32 (procout -> pipeout .)
+    RPAREN          reduce using rule 32 (procout -> pipeout .)
 
 
 state 32
 
-    (34) python_code -> PYTHON python_code .
+    (24) proc -> command procout .
 
-    NL              reduce using rule 34 (python_code -> PYTHON python_code .)
-    SEMICOLON       reduce using rule 34 (python_code -> PYTHON python_code .)
-    END_COLON       reduce using rule 34 (python_code -> PYTHON python_code .)
-    ASSIGNMENT_OPERATOR reduce using rule 34 (python_code -> PYTHON python_code .)
+    SHELL_DELIMITER reduce using rule 24 (proc -> command procout .)
+    COMMA           reduce using rule 24 (proc -> command procout .)
+    RPAREN          reduce using rule 24 (proc -> command procout .)
 
 
 state 33
 
-    (40) python_code -> DOCSTRING empty .
+    (41) streamout -> ERROUT . empty empty empty VARNAME empty
+    (18) empty -> .
 
-    NL              reduce using rule 40 (python_code -> DOCSTRING empty .)
-    SEMICOLON       reduce using rule 40 (python_code -> DOCSTRING empty .)
-    END_COLON       reduce using rule 40 (python_code -> DOCSTRING empty .)
-    ASSIGNMENT_OPERATOR reduce using rule 40 (python_code -> DOCSTRING empty .)
+    VARNAME         reduce using rule 18 (empty -> .)
 
+    empty                          shift and go to state 54
 
 state 34
 
-    (36) python_code -> DOCSTRING python_code .
+    (38) pipeout -> BOTHPIPE . proc
+    (23) proc -> . command empty
+    (24) proc -> . command procout
+    (25) command -> . WORD arglist
+    (26) command -> . WORD empty
 
-    NL              reduce using rule 36 (python_code -> DOCSTRING python_code .)
-    SEMICOLON       reduce using rule 36 (python_code -> DOCSTRING python_code .)
-    END_COLON       reduce using rule 36 (python_code -> DOCSTRING python_code .)
-    ASSIGNMENT_OPERATOR reduce using rule 36 (python_code -> DOCSTRING python_code .)
+    WORD            shift and go to state 18
 
+    proc                           shift and go to state 55
+    command                        shift and go to state 56
 
 state 35
 
-    (22) for_loop -> FOR PYTHON . IN expression END_COLON suite
+    (35) pipeout -> PIPE . empty proc empty empty empty
+    (36) pipeout -> PIPE . LPAREN proc COMMA proc RPAREN
+    (18) empty -> .
 
-    IN              shift and go to state 57
+    LPAREN          shift and go to state 57
+    WORD            reduce using rule 18 (empty -> .)
 
+    empty                          shift and go to state 58
 
 state 36
 
-    (3) nonempty_block -> statement_complex empty .
+    (37) pipeout -> ERRPIPE . empty empty empty proc empty
+    (18) empty -> .
 
-    DEDENT          reduce using rule 3 (nonempty_block -> statement_complex empty .)
-    $end            reduce using rule 3 (nonempty_block -> statement_complex empty .)
+    WORD            reduce using rule 18 (empty -> .)
 
+    empty                          shift and go to state 59
 
 state 37
 
-    (4) nonempty_block -> statement_complex nonempty_block .
+    (21) procin -> command STREAM_IN . instream procout
+    (22) procin -> command STREAM_IN . instream empty
+    (45) instream -> . WORD
+    (46) instream -> . var
+    (47) instream -> . STRING
+    (51) var -> . VARNAME
 
-    DEDENT          reduce using rule 4 (nonempty_block -> statement_complex nonempty_block .)
-    $end            reduce using rule 4 (nonempty_block -> statement_complex nonempty_block .)
+    WORD            shift and go to state 60
+    STRING          shift and go to state 63
+    VARNAME         shift and go to state 47
 
+    var                            shift and go to state 62
+    instream                       shift and go to state 61
 
 state 38
 
-    (7) statement_complex -> statement_multi NL .
+    (34) procout -> fileout .
 
-    IF              reduce using rule 7 (statement_complex -> statement_multi NL .)
-    WHILE           reduce using rule 7 (statement_complex -> statement_multi NL .)
-    FOR             reduce using rule 7 (statement_complex -> statement_multi NL .)
-    RETURN          reduce using rule 7 (statement_complex -> statement_multi NL .)
-    ASSERT          reduce using rule 7 (statement_complex -> statement_multi NL .)
-    YIELD           reduce using rule 7 (statement_complex -> statement_multi NL .)
-    PYTHON          reduce using rule 7 (statement_complex -> statement_multi NL .)
-    STRING          reduce using rule 7 (statement_complex -> statement_multi NL .)
-    DOCSTRING       reduce using rule 7 (statement_complex -> statement_multi NL .)
-    COLON           reduce using rule 7 (statement_complex -> statement_multi NL .)
-    SHELL_DELIMITER reduce using rule 7 (statement_complex -> statement_multi NL .)
-    DEDENT          reduce using rule 7 (statement_complex -> statement_multi NL .)
-    $end            reduce using rule 7 (statement_complex -> statement_multi NL .)
+    SHELL_DELIMITER reduce using rule 34 (procout -> fileout .)
+    COMMA           reduce using rule 34 (procout -> fileout .)
+    RPAREN          reduce using rule 34 (procout -> fileout .)
 
 
 state 39
 
-    (8) statement_complex -> statement_multi SEMICOLON . NL
-    (9) statement_multi -> statement_multi SEMICOLON . statement_multi
-    (9) statement_multi -> . statement_multi SEMICOLON statement_multi
-    (10) statement_multi -> . statement_simple
-    (11) statement_simple -> . statement_result
-    (12) statement_simple -> . statement_no_result
-    (13) statement_result -> . assignment
-    (14) statement_result -> . return
-    (15) statement_result -> . assert
-    (16) statement_result -> . yield
-    (17) statement_no_result -> . shellblock_run
-    (18) statement_no_result -> . python_code
-    (27) assignment -> . python_code ASSIGNMENT_OPERATOR expression
-    (28) return -> . RETURN empty
-    (29) return -> . RETURN expression
-    (30) assert -> . ASSERT expression
-    (31) yield -> . YIELD expression
-    (43) shellblock_run -> . shellblock
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
+    (33) procout -> streamout .
 
-    NL              shift and go to state 59
-    RETURN          shift and go to state 26
-    ASSERT          shift and go to state 17
-    YIELD           shift and go to state 24
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    SHELL_DELIMITER shift and go to state 19
+    SHELL_DELIMITER reduce using rule 33 (procout -> streamout .)
+    COMMA           reduce using rule 33 (procout -> streamout .)
+    RPAREN          reduce using rule 33 (procout -> streamout .)
 
-    shellblock_run                 shift and go to state 29
-    yield                          shift and go to state 16
-    statement_result               shift and go to state 27
-    python_code                    shift and go to state 20
-    statement_multi                shift and go to state 58
-    return                         shift and go to state 22
-    assignment                     shift and go to state 18
-    statement_no_result            shift and go to state 30
-    assert                         shift and go to state 12
-    shellblock                     shift and go to state 23
-    statement_simple               shift and go to state 15
 
 state 40
 
-    (39) python_code -> STRING empty .
+    (39) streamout -> STREAM_OUT . empty VARNAME empty empty empty
+    (40) streamout -> STREAM_OUT . LPAREN VARNAME COMMA VARNAME RPAREN
+    (18) empty -> .
 
-    NL              reduce using rule 39 (python_code -> STRING empty .)
-    SEMICOLON       reduce using rule 39 (python_code -> STRING empty .)
-    END_COLON       reduce using rule 39 (python_code -> STRING empty .)
-    ASSIGNMENT_OPERATOR reduce using rule 39 (python_code -> STRING empty .)
+    LPAREN          shift and go to state 64
+    VARNAME         reduce using rule 18 (empty -> .)
 
+    empty                          shift and go to state 65
 
 state 41
 
-    (35) python_code -> STRING python_code .
+    (23) proc -> command empty .
 
-    NL              reduce using rule 35 (python_code -> STRING python_code .)
-    SEMICOLON       reduce using rule 35 (python_code -> STRING python_code .)
-    END_COLON       reduce using rule 35 (python_code -> STRING python_code .)
-    ASSIGNMENT_OPERATOR reduce using rule 35 (python_code -> STRING python_code .)
+    SHELL_DELIMITER reduce using rule 23 (proc -> command empty .)
+    COMMA           reduce using rule 23 (proc -> command empty .)
+    RPAREN          reduce using rule 23 (proc -> command empty .)
 
 
 state 42
 
-    (37) python_code -> COLON python_code .
+    (42) streamout -> BOTHOUT . VARNAME
 
-    NL              reduce using rule 37 (python_code -> COLON python_code .)
-    SEMICOLON       reduce using rule 37 (python_code -> COLON python_code .)
-    END_COLON       reduce using rule 37 (python_code -> COLON python_code .)
-    ASSIGNMENT_OPERATOR reduce using rule 37 (python_code -> COLON python_code .)
+    VARNAME         shift and go to state 66
 
 
 state 43
 
-    (33) expression -> python_code .
+    (43) fileout -> FILEOUT . file
+    (48) file -> . WORD
+    (49) file -> . var
+    (50) file -> . STRING
+    (51) var -> . VARNAME
 
-    NL              reduce using rule 33 (expression -> python_code .)
-    SEMICOLON       reduce using rule 33 (expression -> python_code .)
-    END_COLON       reduce using rule 33 (expression -> python_code .)
+    WORD            shift and go to state 68
+    STRING          shift and go to state 70
+    VARNAME         shift and go to state 47
 
+    file                           shift and go to state 67
+    var                            shift and go to state 69
 
 state 44
 
-    (21) while_loop -> WHILE expression . END_COLON suite
+    (44) fileout -> FILEAPPEND . file
+    (48) file -> . WORD
+    (49) file -> . var
+    (50) file -> . STRING
+    (51) var -> . VARNAME
 
-    END_COLON       shift and go to state 60
+    WORD            shift and go to state 68
+    STRING          shift and go to state 70
+    VARNAME         shift and go to state 47
 
+    file                           shift and go to state 71
+    var                            shift and go to state 69
 
 state 45
 
-    (32) expression -> shellblock .
+    (27) arglist -> arg . empty
+    (28) arglist -> arg . arglist
+    (18) empty -> .
+    (27) arglist -> . arg empty
+    (28) arglist -> . arg arglist
+    (29) arg -> . WORD
+    (30) arg -> . var
+    (31) arg -> . STRING
+    (51) var -> . VARNAME
 
-    NL              reduce using rule 32 (expression -> shellblock .)
-    SEMICOLON       reduce using rule 32 (expression -> shellblock .)
-    END_COLON       reduce using rule 32 (expression -> shellblock .)
+    STREAM_IN       reduce using rule 18 (empty -> .)
+    PIPE            reduce using rule 18 (empty -> .)
+    ERRPIPE         reduce using rule 18 (empty -> .)
+    BOTHPIPE        reduce using rule 18 (empty -> .)
+    STREAM_OUT      reduce using rule 18 (empty -> .)
+    ERROUT          reduce using rule 18 (empty -> .)
+    BOTHOUT         reduce using rule 18 (empty -> .)
+    FILEOUT         reduce using rule 18 (empty -> .)
+    FILEAPPEND      reduce using rule 18 (empty -> .)
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    COMMA           reduce using rule 18 (empty -> .)
+    RPAREN          reduce using rule 18 (empty -> .)
+    WORD            shift and go to state 46
+    STRING          shift and go to state 50
+    VARNAME         shift and go to state 47
 
+    arg                            shift and go to state 45
+    var                            shift and go to state 49
+    arglist                        shift and go to state 72
+    empty                          shift and go to state 73
 
 state 46
 
-    (30) assert -> ASSERT expression .
+    (29) arg -> WORD .
 
-    NL              reduce using rule 30 (assert -> ASSERT expression .)
-    SEMICOLON       reduce using rule 30 (assert -> ASSERT expression .)
+    WORD            reduce using rule 29 (arg -> WORD .)
+    STRING          reduce using rule 29 (arg -> WORD .)
+    VARNAME         reduce using rule 29 (arg -> WORD .)
+    STREAM_IN       reduce using rule 29 (arg -> WORD .)
+    PIPE            reduce using rule 29 (arg -> WORD .)
+    ERRPIPE         reduce using rule 29 (arg -> WORD .)
+    BOTHPIPE        reduce using rule 29 (arg -> WORD .)
+    STREAM_OUT      reduce using rule 29 (arg -> WORD .)
+    ERROUT          reduce using rule 29 (arg -> WORD .)
+    BOTHOUT         reduce using rule 29 (arg -> WORD .)
+    FILEOUT         reduce using rule 29 (arg -> WORD .)
+    FILEAPPEND      reduce using rule 29 (arg -> WORD .)
+    SHELL_DELIMITER reduce using rule 29 (arg -> WORD .)
+    COMMA           reduce using rule 29 (arg -> WORD .)
+    RPAREN          reduce using rule 29 (arg -> WORD .)
 
 
 state 47
 
-    (47) statement -> procin .
+    (51) var -> VARNAME .
 
-    SHELL_DELIMITER reduce using rule 47 (statement -> procin .)
+    PIPE            reduce using rule 51 (var -> VARNAME .)
+    ERRPIPE         reduce using rule 51 (var -> VARNAME .)
+    BOTHPIPE        reduce using rule 51 (var -> VARNAME .)
+    STREAM_OUT      reduce using rule 51 (var -> VARNAME .)
+    ERROUT          reduce using rule 51 (var -> VARNAME .)
+    BOTHOUT         reduce using rule 51 (var -> VARNAME .)
+    FILEOUT         reduce using rule 51 (var -> VARNAME .)
+    FILEAPPEND      reduce using rule 51 (var -> VARNAME .)
+    SHELL_DELIMITER reduce using rule 51 (var -> VARNAME .)
+    WORD            reduce using rule 51 (var -> VARNAME .)
+    STRING          reduce using rule 51 (var -> VARNAME .)
+    VARNAME         reduce using rule 51 (var -> VARNAME .)
+    STREAM_IN       reduce using rule 51 (var -> VARNAME .)
+    COMMA           reduce using rule 51 (var -> VARNAME .)
+    RPAREN          reduce using rule 51 (var -> VARNAME .)
 
 
 state 48
 
-    (44) shellblock -> SHELL_DELIMITER statement . SHELL_DELIMITER
+    (25) command -> WORD arglist .
 
-    SHELL_DELIMITER shift and go to state 61
+    PIPE            reduce using rule 25 (command -> WORD arglist .)
+    ERRPIPE         reduce using rule 25 (command -> WORD arglist .)
+    BOTHPIPE        reduce using rule 25 (command -> WORD arglist .)
+    STREAM_OUT      reduce using rule 25 (command -> WORD arglist .)
+    ERROUT          reduce using rule 25 (command -> WORD arglist .)
+    BOTHOUT         reduce using rule 25 (command -> WORD arglist .)
+    FILEOUT         reduce using rule 25 (command -> WORD arglist .)
+    FILEAPPEND      reduce using rule 25 (command -> WORD arglist .)
+    RPAREN          reduce using rule 25 (command -> WORD arglist .)
+    SHELL_DELIMITER reduce using rule 25 (command -> WORD arglist .)
+    COMMA           reduce using rule 25 (command -> WORD arglist .)
+    STREAM_IN       reduce using rule 25 (command -> WORD arglist .)
 
 
 state 49
 
-    (50) proc -> command . empty
-    (51) proc -> command . procout
-    (48) procin -> command . STREAM_IN instream procout
-    (49) procin -> command . STREAM_IN instream empty
-    (45) empty -> .
-    (59) procout -> . pipeout
-    (60) procout -> . streamout
-    (61) procout -> . fileout
-    (62) pipeout -> . PIPE empty proc empty empty empty
-    (63) pipeout -> . PIPE LPAREN proc COMMA proc RPAREN
-    (64) pipeout -> . ERRPIPE empty empty empty proc empty
-    (65) pipeout -> . BOTHPIPE proc
-    (66) streamout -> . STREAM_OUT VARNAME
-    (67) streamout -> . STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN
-    (68) streamout -> . ERROUT VARNAME
-    (69) streamout -> . BOTHOUT VARNAME
-    (70) fileout -> . FILEOUT file
-    (71) fileout -> . FILEAPPEND file
+    (30) arg -> var .
 
-    STREAM_IN       shift and go to state 69
-    SHELL_DELIMITER reduce using rule 45 (empty -> .)
-    PIPE            shift and go to state 62
-    ERRPIPE         shift and go to state 65
-    BOTHPIPE        shift and go to state 67
-    STREAM_OUT      shift and go to state 73
-    ERROUT          shift and go to state 70
-    BOTHOUT         shift and go to state 72
-    FILEOUT         shift and go to state 74
-    FILEAPPEND      shift and go to state 75
+    WORD            reduce using rule 30 (arg -> var .)
+    STRING          reduce using rule 30 (arg -> var .)
+    VARNAME         reduce using rule 30 (arg -> var .)
+    STREAM_IN       reduce using rule 30 (arg -> var .)
+    PIPE            reduce using rule 30 (arg -> var .)
+    ERRPIPE         reduce using rule 30 (arg -> var .)
+    BOTHPIPE        reduce using rule 30 (arg -> var .)
+    STREAM_OUT      reduce using rule 30 (arg -> var .)
+    ERROUT          reduce using rule 30 (arg -> var .)
+    BOTHOUT         reduce using rule 30 (arg -> var .)
+    FILEOUT         reduce using rule 30 (arg -> var .)
+    FILEAPPEND      reduce using rule 30 (arg -> var .)
+    SHELL_DELIMITER reduce using rule 30 (arg -> var .)
+    COMMA           reduce using rule 30 (arg -> var .)
+    RPAREN          reduce using rule 30 (arg -> var .)
 
-    fileout                        shift and go to state 63
-    pipeout                        shift and go to state 64
-    empty                          shift and go to state 71
-    streamout                      shift and go to state 66
-    procout                        shift and go to state 68
 
 state 50
 
-    (52) command -> WORD . arglist
-    (53) command -> WORD . empty
-    (54) arglist -> . arg empty
-    (55) arglist -> . arg arglist
-    (45) empty -> .
-    (56) arg -> . WORD
-    (57) arg -> . var
-    (58) arg -> . STRING
-    (78) var -> . VARNAME
+    (31) arg -> STRING .
 
-    STREAM_IN       reduce using rule 45 (empty -> .)
-    PIPE            reduce using rule 45 (empty -> .)
-    ERRPIPE         reduce using rule 45 (empty -> .)
-    BOTHPIPE        reduce using rule 45 (empty -> .)
-    STREAM_OUT      reduce using rule 45 (empty -> .)
-    ERROUT          reduce using rule 45 (empty -> .)
-    BOTHOUT         reduce using rule 45 (empty -> .)
-    FILEOUT         reduce using rule 45 (empty -> .)
-    FILEAPPEND      reduce using rule 45 (empty -> .)
-    SHELL_DELIMITER reduce using rule 45 (empty -> .)
-    COMMA           reduce using rule 45 (empty -> .)
-    RPAREN          reduce using rule 45 (empty -> .)
-    WORD            shift and go to state 82
-    STRING          shift and go to state 81
-    VARNAME         shift and go to state 77
+    WORD            reduce using rule 31 (arg -> STRING .)
+    STRING          reduce using rule 31 (arg -> STRING .)
+    VARNAME         reduce using rule 31 (arg -> STRING .)
+    STREAM_IN       reduce using rule 31 (arg -> STRING .)
+    PIPE            reduce using rule 31 (arg -> STRING .)
+    ERRPIPE         reduce using rule 31 (arg -> STRING .)
+    BOTHPIPE        reduce using rule 31 (arg -> STRING .)
+    STREAM_OUT      reduce using rule 31 (arg -> STRING .)
+    ERROUT          reduce using rule 31 (arg -> STRING .)
+    BOTHOUT         reduce using rule 31 (arg -> STRING .)
+    FILEOUT         reduce using rule 31 (arg -> STRING .)
+    FILEAPPEND      reduce using rule 31 (arg -> STRING .)
+    SHELL_DELIMITER reduce using rule 31 (arg -> STRING .)
+    COMMA           reduce using rule 31 (arg -> STRING .)
+    RPAREN          reduce using rule 31 (arg -> STRING .)
 
-    arglist                        shift and go to state 76
-    var                            shift and go to state 79
-    arg                            shift and go to state 80
-    empty                          shift and go to state 78
 
 state 51
 
-    (46) statement -> proc .
+    (26) command -> WORD empty .
 
-    SHELL_DELIMITER reduce using rule 46 (statement -> proc .)
+    PIPE            reduce using rule 26 (command -> WORD empty .)
+    ERRPIPE         reduce using rule 26 (command -> WORD empty .)
+    BOTHPIPE        reduce using rule 26 (command -> WORD empty .)
+    STREAM_OUT      reduce using rule 26 (command -> WORD empty .)
+    ERROUT          reduce using rule 26 (command -> WORD empty .)
+    BOTHOUT         reduce using rule 26 (command -> WORD empty .)
+    FILEOUT         reduce using rule 26 (command -> WORD empty .)
+    FILEAPPEND      reduce using rule 26 (command -> WORD empty .)
+    RPAREN          reduce using rule 26 (command -> WORD empty .)
+    SHELL_DELIMITER reduce using rule 26 (command -> WORD empty .)
+    COMMA           reduce using rule 26 (command -> WORD empty .)
+    STREAM_IN       reduce using rule 26 (command -> WORD empty .)
 
 
 state 52
 
-    (27) assignment -> python_code ASSIGNMENT_OPERATOR . expression
-    (32) expression -> . shellblock
-    (33) expression -> . python_code
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
+    (16) suite -> INDENT nonempty_block DEDENT .
 
-    SHELL_DELIMITER shift and go to state 19
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
+    INDENT          reduce using rule 16 (suite -> INDENT nonempty_block DEDENT .)
+    SHELL_DELIMITER reduce using rule 16 (suite -> INDENT nonempty_block DEDENT .)
+    PYTHON          reduce using rule 16 (suite -> INDENT nonempty_block DEDENT .)
+    STRING          reduce using rule 16 (suite -> INDENT nonempty_block DEDENT .)
+    DOCSTRING       reduce using rule 16 (suite -> INDENT nonempty_block DEDENT .)
+    $end            reduce using rule 16 (suite -> INDENT nonempty_block DEDENT .)
+    DEDENT          reduce using rule 16 (suite -> INDENT nonempty_block DEDENT .)
 
-    python_code                    shift and go to state 43
-    shellblock                     shift and go to state 45
-    expression                     shift and go to state 83
 
 state 53
 
-    (31) yield -> YIELD expression .
+    (10) statement_shell -> shellblock statement_multi .
 
-    NL              reduce using rule 31 (yield -> YIELD expression .)
-    SEMICOLON       reduce using rule 31 (yield -> YIELD expression .)
+    NL              reduce using rule 10 (statement_shell -> shellblock statement_multi .)
 
 
 state 54
 
-    (23) conditional -> IF expression . END_COLON suite conditional_extension
-    (24) conditional -> IF expression . END_COLON suite empty
+    (41) streamout -> ERROUT empty . empty empty VARNAME empty
+    (18) empty -> .
 
-    END_COLON       shift and go to state 84
+    VARNAME         reduce using rule 18 (empty -> .)
 
+    empty                          shift and go to state 74
 
 state 55
 
-    (28) return -> RETURN empty .
+    (38) pipeout -> BOTHPIPE proc .
 
-    NL              reduce using rule 28 (return -> RETURN empty .)
-    SEMICOLON       reduce using rule 28 (return -> RETURN empty .)
+    SHELL_DELIMITER reduce using rule 38 (pipeout -> BOTHPIPE proc .)
+    COMMA           reduce using rule 38 (pipeout -> BOTHPIPE proc .)
+    RPAREN          reduce using rule 38 (pipeout -> BOTHPIPE proc .)
 
 
 state 56
 
-    (29) return -> RETURN expression .
+    (23) proc -> command . empty
+    (24) proc -> command . procout
+    (18) empty -> .
+    (32) procout -> . pipeout
+    (33) procout -> . streamout
+    (34) procout -> . fileout
+    (35) pipeout -> . PIPE empty proc empty empty empty
+    (36) pipeout -> . PIPE LPAREN proc COMMA proc RPAREN
+    (37) pipeout -> . ERRPIPE empty empty empty proc empty
+    (38) pipeout -> . BOTHPIPE proc
+    (39) streamout -> . STREAM_OUT empty VARNAME empty empty empty
+    (40) streamout -> . STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN
+    (41) streamout -> . ERROUT empty empty empty VARNAME empty
+    (42) streamout -> . BOTHOUT VARNAME
+    (43) fileout -> . FILEOUT file
+    (44) fileout -> . FILEAPPEND file
 
-    NL              reduce using rule 29 (return -> RETURN expression .)
-    SEMICOLON       reduce using rule 29 (return -> RETURN expression .)
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    COMMA           reduce using rule 18 (empty -> .)
+    RPAREN          reduce using rule 18 (empty -> .)
+    PIPE            shift and go to state 35
+    ERRPIPE         shift and go to state 36
+    BOTHPIPE        shift and go to state 34
+    STREAM_OUT      shift and go to state 40
+    ERROUT          shift and go to state 33
+    BOTHOUT         shift and go to state 42
+    FILEOUT         shift and go to state 43
+    FILEAPPEND      shift and go to state 44
 
+    pipeout                        shift and go to state 31
+    fileout                        shift and go to state 38
+    procout                        shift and go to state 32
+    streamout                      shift and go to state 39
+    empty                          shift and go to state 41
 
 state 57
 
-    (22) for_loop -> FOR PYTHON IN . expression END_COLON suite
-    (32) expression -> . shellblock
-    (33) expression -> . python_code
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
+    (36) pipeout -> PIPE LPAREN . proc COMMA proc RPAREN
+    (23) proc -> . command empty
+    (24) proc -> . command procout
+    (25) command -> . WORD arglist
+    (26) command -> . WORD empty
 
-    SHELL_DELIMITER shift and go to state 19
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
+    WORD            shift and go to state 18
 
-    expression                     shift and go to state 85
-    python_code                    shift and go to state 43
-    shellblock                     shift and go to state 45
+    proc                           shift and go to state 75
+    command                        shift and go to state 56
 
 state 58
 
-    (9) statement_multi -> statement_multi SEMICOLON statement_multi .
-    (9) statement_multi -> statement_multi . SEMICOLON statement_multi
+    (35) pipeout -> PIPE empty . proc empty empty empty
+    (23) proc -> . command empty
+    (24) proc -> . command procout
+    (25) command -> . WORD arglist
+    (26) command -> . WORD empty
 
-  ! shift/reduce conflict for SEMICOLON resolved as shift
-    NL              reduce using rule 9 (statement_multi -> statement_multi SEMICOLON statement_multi .)
-    SEMICOLON       shift and go to state 86
+    WORD            shift and go to state 18
 
-  ! SEMICOLON       [ reduce using rule 9 (statement_multi -> statement_multi SEMICOLON statement_multi .) ]
-
+    proc                           shift and go to state 76
+    command                        shift and go to state 56
 
 state 59
 
-    (8) statement_complex -> statement_multi SEMICOLON NL .
+    (37) pipeout -> ERRPIPE empty . empty empty proc empty
+    (18) empty -> .
 
-    IF              reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    WHILE           reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    FOR             reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    RETURN          reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    ASSERT          reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    YIELD           reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    PYTHON          reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    STRING          reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    DOCSTRING       reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    COLON           reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    SHELL_DELIMITER reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    DEDENT          reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
-    $end            reduce using rule 8 (statement_complex -> statement_multi SEMICOLON NL .)
+    WORD            reduce using rule 18 (empty -> .)
 
+    empty                          shift and go to state 77
 
 state 60
 
-    (21) while_loop -> WHILE expression END_COLON . suite
-    (41) suite -> . NL INDENT nonempty_block DEDENT
-    (42) suite -> . statement_simple NL
-    (11) statement_simple -> . statement_result
-    (12) statement_simple -> . statement_no_result
-    (13) statement_result -> . assignment
-    (14) statement_result -> . return
-    (15) statement_result -> . assert
-    (16) statement_result -> . yield
-    (17) statement_no_result -> . shellblock_run
-    (18) statement_no_result -> . python_code
-    (27) assignment -> . python_code ASSIGNMENT_OPERATOR expression
-    (28) return -> . RETURN empty
-    (29) return -> . RETURN expression
-    (30) assert -> . ASSERT expression
-    (31) yield -> . YIELD expression
-    (43) shellblock_run -> . shellblock
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
+    (45) instream -> WORD .
 
-    NL              shift and go to state 88
-    RETURN          shift and go to state 26
-    ASSERT          shift and go to state 17
-    YIELD           shift and go to state 24
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    SHELL_DELIMITER shift and go to state 19
+    PIPE            reduce using rule 45 (instream -> WORD .)
+    ERRPIPE         reduce using rule 45 (instream -> WORD .)
+    BOTHPIPE        reduce using rule 45 (instream -> WORD .)
+    STREAM_OUT      reduce using rule 45 (instream -> WORD .)
+    ERROUT          reduce using rule 45 (instream -> WORD .)
+    BOTHOUT         reduce using rule 45 (instream -> WORD .)
+    FILEOUT         reduce using rule 45 (instream -> WORD .)
+    FILEAPPEND      reduce using rule 45 (instream -> WORD .)
+    SHELL_DELIMITER reduce using rule 45 (instream -> WORD .)
 
-    suite                          shift and go to state 87
-    shellblock_run                 shift and go to state 29
-    yield                          shift and go to state 16
-    statement_result               shift and go to state 27
-    python_code                    shift and go to state 20
-    return                         shift and go to state 22
-    assignment                     shift and go to state 18
-    statement_simple               shift and go to state 89
-    assert                         shift and go to state 12
-    shellblock                     shift and go to state 23
-    statement_no_result            shift and go to state 30
 
 state 61
 
-    (44) shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER .
+    (21) procin -> command STREAM_IN instream . procout
+    (22) procin -> command STREAM_IN instream . empty
+    (32) procout -> . pipeout
+    (33) procout -> . streamout
+    (34) procout -> . fileout
+    (18) empty -> .
+    (35) pipeout -> . PIPE empty proc empty empty empty
+    (36) pipeout -> . PIPE LPAREN proc COMMA proc RPAREN
+    (37) pipeout -> . ERRPIPE empty empty empty proc empty
+    (38) pipeout -> . BOTHPIPE proc
+    (39) streamout -> . STREAM_OUT empty VARNAME empty empty empty
+    (40) streamout -> . STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN
+    (41) streamout -> . ERROUT empty empty empty VARNAME empty
+    (42) streamout -> . BOTHOUT VARNAME
+    (43) fileout -> . FILEOUT file
+    (44) fileout -> . FILEAPPEND file
 
-    NL              reduce using rule 44 (shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER .)
-    SEMICOLON       reduce using rule 44 (shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER .)
-    END_COLON       reduce using rule 44 (shellblock -> SHELL_DELIMITER statement SHELL_DELIMITER .)
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    PIPE            shift and go to state 35
+    ERRPIPE         shift and go to state 36
+    BOTHPIPE        shift and go to state 34
+    STREAM_OUT      shift and go to state 40
+    ERROUT          shift and go to state 33
+    BOTHOUT         shift and go to state 42
+    FILEOUT         shift and go to state 43
+    FILEAPPEND      shift and go to state 44
 
+    pipeout                        shift and go to state 31
+    fileout                        shift and go to state 38
+    procout                        shift and go to state 78
+    streamout                      shift and go to state 39
+    empty                          shift and go to state 79
 
 state 62
 
-    (62) pipeout -> PIPE . empty proc empty empty empty
-    (63) pipeout -> PIPE . LPAREN proc COMMA proc RPAREN
-    (45) empty -> .
+    (46) instream -> var .
 
-    LPAREN          shift and go to state 91
-    WORD            reduce using rule 45 (empty -> .)
+    PIPE            reduce using rule 46 (instream -> var .)
+    ERRPIPE         reduce using rule 46 (instream -> var .)
+    BOTHPIPE        reduce using rule 46 (instream -> var .)
+    STREAM_OUT      reduce using rule 46 (instream -> var .)
+    ERROUT          reduce using rule 46 (instream -> var .)
+    BOTHOUT         reduce using rule 46 (instream -> var .)
+    FILEOUT         reduce using rule 46 (instream -> var .)
+    FILEAPPEND      reduce using rule 46 (instream -> var .)
+    SHELL_DELIMITER reduce using rule 46 (instream -> var .)
 
-    empty                          shift and go to state 90
 
 state 63
 
-    (61) procout -> fileout .
+    (47) instream -> STRING .
 
-    SHELL_DELIMITER reduce using rule 61 (procout -> fileout .)
-    COMMA           reduce using rule 61 (procout -> fileout .)
-    RPAREN          reduce using rule 61 (procout -> fileout .)
+    PIPE            reduce using rule 47 (instream -> STRING .)
+    ERRPIPE         reduce using rule 47 (instream -> STRING .)
+    BOTHPIPE        reduce using rule 47 (instream -> STRING .)
+    STREAM_OUT      reduce using rule 47 (instream -> STRING .)
+    ERROUT          reduce using rule 47 (instream -> STRING .)
+    BOTHOUT         reduce using rule 47 (instream -> STRING .)
+    FILEOUT         reduce using rule 47 (instream -> STRING .)
+    FILEAPPEND      reduce using rule 47 (instream -> STRING .)
+    SHELL_DELIMITER reduce using rule 47 (instream -> STRING .)
 
 
 state 64
 
-    (59) procout -> pipeout .
+    (40) streamout -> STREAM_OUT LPAREN . VARNAME COMMA VARNAME RPAREN
 
-    SHELL_DELIMITER reduce using rule 59 (procout -> pipeout .)
-    COMMA           reduce using rule 59 (procout -> pipeout .)
-    RPAREN          reduce using rule 59 (procout -> pipeout .)
+    VARNAME         shift and go to state 80
 
 
 state 65
 
-    (64) pipeout -> ERRPIPE . empty empty empty proc empty
-    (45) empty -> .
+    (39) streamout -> STREAM_OUT empty . VARNAME empty empty empty
 
-    WORD            reduce using rule 45 (empty -> .)
+    VARNAME         shift and go to state 81
 
-    empty                          shift and go to state 92
 
 state 66
 
-    (60) procout -> streamout .
+    (42) streamout -> BOTHOUT VARNAME .
 
-    SHELL_DELIMITER reduce using rule 60 (procout -> streamout .)
-    COMMA           reduce using rule 60 (procout -> streamout .)
-    RPAREN          reduce using rule 60 (procout -> streamout .)
+    SHELL_DELIMITER reduce using rule 42 (streamout -> BOTHOUT VARNAME .)
+    COMMA           reduce using rule 42 (streamout -> BOTHOUT VARNAME .)
+    RPAREN          reduce using rule 42 (streamout -> BOTHOUT VARNAME .)
 
 
 state 67
 
-    (65) pipeout -> BOTHPIPE . proc
-    (50) proc -> . command empty
-    (51) proc -> . command procout
-    (52) command -> . WORD arglist
-    (53) command -> . WORD empty
+    (43) fileout -> FILEOUT file .
 
-    WORD            shift and go to state 50
+    SHELL_DELIMITER reduce using rule 43 (fileout -> FILEOUT file .)
+    COMMA           reduce using rule 43 (fileout -> FILEOUT file .)
+    RPAREN          reduce using rule 43 (fileout -> FILEOUT file .)
 
-    command                        shift and go to state 93
-    proc                           shift and go to state 94
 
 state 68
 
-    (51) proc -> command procout .
+    (48) file -> WORD .
 
-    COMMA           reduce using rule 51 (proc -> command procout .)
-    SHELL_DELIMITER reduce using rule 51 (proc -> command procout .)
-    RPAREN          reduce using rule 51 (proc -> command procout .)
+    SHELL_DELIMITER reduce using rule 48 (file -> WORD .)
+    COMMA           reduce using rule 48 (file -> WORD .)
+    RPAREN          reduce using rule 48 (file -> WORD .)
 
 
 state 69
 
-    (48) procin -> command STREAM_IN . instream procout
-    (49) procin -> command STREAM_IN . instream empty
-    (72) instream -> . WORD
-    (73) instream -> . var
-    (74) instream -> . STRING
-    (78) var -> . VARNAME
+    (49) file -> var .
 
-    WORD            shift and go to state 98
-    STRING          shift and go to state 97
-    VARNAME         shift and go to state 77
+    SHELL_DELIMITER reduce using rule 49 (file -> var .)
+    COMMA           reduce using rule 49 (file -> var .)
+    RPAREN          reduce using rule 49 (file -> var .)
 
-    var                            shift and go to state 96
-    instream                       shift and go to state 95
 
 state 70
 
-    (68) streamout -> ERROUT . VARNAME
+    (50) file -> STRING .
 
-    VARNAME         shift and go to state 99
+    SHELL_DELIMITER reduce using rule 50 (file -> STRING .)
+    COMMA           reduce using rule 50 (file -> STRING .)
+    RPAREN          reduce using rule 50 (file -> STRING .)
 
 
 state 71
 
-    (50) proc -> command empty .
+    (44) fileout -> FILEAPPEND file .
 
-    COMMA           reduce using rule 50 (proc -> command empty .)
-    SHELL_DELIMITER reduce using rule 50 (proc -> command empty .)
-    RPAREN          reduce using rule 50 (proc -> command empty .)
+    SHELL_DELIMITER reduce using rule 44 (fileout -> FILEAPPEND file .)
+    COMMA           reduce using rule 44 (fileout -> FILEAPPEND file .)
+    RPAREN          reduce using rule 44 (fileout -> FILEAPPEND file .)
 
 
 state 72
 
-    (69) streamout -> BOTHOUT . VARNAME
+    (28) arglist -> arg arglist .
 
-    VARNAME         shift and go to state 100
+    STREAM_IN       reduce using rule 28 (arglist -> arg arglist .)
+    PIPE            reduce using rule 28 (arglist -> arg arglist .)
+    ERRPIPE         reduce using rule 28 (arglist -> arg arglist .)
+    BOTHPIPE        reduce using rule 28 (arglist -> arg arglist .)
+    STREAM_OUT      reduce using rule 28 (arglist -> arg arglist .)
+    ERROUT          reduce using rule 28 (arglist -> arg arglist .)
+    BOTHOUT         reduce using rule 28 (arglist -> arg arglist .)
+    FILEOUT         reduce using rule 28 (arglist -> arg arglist .)
+    FILEAPPEND      reduce using rule 28 (arglist -> arg arglist .)
+    SHELL_DELIMITER reduce using rule 28 (arglist -> arg arglist .)
+    COMMA           reduce using rule 28 (arglist -> arg arglist .)
+    RPAREN          reduce using rule 28 (arglist -> arg arglist .)
 
 
 state 73
 
-    (66) streamout -> STREAM_OUT . VARNAME
-    (67) streamout -> STREAM_OUT . LPAREN VARNAME COMMA VARNAME RPAREN
+    (27) arglist -> arg empty .
 
-    VARNAME         shift and go to state 102
-    LPAREN          shift and go to state 101
+    STREAM_IN       reduce using rule 27 (arglist -> arg empty .)
+    PIPE            reduce using rule 27 (arglist -> arg empty .)
+    ERRPIPE         reduce using rule 27 (arglist -> arg empty .)
+    BOTHPIPE        reduce using rule 27 (arglist -> arg empty .)
+    STREAM_OUT      reduce using rule 27 (arglist -> arg empty .)
+    ERROUT          reduce using rule 27 (arglist -> arg empty .)
+    BOTHOUT         reduce using rule 27 (arglist -> arg empty .)
+    FILEOUT         reduce using rule 27 (arglist -> arg empty .)
+    FILEAPPEND      reduce using rule 27 (arglist -> arg empty .)
+    SHELL_DELIMITER reduce using rule 27 (arglist -> arg empty .)
+    COMMA           reduce using rule 27 (arglist -> arg empty .)
+    RPAREN          reduce using rule 27 (arglist -> arg empty .)
 
 
 state 74
 
-    (70) fileout -> FILEOUT . file
-    (75) file -> . WORD
-    (76) file -> . var
-    (77) file -> . STRING
-    (78) var -> . VARNAME
+    (41) streamout -> ERROUT empty empty . empty VARNAME empty
+    (18) empty -> .
 
-    WORD            shift and go to state 106
-    STRING          shift and go to state 105
-    VARNAME         shift and go to state 77
+    VARNAME         reduce using rule 18 (empty -> .)
 
-    var                            shift and go to state 104
-    file                           shift and go to state 103
+    empty                          shift and go to state 82
 
 state 75
 
-    (71) fileout -> FILEAPPEND . file
-    (75) file -> . WORD
-    (76) file -> . var
-    (77) file -> . STRING
-    (78) var -> . VARNAME
+    (36) pipeout -> PIPE LPAREN proc . COMMA proc RPAREN
 
-    WORD            shift and go to state 106
-    STRING          shift and go to state 105
-    VARNAME         shift and go to state 77
+    COMMA           shift and go to state 83
 
-    var                            shift and go to state 104
-    file                           shift and go to state 107
 
 state 76
 
-    (52) command -> WORD arglist .
+    (35) pipeout -> PIPE empty proc . empty empty empty
+    (18) empty -> .
 
-    STREAM_IN       reduce using rule 52 (command -> WORD arglist .)
-    PIPE            reduce using rule 52 (command -> WORD arglist .)
-    ERRPIPE         reduce using rule 52 (command -> WORD arglist .)
-    BOTHPIPE        reduce using rule 52 (command -> WORD arglist .)
-    STREAM_OUT      reduce using rule 52 (command -> WORD arglist .)
-    ERROUT          reduce using rule 52 (command -> WORD arglist .)
-    BOTHOUT         reduce using rule 52 (command -> WORD arglist .)
-    FILEOUT         reduce using rule 52 (command -> WORD arglist .)
-    FILEAPPEND      reduce using rule 52 (command -> WORD arglist .)
-    SHELL_DELIMITER reduce using rule 52 (command -> WORD arglist .)
-    COMMA           reduce using rule 52 (command -> WORD arglist .)
-    RPAREN          reduce using rule 52 (command -> WORD arglist .)
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    COMMA           reduce using rule 18 (empty -> .)
+    RPAREN          reduce using rule 18 (empty -> .)
 
+    empty                          shift and go to state 84
 
 state 77
 
-    (78) var -> VARNAME .
+    (37) pipeout -> ERRPIPE empty empty . empty proc empty
+    (18) empty -> .
 
-    WORD            reduce using rule 78 (var -> VARNAME .)
-    STRING          reduce using rule 78 (var -> VARNAME .)
-    VARNAME         reduce using rule 78 (var -> VARNAME .)
-    STREAM_IN       reduce using rule 78 (var -> VARNAME .)
-    PIPE            reduce using rule 78 (var -> VARNAME .)
-    ERRPIPE         reduce using rule 78 (var -> VARNAME .)
-    BOTHPIPE        reduce using rule 78 (var -> VARNAME .)
-    STREAM_OUT      reduce using rule 78 (var -> VARNAME .)
-    ERROUT          reduce using rule 78 (var -> VARNAME .)
-    BOTHOUT         reduce using rule 78 (var -> VARNAME .)
-    FILEOUT         reduce using rule 78 (var -> VARNAME .)
-    FILEAPPEND      reduce using rule 78 (var -> VARNAME .)
-    SHELL_DELIMITER reduce using rule 78 (var -> VARNAME .)
-    COMMA           reduce using rule 78 (var -> VARNAME .)
-    RPAREN          reduce using rule 78 (var -> VARNAME .)
+    WORD            reduce using rule 18 (empty -> .)
 
+    empty                          shift and go to state 85
 
 state 78
 
-    (53) command -> WORD empty .
+    (21) procin -> command STREAM_IN instream procout .
 
-    STREAM_IN       reduce using rule 53 (command -> WORD empty .)
-    PIPE            reduce using rule 53 (command -> WORD empty .)
-    ERRPIPE         reduce using rule 53 (command -> WORD empty .)
-    BOTHPIPE        reduce using rule 53 (command -> WORD empty .)
-    STREAM_OUT      reduce using rule 53 (command -> WORD empty .)
-    ERROUT          reduce using rule 53 (command -> WORD empty .)
-    BOTHOUT         reduce using rule 53 (command -> WORD empty .)
-    FILEOUT         reduce using rule 53 (command -> WORD empty .)
-    FILEAPPEND      reduce using rule 53 (command -> WORD empty .)
-    SHELL_DELIMITER reduce using rule 53 (command -> WORD empty .)
-    COMMA           reduce using rule 53 (command -> WORD empty .)
-    RPAREN          reduce using rule 53 (command -> WORD empty .)
+    SHELL_DELIMITER reduce using rule 21 (procin -> command STREAM_IN instream procout .)
 
 
 state 79
 
-    (57) arg -> var .
+    (22) procin -> command STREAM_IN instream empty .
 
-    WORD            reduce using rule 57 (arg -> var .)
-    STRING          reduce using rule 57 (arg -> var .)
-    VARNAME         reduce using rule 57 (arg -> var .)
-    STREAM_IN       reduce using rule 57 (arg -> var .)
-    PIPE            reduce using rule 57 (arg -> var .)
-    ERRPIPE         reduce using rule 57 (arg -> var .)
-    BOTHPIPE        reduce using rule 57 (arg -> var .)
-    STREAM_OUT      reduce using rule 57 (arg -> var .)
-    ERROUT          reduce using rule 57 (arg -> var .)
-    BOTHOUT         reduce using rule 57 (arg -> var .)
-    FILEOUT         reduce using rule 57 (arg -> var .)
-    FILEAPPEND      reduce using rule 57 (arg -> var .)
-    SHELL_DELIMITER reduce using rule 57 (arg -> var .)
-    COMMA           reduce using rule 57 (arg -> var .)
-    RPAREN          reduce using rule 57 (arg -> var .)
+    SHELL_DELIMITER reduce using rule 22 (procin -> command STREAM_IN instream empty .)
 
 
 state 80
 
-    (54) arglist -> arg . empty
-    (55) arglist -> arg . arglist
-    (45) empty -> .
-    (54) arglist -> . arg empty
-    (55) arglist -> . arg arglist
-    (56) arg -> . WORD
-    (57) arg -> . var
-    (58) arg -> . STRING
-    (78) var -> . VARNAME
+    (40) streamout -> STREAM_OUT LPAREN VARNAME . COMMA VARNAME RPAREN
 
-    STREAM_IN       reduce using rule 45 (empty -> .)
-    PIPE            reduce using rule 45 (empty -> .)
-    ERRPIPE         reduce using rule 45 (empty -> .)
-    BOTHPIPE        reduce using rule 45 (empty -> .)
-    STREAM_OUT      reduce using rule 45 (empty -> .)
-    ERROUT          reduce using rule 45 (empty -> .)
-    BOTHOUT         reduce using rule 45 (empty -> .)
-    FILEOUT         reduce using rule 45 (empty -> .)
-    FILEAPPEND      reduce using rule 45 (empty -> .)
-    SHELL_DELIMITER reduce using rule 45 (empty -> .)
-    COMMA           reduce using rule 45 (empty -> .)
-    RPAREN          reduce using rule 45 (empty -> .)
-    WORD            shift and go to state 82
-    STRING          shift and go to state 81
-    VARNAME         shift and go to state 77
+    COMMA           shift and go to state 86
 
-    arglist                        shift and go to state 108
-    var                            shift and go to state 79
-    arg                            shift and go to state 80
-    empty                          shift and go to state 109
 
 state 81
 
-    (58) arg -> STRING .
+    (39) streamout -> STREAM_OUT empty VARNAME . empty empty empty
+    (18) empty -> .
 
-    WORD            reduce using rule 58 (arg -> STRING .)
-    STRING          reduce using rule 58 (arg -> STRING .)
-    VARNAME         reduce using rule 58 (arg -> STRING .)
-    STREAM_IN       reduce using rule 58 (arg -> STRING .)
-    PIPE            reduce using rule 58 (arg -> STRING .)
-    ERRPIPE         reduce using rule 58 (arg -> STRING .)
-    BOTHPIPE        reduce using rule 58 (arg -> STRING .)
-    STREAM_OUT      reduce using rule 58 (arg -> STRING .)
-    ERROUT          reduce using rule 58 (arg -> STRING .)
-    BOTHOUT         reduce using rule 58 (arg -> STRING .)
-    FILEOUT         reduce using rule 58 (arg -> STRING .)
-    FILEAPPEND      reduce using rule 58 (arg -> STRING .)
-    SHELL_DELIMITER reduce using rule 58 (arg -> STRING .)
-    COMMA           reduce using rule 58 (arg -> STRING .)
-    RPAREN          reduce using rule 58 (arg -> STRING .)
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    COMMA           reduce using rule 18 (empty -> .)
+    RPAREN          reduce using rule 18 (empty -> .)
 
+    empty                          shift and go to state 87
 
 state 82
 
-    (56) arg -> WORD .
+    (41) streamout -> ERROUT empty empty empty . VARNAME empty
 
-    WORD            reduce using rule 56 (arg -> WORD .)
-    STRING          reduce using rule 56 (arg -> WORD .)
-    VARNAME         reduce using rule 56 (arg -> WORD .)
-    STREAM_IN       reduce using rule 56 (arg -> WORD .)
-    PIPE            reduce using rule 56 (arg -> WORD .)
-    ERRPIPE         reduce using rule 56 (arg -> WORD .)
-    BOTHPIPE        reduce using rule 56 (arg -> WORD .)
-    STREAM_OUT      reduce using rule 56 (arg -> WORD .)
-    ERROUT          reduce using rule 56 (arg -> WORD .)
-    BOTHOUT         reduce using rule 56 (arg -> WORD .)
-    FILEOUT         reduce using rule 56 (arg -> WORD .)
-    FILEAPPEND      reduce using rule 56 (arg -> WORD .)
-    SHELL_DELIMITER reduce using rule 56 (arg -> WORD .)
-    COMMA           reduce using rule 56 (arg -> WORD .)
-    RPAREN          reduce using rule 56 (arg -> WORD .)
+    VARNAME         shift and go to state 88
 
 
 state 83
 
-    (27) assignment -> python_code ASSIGNMENT_OPERATOR expression .
+    (36) pipeout -> PIPE LPAREN proc COMMA . proc RPAREN
+    (23) proc -> . command empty
+    (24) proc -> . command procout
+    (25) command -> . WORD arglist
+    (26) command -> . WORD empty
 
-    NL              reduce using rule 27 (assignment -> python_code ASSIGNMENT_OPERATOR expression .)
-    SEMICOLON       reduce using rule 27 (assignment -> python_code ASSIGNMENT_OPERATOR expression .)
+    WORD            shift and go to state 18
 
+    proc                           shift and go to state 89
+    command                        shift and go to state 56
 
 state 84
 
-    (23) conditional -> IF expression END_COLON . suite conditional_extension
-    (24) conditional -> IF expression END_COLON . suite empty
-    (41) suite -> . NL INDENT nonempty_block DEDENT
-    (42) suite -> . statement_simple NL
-    (11) statement_simple -> . statement_result
-    (12) statement_simple -> . statement_no_result
-    (13) statement_result -> . assignment
-    (14) statement_result -> . return
-    (15) statement_result -> . assert
-    (16) statement_result -> . yield
-    (17) statement_no_result -> . shellblock_run
-    (18) statement_no_result -> . python_code
-    (27) assignment -> . python_code ASSIGNMENT_OPERATOR expression
-    (28) return -> . RETURN empty
-    (29) return -> . RETURN expression
-    (30) assert -> . ASSERT expression
-    (31) yield -> . YIELD expression
-    (43) shellblock_run -> . shellblock
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
+    (35) pipeout -> PIPE empty proc empty . empty empty
+    (18) empty -> .
 
-    NL              shift and go to state 88
-    RETURN          shift and go to state 26
-    ASSERT          shift and go to state 17
-    YIELD           shift and go to state 24
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    SHELL_DELIMITER shift and go to state 19
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    COMMA           reduce using rule 18 (empty -> .)
+    RPAREN          reduce using rule 18 (empty -> .)
 
-    suite                          shift and go to state 110
-    shellblock_run                 shift and go to state 29
-    statement_simple               shift and go to state 89
-    python_code                    shift and go to state 20
-    yield                          shift and go to state 16
-    return                         shift and go to state 22
-    assignment                     shift and go to state 18
-    statement_no_result            shift and go to state 30
-    assert                         shift and go to state 12
-    shellblock                     shift and go to state 23
-    statement_result               shift and go to state 27
+    empty                          shift and go to state 90
 
 state 85
 
-    (22) for_loop -> FOR PYTHON IN expression . END_COLON suite
+    (37) pipeout -> ERRPIPE empty empty empty . proc empty
+    (23) proc -> . command empty
+    (24) proc -> . command procout
+    (25) command -> . WORD arglist
+    (26) command -> . WORD empty
 
-    END_COLON       shift and go to state 111
+    WORD            shift and go to state 18
 
+    proc                           shift and go to state 91
+    command                        shift and go to state 56
 
 state 86
 
-    (9) statement_multi -> statement_multi SEMICOLON . statement_multi
-    (9) statement_multi -> . statement_multi SEMICOLON statement_multi
-    (10) statement_multi -> . statement_simple
-    (11) statement_simple -> . statement_result
-    (12) statement_simple -> . statement_no_result
-    (13) statement_result -> . assignment
-    (14) statement_result -> . return
-    (15) statement_result -> . assert
-    (16) statement_result -> . yield
-    (17) statement_no_result -> . shellblock_run
-    (18) statement_no_result -> . python_code
-    (27) assignment -> . python_code ASSIGNMENT_OPERATOR expression
-    (28) return -> . RETURN empty
-    (29) return -> . RETURN expression
-    (30) assert -> . ASSERT expression
-    (31) yield -> . YIELD expression
-    (43) shellblock_run -> . shellblock
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
+    (40) streamout -> STREAM_OUT LPAREN VARNAME COMMA . VARNAME RPAREN
 
-    RETURN          shift and go to state 26
-    ASSERT          shift and go to state 17
-    YIELD           shift and go to state 24
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    SHELL_DELIMITER shift and go to state 19
+    VARNAME         shift and go to state 92
 
-    shellblock_run                 shift and go to state 29
-    yield                          shift and go to state 16
-    statement_result               shift and go to state 27
-    python_code                    shift and go to state 20
-    statement_multi                shift and go to state 58
-    return                         shift and go to state 22
-    assignment                     shift and go to state 18
-    statement_no_result            shift and go to state 30
-    assert                         shift and go to state 12
-    shellblock                     shift and go to state 23
-    statement_simple               shift and go to state 15
 
 state 87
 
-    (21) while_loop -> WHILE expression END_COLON suite .
+    (39) streamout -> STREAM_OUT empty VARNAME empty . empty empty
+    (18) empty -> .
 
-    IF              reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    WHILE           reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    FOR             reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    RETURN          reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    ASSERT          reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    YIELD           reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    PYTHON          reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    STRING          reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    DOCSTRING       reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    COLON           reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    SHELL_DELIMITER reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    $end            reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
-    DEDENT          reduce using rule 21 (while_loop -> WHILE expression END_COLON suite .)
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    COMMA           reduce using rule 18 (empty -> .)
+    RPAREN          reduce using rule 18 (empty -> .)
 
+    empty                          shift and go to state 93
 
 state 88
 
-    (41) suite -> NL . INDENT nonempty_block DEDENT
+    (41) streamout -> ERROUT empty empty empty VARNAME . empty
+    (18) empty -> .
 
-    INDENT          shift and go to state 112
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    COMMA           reduce using rule 18 (empty -> .)
+    RPAREN          reduce using rule 18 (empty -> .)
 
+    empty                          shift and go to state 94
 
 state 89
 
-    (42) suite -> statement_simple . NL
+    (36) pipeout -> PIPE LPAREN proc COMMA proc . RPAREN
 
-    NL              shift and go to state 113
+    RPAREN          shift and go to state 95
 
 
 state 90
 
-    (62) pipeout -> PIPE empty . proc empty empty empty
-    (50) proc -> . command empty
-    (51) proc -> . command procout
-    (52) command -> . WORD arglist
-    (53) command -> . WORD empty
+    (35) pipeout -> PIPE empty proc empty empty . empty
+    (18) empty -> .
 
-    WORD            shift and go to state 50
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    COMMA           reduce using rule 18 (empty -> .)
+    RPAREN          reduce using rule 18 (empty -> .)
 
-    command                        shift and go to state 93
-    proc                           shift and go to state 114
+    empty                          shift and go to state 96
 
 state 91
 
-    (63) pipeout -> PIPE LPAREN . proc COMMA proc RPAREN
-    (50) proc -> . command empty
-    (51) proc -> . command procout
-    (52) command -> . WORD arglist
-    (53) command -> . WORD empty
+    (37) pipeout -> ERRPIPE empty empty empty proc . empty
+    (18) empty -> .
 
-    WORD            shift and go to state 50
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    COMMA           reduce using rule 18 (empty -> .)
+    RPAREN          reduce using rule 18 (empty -> .)
 
-    command                        shift and go to state 93
-    proc                           shift and go to state 115
+    empty                          shift and go to state 97
 
 state 92
 
-    (64) pipeout -> ERRPIPE empty . empty empty proc empty
-    (45) empty -> .
+    (40) streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME . RPAREN
 
-    WORD            reduce using rule 45 (empty -> .)
+    RPAREN          shift and go to state 98
 
-    empty                          shift and go to state 116
 
 state 93
 
-    (50) proc -> command . empty
-    (51) proc -> command . procout
-    (45) empty -> .
-    (59) procout -> . pipeout
-    (60) procout -> . streamout
-    (61) procout -> . fileout
-    (62) pipeout -> . PIPE empty proc empty empty empty
-    (63) pipeout -> . PIPE LPAREN proc COMMA proc RPAREN
-    (64) pipeout -> . ERRPIPE empty empty empty proc empty
-    (65) pipeout -> . BOTHPIPE proc
-    (66) streamout -> . STREAM_OUT VARNAME
-    (67) streamout -> . STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN
-    (68) streamout -> . ERROUT VARNAME
-    (69) streamout -> . BOTHOUT VARNAME
-    (70) fileout -> . FILEOUT file
-    (71) fileout -> . FILEAPPEND file
+    (39) streamout -> STREAM_OUT empty VARNAME empty empty . empty
+    (18) empty -> .
 
-    SHELL_DELIMITER reduce using rule 45 (empty -> .)
-    COMMA           reduce using rule 45 (empty -> .)
-    RPAREN          reduce using rule 45 (empty -> .)
-    PIPE            shift and go to state 62
-    ERRPIPE         shift and go to state 65
-    BOTHPIPE        shift and go to state 67
-    STREAM_OUT      shift and go to state 73
-    ERROUT          shift and go to state 70
-    BOTHOUT         shift and go to state 72
-    FILEOUT         shift and go to state 74
-    FILEAPPEND      shift and go to state 75
+    SHELL_DELIMITER reduce using rule 18 (empty -> .)
+    COMMA           reduce using rule 18 (empty -> .)
+    RPAREN          reduce using rule 18 (empty -> .)
 
-    fileout                        shift and go to state 63
-    pipeout                        shift and go to state 64
-    empty                          shift and go to state 71
-    streamout                      shift and go to state 66
-    procout                        shift and go to state 68
+    empty                          shift and go to state 99
 
 state 94
 
-    (65) pipeout -> BOTHPIPE proc .
+    (41) streamout -> ERROUT empty empty empty VARNAME empty .
 
-    SHELL_DELIMITER reduce using rule 65 (pipeout -> BOTHPIPE proc .)
-    COMMA           reduce using rule 65 (pipeout -> BOTHPIPE proc .)
-    RPAREN          reduce using rule 65 (pipeout -> BOTHPIPE proc .)
+    SHELL_DELIMITER reduce using rule 41 (streamout -> ERROUT empty empty empty VARNAME empty .)
+    COMMA           reduce using rule 41 (streamout -> ERROUT empty empty empty VARNAME empty .)
+    RPAREN          reduce using rule 41 (streamout -> ERROUT empty empty empty VARNAME empty .)
 
 
 state 95
 
-    (48) procin -> command STREAM_IN instream . procout
-    (49) procin -> command STREAM_IN instream . empty
-    (59) procout -> . pipeout
-    (60) procout -> . streamout
-    (61) procout -> . fileout
-    (45) empty -> .
-    (62) pipeout -> . PIPE empty proc empty empty empty
-    (63) pipeout -> . PIPE LPAREN proc COMMA proc RPAREN
-    (64) pipeout -> . ERRPIPE empty empty empty proc empty
-    (65) pipeout -> . BOTHPIPE proc
-    (66) streamout -> . STREAM_OUT VARNAME
-    (67) streamout -> . STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN
-    (68) streamout -> . ERROUT VARNAME
-    (69) streamout -> . BOTHOUT VARNAME
-    (70) fileout -> . FILEOUT file
-    (71) fileout -> . FILEAPPEND file
+    (36) pipeout -> PIPE LPAREN proc COMMA proc RPAREN .
 
-    SHELL_DELIMITER reduce using rule 45 (empty -> .)
-    PIPE            shift and go to state 62
-    ERRPIPE         shift and go to state 65
-    BOTHPIPE        shift and go to state 67
-    STREAM_OUT      shift and go to state 73
-    ERROUT          shift and go to state 70
-    BOTHOUT         shift and go to state 72
-    FILEOUT         shift and go to state 74
-    FILEAPPEND      shift and go to state 75
+    SHELL_DELIMITER reduce using rule 36 (pipeout -> PIPE LPAREN proc COMMA proc RPAREN .)
+    COMMA           reduce using rule 36 (pipeout -> PIPE LPAREN proc COMMA proc RPAREN .)
+    RPAREN          reduce using rule 36 (pipeout -> PIPE LPAREN proc COMMA proc RPAREN .)
 
-    fileout                        shift and go to state 63
-    pipeout                        shift and go to state 64
-    empty                          shift and go to state 118
-    streamout                      shift and go to state 66
-    procout                        shift and go to state 117
 
 state 96
 
-    (73) instream -> var .
+    (35) pipeout -> PIPE empty proc empty empty empty .
 
-    PIPE            reduce using rule 73 (instream -> var .)
-    ERRPIPE         reduce using rule 73 (instream -> var .)
-    BOTHPIPE        reduce using rule 73 (instream -> var .)
-    STREAM_OUT      reduce using rule 73 (instream -> var .)
-    ERROUT          reduce using rule 73 (instream -> var .)
-    BOTHOUT         reduce using rule 73 (instream -> var .)
-    FILEOUT         reduce using rule 73 (instream -> var .)
-    FILEAPPEND      reduce using rule 73 (instream -> var .)
-    SHELL_DELIMITER reduce using rule 73 (instream -> var .)
+    SHELL_DELIMITER reduce using rule 35 (pipeout -> PIPE empty proc empty empty empty .)
+    COMMA           reduce using rule 35 (pipeout -> PIPE empty proc empty empty empty .)
+    RPAREN          reduce using rule 35 (pipeout -> PIPE empty proc empty empty empty .)
 
 
 state 97
 
-    (74) instream -> STRING .
+    (37) pipeout -> ERRPIPE empty empty empty proc empty .
 
-    PIPE            reduce using rule 74 (instream -> STRING .)
-    ERRPIPE         reduce using rule 74 (instream -> STRING .)
-    BOTHPIPE        reduce using rule 74 (instream -> STRING .)
-    STREAM_OUT      reduce using rule 74 (instream -> STRING .)
-    ERROUT          reduce using rule 74 (instream -> STRING .)
-    BOTHOUT         reduce using rule 74 (instream -> STRING .)
-    FILEOUT         reduce using rule 74 (instream -> STRING .)
-    FILEAPPEND      reduce using rule 74 (instream -> STRING .)
-    SHELL_DELIMITER reduce using rule 74 (instream -> STRING .)
+    SHELL_DELIMITER reduce using rule 37 (pipeout -> ERRPIPE empty empty empty proc empty .)
+    COMMA           reduce using rule 37 (pipeout -> ERRPIPE empty empty empty proc empty .)
+    RPAREN          reduce using rule 37 (pipeout -> ERRPIPE empty empty empty proc empty .)
 
 
 state 98
 
-    (72) instream -> WORD .
+    (40) streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN .
 
-    PIPE            reduce using rule 72 (instream -> WORD .)
-    ERRPIPE         reduce using rule 72 (instream -> WORD .)
-    BOTHPIPE        reduce using rule 72 (instream -> WORD .)
-    STREAM_OUT      reduce using rule 72 (instream -> WORD .)
-    ERROUT          reduce using rule 72 (instream -> WORD .)
-    BOTHOUT         reduce using rule 72 (instream -> WORD .)
-    FILEOUT         reduce using rule 72 (instream -> WORD .)
-    FILEAPPEND      reduce using rule 72 (instream -> WORD .)
-    SHELL_DELIMITER reduce using rule 72 (instream -> WORD .)
+    SHELL_DELIMITER reduce using rule 40 (streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN .)
+    COMMA           reduce using rule 40 (streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN .)
+    RPAREN          reduce using rule 40 (streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN .)
 
 
 state 99
 
-    (68) streamout -> ERROUT VARNAME .
+    (39) streamout -> STREAM_OUT empty VARNAME empty empty empty .
 
-    SHELL_DELIMITER reduce using rule 68 (streamout -> ERROUT VARNAME .)
-    COMMA           reduce using rule 68 (streamout -> ERROUT VARNAME .)
-    RPAREN          reduce using rule 68 (streamout -> ERROUT VARNAME .)
+    SHELL_DELIMITER reduce using rule 39 (streamout -> STREAM_OUT empty VARNAME empty empty empty .)
+    COMMA           reduce using rule 39 (streamout -> STREAM_OUT empty VARNAME empty empty empty .)
+    RPAREN          reduce using rule 39 (streamout -> STREAM_OUT empty VARNAME empty empty empty .)
 
-
-state 100
-
-    (69) streamout -> BOTHOUT VARNAME .
-
-    SHELL_DELIMITER reduce using rule 69 (streamout -> BOTHOUT VARNAME .)
-    COMMA           reduce using rule 69 (streamout -> BOTHOUT VARNAME .)
-    RPAREN          reduce using rule 69 (streamout -> BOTHOUT VARNAME .)
-
-
-state 101
-
-    (67) streamout -> STREAM_OUT LPAREN . VARNAME COMMA VARNAME RPAREN
-
-    VARNAME         shift and go to state 119
-
-
-state 102
-
-    (66) streamout -> STREAM_OUT VARNAME .
-
-    SHELL_DELIMITER reduce using rule 66 (streamout -> STREAM_OUT VARNAME .)
-    COMMA           reduce using rule 66 (streamout -> STREAM_OUT VARNAME .)
-    RPAREN          reduce using rule 66 (streamout -> STREAM_OUT VARNAME .)
-
-
-state 103
-
-    (70) fileout -> FILEOUT file .
-
-    SHELL_DELIMITER reduce using rule 70 (fileout -> FILEOUT file .)
-    COMMA           reduce using rule 70 (fileout -> FILEOUT file .)
-    RPAREN          reduce using rule 70 (fileout -> FILEOUT file .)
-
-
-state 104
-
-    (76) file -> var .
-
-    SHELL_DELIMITER reduce using rule 76 (file -> var .)
-    COMMA           reduce using rule 76 (file -> var .)
-    RPAREN          reduce using rule 76 (file -> var .)
-
-
-state 105
-
-    (77) file -> STRING .
-
-    SHELL_DELIMITER reduce using rule 77 (file -> STRING .)
-    COMMA           reduce using rule 77 (file -> STRING .)
-    RPAREN          reduce using rule 77 (file -> STRING .)
-
-
-state 106
-
-    (75) file -> WORD .
-
-    SHELL_DELIMITER reduce using rule 75 (file -> WORD .)
-    COMMA           reduce using rule 75 (file -> WORD .)
-    RPAREN          reduce using rule 75 (file -> WORD .)
-
-
-state 107
-
-    (71) fileout -> FILEAPPEND file .
-
-    SHELL_DELIMITER reduce using rule 71 (fileout -> FILEAPPEND file .)
-    COMMA           reduce using rule 71 (fileout -> FILEAPPEND file .)
-    RPAREN          reduce using rule 71 (fileout -> FILEAPPEND file .)
-
-
-state 108
-
-    (55) arglist -> arg arglist .
-
-    STREAM_IN       reduce using rule 55 (arglist -> arg arglist .)
-    PIPE            reduce using rule 55 (arglist -> arg arglist .)
-    ERRPIPE         reduce using rule 55 (arglist -> arg arglist .)
-    BOTHPIPE        reduce using rule 55 (arglist -> arg arglist .)
-    STREAM_OUT      reduce using rule 55 (arglist -> arg arglist .)
-    ERROUT          reduce using rule 55 (arglist -> arg arglist .)
-    BOTHOUT         reduce using rule 55 (arglist -> arg arglist .)
-    FILEOUT         reduce using rule 55 (arglist -> arg arglist .)
-    FILEAPPEND      reduce using rule 55 (arglist -> arg arglist .)
-    SHELL_DELIMITER reduce using rule 55 (arglist -> arg arglist .)
-    COMMA           reduce using rule 55 (arglist -> arg arglist .)
-    RPAREN          reduce using rule 55 (arglist -> arg arglist .)
-
-
-state 109
-
-    (54) arglist -> arg empty .
-
-    STREAM_IN       reduce using rule 54 (arglist -> arg empty .)
-    PIPE            reduce using rule 54 (arglist -> arg empty .)
-    ERRPIPE         reduce using rule 54 (arglist -> arg empty .)
-    BOTHPIPE        reduce using rule 54 (arglist -> arg empty .)
-    STREAM_OUT      reduce using rule 54 (arglist -> arg empty .)
-    ERROUT          reduce using rule 54 (arglist -> arg empty .)
-    BOTHOUT         reduce using rule 54 (arglist -> arg empty .)
-    FILEOUT         reduce using rule 54 (arglist -> arg empty .)
-    FILEAPPEND      reduce using rule 54 (arglist -> arg empty .)
-    SHELL_DELIMITER reduce using rule 54 (arglist -> arg empty .)
-    COMMA           reduce using rule 54 (arglist -> arg empty .)
-    RPAREN          reduce using rule 54 (arglist -> arg empty .)
-
-
-state 110
-
-    (23) conditional -> IF expression END_COLON suite . conditional_extension
-    (24) conditional -> IF expression END_COLON suite . empty
-    (25) conditional_extension -> . ELIF expression END_COLON suite conditional_extension
-    (26) conditional_extension -> . ELSE END_COLON suite
-    (45) empty -> .
-
-    ELIF            shift and go to state 122
-    ELSE            shift and go to state 120
-    IF              reduce using rule 45 (empty -> .)
-    WHILE           reduce using rule 45 (empty -> .)
-    FOR             reduce using rule 45 (empty -> .)
-    RETURN          reduce using rule 45 (empty -> .)
-    ASSERT          reduce using rule 45 (empty -> .)
-    YIELD           reduce using rule 45 (empty -> .)
-    PYTHON          reduce using rule 45 (empty -> .)
-    STRING          reduce using rule 45 (empty -> .)
-    DOCSTRING       reduce using rule 45 (empty -> .)
-    COLON           reduce using rule 45 (empty -> .)
-    SHELL_DELIMITER reduce using rule 45 (empty -> .)
-    $end            reduce using rule 45 (empty -> .)
-    DEDENT          reduce using rule 45 (empty -> .)
-
-    empty                          shift and go to state 123
-    conditional_extension          shift and go to state 121
-
-state 111
-
-    (22) for_loop -> FOR PYTHON IN expression END_COLON . suite
-    (41) suite -> . NL INDENT nonempty_block DEDENT
-    (42) suite -> . statement_simple NL
-    (11) statement_simple -> . statement_result
-    (12) statement_simple -> . statement_no_result
-    (13) statement_result -> . assignment
-    (14) statement_result -> . return
-    (15) statement_result -> . assert
-    (16) statement_result -> . yield
-    (17) statement_no_result -> . shellblock_run
-    (18) statement_no_result -> . python_code
-    (27) assignment -> . python_code ASSIGNMENT_OPERATOR expression
-    (28) return -> . RETURN empty
-    (29) return -> . RETURN expression
-    (30) assert -> . ASSERT expression
-    (31) yield -> . YIELD expression
-    (43) shellblock_run -> . shellblock
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-
-    NL              shift and go to state 88
-    RETURN          shift and go to state 26
-    ASSERT          shift and go to state 17
-    YIELD           shift and go to state 24
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    SHELL_DELIMITER shift and go to state 19
-
-    suite                          shift and go to state 124
-    shellblock_run                 shift and go to state 29
-    yield                          shift and go to state 16
-    statement_result               shift and go to state 27
-    python_code                    shift and go to state 20
-    return                         shift and go to state 22
-    assignment                     shift and go to state 18
-    statement_simple               shift and go to state 89
-    assert                         shift and go to state 12
-    shellblock                     shift and go to state 23
-    statement_no_result            shift and go to state 30
-
-state 112
-
-    (41) suite -> NL INDENT . nonempty_block DEDENT
-    (3) nonempty_block -> . statement_complex empty
-    (4) nonempty_block -> . statement_complex nonempty_block
-    (5) statement_complex -> . loop
-    (6) statement_complex -> . conditional
-    (7) statement_complex -> . statement_multi NL
-    (8) statement_complex -> . statement_multi SEMICOLON NL
-    (19) loop -> . while_loop
-    (20) loop -> . for_loop
-    (23) conditional -> . IF expression END_COLON suite conditional_extension
-    (24) conditional -> . IF expression END_COLON suite empty
-    (9) statement_multi -> . statement_multi SEMICOLON statement_multi
-    (10) statement_multi -> . statement_simple
-    (21) while_loop -> . WHILE expression END_COLON suite
-    (22) for_loop -> . FOR PYTHON IN expression END_COLON suite
-    (11) statement_simple -> . statement_result
-    (12) statement_simple -> . statement_no_result
-    (13) statement_result -> . assignment
-    (14) statement_result -> . return
-    (15) statement_result -> . assert
-    (16) statement_result -> . yield
-    (17) statement_no_result -> . shellblock_run
-    (18) statement_no_result -> . python_code
-    (27) assignment -> . python_code ASSIGNMENT_OPERATOR expression
-    (28) return -> . RETURN empty
-    (29) return -> . RETURN expression
-    (30) assert -> . ASSERT expression
-    (31) yield -> . YIELD expression
-    (43) shellblock_run -> . shellblock
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-
-    IF              shift and go to state 25
-    WHILE           shift and go to state 13
-    FOR             shift and go to state 4
-    RETURN          shift and go to state 26
-    ASSERT          shift and go to state 17
-    YIELD           shift and go to state 24
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    SHELL_DELIMITER shift and go to state 19
-
-    shellblock_run                 shift and go to state 29
-    nonempty_block                 shift and go to state 125
-    statement_complex              shift and go to state 6
-    statement_multi                shift and go to state 7
-    conditional                    shift and go to state 9
-    for_loop                       shift and go to state 11
-    assert                         shift and go to state 12
-    shellblock                     shift and go to state 23
-    statement_result               shift and go to state 27
-    yield                          shift and go to state 16
-    assignment                     shift and go to state 18
-    while_loop                     shift and go to state 21
-    loop                           shift and go to state 28
-    return                         shift and go to state 22
-    python_code                    shift and go to state 20
-    statement_simple               shift and go to state 15
-    statement_no_result            shift and go to state 30
-
-state 113
-
-    (42) suite -> statement_simple NL .
-
-    ELIF            reduce using rule 42 (suite -> statement_simple NL .)
-    ELSE            reduce using rule 42 (suite -> statement_simple NL .)
-    IF              reduce using rule 42 (suite -> statement_simple NL .)
-    WHILE           reduce using rule 42 (suite -> statement_simple NL .)
-    FOR             reduce using rule 42 (suite -> statement_simple NL .)
-    RETURN          reduce using rule 42 (suite -> statement_simple NL .)
-    ASSERT          reduce using rule 42 (suite -> statement_simple NL .)
-    YIELD           reduce using rule 42 (suite -> statement_simple NL .)
-    PYTHON          reduce using rule 42 (suite -> statement_simple NL .)
-    STRING          reduce using rule 42 (suite -> statement_simple NL .)
-    DOCSTRING       reduce using rule 42 (suite -> statement_simple NL .)
-    COLON           reduce using rule 42 (suite -> statement_simple NL .)
-    SHELL_DELIMITER reduce using rule 42 (suite -> statement_simple NL .)
-    $end            reduce using rule 42 (suite -> statement_simple NL .)
-    DEDENT          reduce using rule 42 (suite -> statement_simple NL .)
-
-
-state 114
-
-    (62) pipeout -> PIPE empty proc . empty empty empty
-    (45) empty -> .
-
-    SHELL_DELIMITER reduce using rule 45 (empty -> .)
-    COMMA           reduce using rule 45 (empty -> .)
-    RPAREN          reduce using rule 45 (empty -> .)
-
-    empty                          shift and go to state 126
-
-state 115
-
-    (63) pipeout -> PIPE LPAREN proc . COMMA proc RPAREN
-
-    COMMA           shift and go to state 127
-
-
-state 116
-
-    (64) pipeout -> ERRPIPE empty empty . empty proc empty
-    (45) empty -> .
-
-    WORD            reduce using rule 45 (empty -> .)
-
-    empty                          shift and go to state 128
-
-state 117
-
-    (48) procin -> command STREAM_IN instream procout .
-
-    SHELL_DELIMITER reduce using rule 48 (procin -> command STREAM_IN instream procout .)
-
-
-state 118
-
-    (49) procin -> command STREAM_IN instream empty .
-
-    SHELL_DELIMITER reduce using rule 49 (procin -> command STREAM_IN instream empty .)
-
-
-state 119
-
-    (67) streamout -> STREAM_OUT LPAREN VARNAME . COMMA VARNAME RPAREN
-
-    COMMA           shift and go to state 129
-
-
-state 120
-
-    (26) conditional_extension -> ELSE . END_COLON suite
-
-    END_COLON       shift and go to state 130
-
-
-state 121
-
-    (23) conditional -> IF expression END_COLON suite conditional_extension .
-
-    IF              reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    WHILE           reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    FOR             reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    RETURN          reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    ASSERT          reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    YIELD           reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    PYTHON          reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    STRING          reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    DOCSTRING       reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    COLON           reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    SHELL_DELIMITER reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    DEDENT          reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-    $end            reduce using rule 23 (conditional -> IF expression END_COLON suite conditional_extension .)
-
-
-state 122
-
-    (25) conditional_extension -> ELIF . expression END_COLON suite conditional_extension
-    (32) expression -> . shellblock
-    (33) expression -> . python_code
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-
-    SHELL_DELIMITER shift and go to state 19
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-
-    expression                     shift and go to state 131
-    python_code                    shift and go to state 43
-    shellblock                     shift and go to state 45
-
-state 123
-
-    (24) conditional -> IF expression END_COLON suite empty .
-
-    IF              reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    WHILE           reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    FOR             reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    RETURN          reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    ASSERT          reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    YIELD           reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    PYTHON          reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    STRING          reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    DOCSTRING       reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    COLON           reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    SHELL_DELIMITER reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    DEDENT          reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-    $end            reduce using rule 24 (conditional -> IF expression END_COLON suite empty .)
-
-
-state 124
-
-    (22) for_loop -> FOR PYTHON IN expression END_COLON suite .
-
-    IF              reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    WHILE           reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    FOR             reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    RETURN          reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    ASSERT          reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    YIELD           reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    PYTHON          reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    STRING          reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    DOCSTRING       reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    COLON           reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    SHELL_DELIMITER reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    $end            reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-    DEDENT          reduce using rule 22 (for_loop -> FOR PYTHON IN expression END_COLON suite .)
-
-
-state 125
-
-    (41) suite -> NL INDENT nonempty_block . DEDENT
-
-    DEDENT          shift and go to state 132
-
-
-state 126
-
-    (62) pipeout -> PIPE empty proc empty . empty empty
-    (45) empty -> .
-
-    SHELL_DELIMITER reduce using rule 45 (empty -> .)
-    COMMA           reduce using rule 45 (empty -> .)
-    RPAREN          reduce using rule 45 (empty -> .)
-
-    empty                          shift and go to state 133
-
-state 127
-
-    (63) pipeout -> PIPE LPAREN proc COMMA . proc RPAREN
-    (50) proc -> . command empty
-    (51) proc -> . command procout
-    (52) command -> . WORD arglist
-    (53) command -> . WORD empty
-
-    WORD            shift and go to state 50
-
-    command                        shift and go to state 93
-    proc                           shift and go to state 134
-
-state 128
-
-    (64) pipeout -> ERRPIPE empty empty empty . proc empty
-    (50) proc -> . command empty
-    (51) proc -> . command procout
-    (52) command -> . WORD arglist
-    (53) command -> . WORD empty
-
-    WORD            shift and go to state 50
-
-    command                        shift and go to state 93
-    proc                           shift and go to state 135
-
-state 129
-
-    (67) streamout -> STREAM_OUT LPAREN VARNAME COMMA . VARNAME RPAREN
-
-    VARNAME         shift and go to state 136
-
-
-state 130
-
-    (26) conditional_extension -> ELSE END_COLON . suite
-    (41) suite -> . NL INDENT nonempty_block DEDENT
-    (42) suite -> . statement_simple NL
-    (11) statement_simple -> . statement_result
-    (12) statement_simple -> . statement_no_result
-    (13) statement_result -> . assignment
-    (14) statement_result -> . return
-    (15) statement_result -> . assert
-    (16) statement_result -> . yield
-    (17) statement_no_result -> . shellblock_run
-    (18) statement_no_result -> . python_code
-    (27) assignment -> . python_code ASSIGNMENT_OPERATOR expression
-    (28) return -> . RETURN empty
-    (29) return -> . RETURN expression
-    (30) assert -> . ASSERT expression
-    (31) yield -> . YIELD expression
-    (43) shellblock_run -> . shellblock
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-
-    NL              shift and go to state 88
-    RETURN          shift and go to state 26
-    ASSERT          shift and go to state 17
-    YIELD           shift and go to state 24
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    SHELL_DELIMITER shift and go to state 19
-
-    suite                          shift and go to state 137
-    shellblock_run                 shift and go to state 29
-    yield                          shift and go to state 16
-    statement_result               shift and go to state 27
-    python_code                    shift and go to state 20
-    return                         shift and go to state 22
-    assignment                     shift and go to state 18
-    statement_simple               shift and go to state 89
-    assert                         shift and go to state 12
-    shellblock                     shift and go to state 23
-    statement_no_result            shift and go to state 30
-
-state 131
-
-    (25) conditional_extension -> ELIF expression . END_COLON suite conditional_extension
-
-    END_COLON       shift and go to state 138
-
-
-state 132
-
-    (41) suite -> NL INDENT nonempty_block DEDENT .
-
-    ELIF            reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    ELSE            reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    IF              reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    WHILE           reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    FOR             reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    RETURN          reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    ASSERT          reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    YIELD           reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    PYTHON          reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    STRING          reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    DOCSTRING       reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    COLON           reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    SHELL_DELIMITER reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    $end            reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-    DEDENT          reduce using rule 41 (suite -> NL INDENT nonempty_block DEDENT .)
-
-
-state 133
-
-    (62) pipeout -> PIPE empty proc empty empty . empty
-    (45) empty -> .
-
-    SHELL_DELIMITER reduce using rule 45 (empty -> .)
-    COMMA           reduce using rule 45 (empty -> .)
-    RPAREN          reduce using rule 45 (empty -> .)
-
-    empty                          shift and go to state 139
-
-state 134
-
-    (63) pipeout -> PIPE LPAREN proc COMMA proc . RPAREN
-
-    RPAREN          shift and go to state 140
-
-
-state 135
-
-    (64) pipeout -> ERRPIPE empty empty empty proc . empty
-    (45) empty -> .
-
-    SHELL_DELIMITER reduce using rule 45 (empty -> .)
-    COMMA           reduce using rule 45 (empty -> .)
-    RPAREN          reduce using rule 45 (empty -> .)
-
-    empty                          shift and go to state 141
-
-state 136
-
-    (67) streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME . RPAREN
-
-    RPAREN          shift and go to state 142
-
-
-state 137
-
-    (26) conditional_extension -> ELSE END_COLON suite .
-
-    IF              reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    WHILE           reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    FOR             reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    RETURN          reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    ASSERT          reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    YIELD           reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    PYTHON          reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    STRING          reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    DOCSTRING       reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    COLON           reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    SHELL_DELIMITER reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    $end            reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-    DEDENT          reduce using rule 26 (conditional_extension -> ELSE END_COLON suite .)
-
-
-state 138
-
-    (25) conditional_extension -> ELIF expression END_COLON . suite conditional_extension
-    (41) suite -> . NL INDENT nonempty_block DEDENT
-    (42) suite -> . statement_simple NL
-    (11) statement_simple -> . statement_result
-    (12) statement_simple -> . statement_no_result
-    (13) statement_result -> . assignment
-    (14) statement_result -> . return
-    (15) statement_result -> . assert
-    (16) statement_result -> . yield
-    (17) statement_no_result -> . shellblock_run
-    (18) statement_no_result -> . python_code
-    (27) assignment -> . python_code ASSIGNMENT_OPERATOR expression
-    (28) return -> . RETURN empty
-    (29) return -> . RETURN expression
-    (30) assert -> . ASSERT expression
-    (31) yield -> . YIELD expression
-    (43) shellblock_run -> . shellblock
-    (34) python_code -> . PYTHON python_code
-    (35) python_code -> . STRING python_code
-    (36) python_code -> . DOCSTRING python_code
-    (37) python_code -> . COLON python_code
-    (38) python_code -> . PYTHON empty
-    (39) python_code -> . STRING empty
-    (40) python_code -> . DOCSTRING empty
-    (44) shellblock -> . SHELL_DELIMITER statement SHELL_DELIMITER
-
-    NL              shift and go to state 88
-    RETURN          shift and go to state 26
-    ASSERT          shift and go to state 17
-    YIELD           shift and go to state 24
-    PYTHON          shift and go to state 1
-    STRING          shift and go to state 8
-    DOCSTRING       shift and go to state 2
-    COLON           shift and go to state 10
-    SHELL_DELIMITER shift and go to state 19
-
-    suite                          shift and go to state 143
-    shellblock_run                 shift and go to state 29
-    yield                          shift and go to state 16
-    python_code                    shift and go to state 20
-    return                         shift and go to state 22
-    assignment                     shift and go to state 18
-    statement_no_result            shift and go to state 30
-    statement_simple               shift and go to state 89
-    assert                         shift and go to state 12
-    shellblock                     shift and go to state 23
-    statement_result               shift and go to state 27
-
-state 139
-
-    (62) pipeout -> PIPE empty proc empty empty empty .
-
-    SHELL_DELIMITER reduce using rule 62 (pipeout -> PIPE empty proc empty empty empty .)
-    COMMA           reduce using rule 62 (pipeout -> PIPE empty proc empty empty empty .)
-    RPAREN          reduce using rule 62 (pipeout -> PIPE empty proc empty empty empty .)
-
-
-state 140
-
-    (63) pipeout -> PIPE LPAREN proc COMMA proc RPAREN .
-
-    SHELL_DELIMITER reduce using rule 63 (pipeout -> PIPE LPAREN proc COMMA proc RPAREN .)
-    COMMA           reduce using rule 63 (pipeout -> PIPE LPAREN proc COMMA proc RPAREN .)
-    RPAREN          reduce using rule 63 (pipeout -> PIPE LPAREN proc COMMA proc RPAREN .)
-
-
-state 141
-
-    (64) pipeout -> ERRPIPE empty empty empty proc empty .
-
-    SHELL_DELIMITER reduce using rule 64 (pipeout -> ERRPIPE empty empty empty proc empty .)
-    COMMA           reduce using rule 64 (pipeout -> ERRPIPE empty empty empty proc empty .)
-    RPAREN          reduce using rule 64 (pipeout -> ERRPIPE empty empty empty proc empty .)
-
-
-state 142
-
-    (67) streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN .
-
-    SHELL_DELIMITER reduce using rule 67 (streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN .)
-    COMMA           reduce using rule 67 (streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN .)
-    RPAREN          reduce using rule 67 (streamout -> STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN .)
-
-
-state 143
-
-    (25) conditional_extension -> ELIF expression END_COLON suite . conditional_extension
-    (25) conditional_extension -> . ELIF expression END_COLON suite conditional_extension
-    (26) conditional_extension -> . ELSE END_COLON suite
-
-    ELIF            shift and go to state 122
-    ELSE            shift and go to state 120
-
-    conditional_extension          shift and go to state 144
-
-state 144
-
-    (25) conditional_extension -> ELIF expression END_COLON suite conditional_extension .
-
-    IF              reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    WHILE           reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    FOR             reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    RETURN          reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    ASSERT          reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    YIELD           reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    PYTHON          reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    STRING          reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    DOCSTRING       reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    COLON           reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    SHELL_DELIMITER reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    $end            reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-    DEDENT          reduce using rule 25 (conditional_extension -> ELIF expression END_COLON suite conditional_extension .)
-
-WARNING: 
-WARNING: Conflicts:
-WARNING: 
-WARNING: shift/reduce conflict for SEMICOLON in state 58 resolved as shift
