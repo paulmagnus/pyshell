@@ -1,0 +1,2 @@
+$ls > @s$
+$tee stream_out < @s$

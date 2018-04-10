@@ -150,13 +150,13 @@ def c_PIPE(child, f, tabs):
     # 0: stdout pipe target 1: stderr pipe target
     f.write(".pipe(")
     if child[0].label != "EMPTY":
-        f.write("out_proc=")
+        f.write("stdout=")
         toPython(child[0], f, tabs)
         if child[1].label != "EMPTY":
             f.write(", ")
 
     if child[1].label != "EMPTY":
-        f.write("err_proc=")
+        f.write("stderr=")
         toPython(child[1], f, tabs)
     
     f.write(")")
