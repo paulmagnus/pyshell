@@ -1,10 +1,31 @@
-import os
+import os, re
 
-for f in $ls$:
-    if (f != 'run_tests.pysh' and f[-5:] == '.pysh'):
-        print('##################################################')
-        print(f)
-        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-        $../bin/pyshell @f$
-        print('##################################################', end='\n\n')
-print('All tests complete!')
+def run_tests():
+    num_tests = 0
+    num_success = 0
+    failures = []
+    for f in $ls$:
+        if (f != 'run_tests.pysh' and f[-5:] == '.pysh'):
+            num_tests += 1
+            print('##################################################')
+            print(f)
+            print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+            $cat @f$.run()
+            print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+            $../bin/pyshell @f$.run()
+            print('##################################################')
+            print()
+            success = input('Correct? ')
+            if success[0] == 'y' or success[0] == 'Y':
+                num_success += 1
+            else:
+                failures.append(f)
+    print('All tests complete!')
+    print(str(num_success) + '/' + str(num_tests), 'tests succeeded')
+
+    if failures:
+        print('Failures:')
+        for failure in failures:
+            print('  ', failure)
+
+run_tests()

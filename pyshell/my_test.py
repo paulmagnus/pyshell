@@ -64,21 +64,79 @@
 # for word in stream:
 #     print(word)
 
-class Tree:
-    def __init__(self, num, left, right):
-        print("Creating", num)
-        self._num = num
-        self._left = left
-        self._right = right
+# class Tree:
+#     def __init__(self, num, left, right):
+#         print("Creating", num)
+#         self._num = num
+#         self._left = left
+#         self._right = right
 
-    def __del__(self):
-        print("Deleting", self._num)
+#     def __del__(self):
+#         print("Deleting", self._num)
 
 
-def foo():
-    t = Tree(1, Tree(2, Tree(3, None, None), None), Tree(4, None, Tree(5, None, None)))
-    for i in range(100):
-        print(i)
+# def foo():
+#     t = Tree(1, Tree(2, Tree(3, None, None), None), Tree(4, None, Tree(5, None, None)))
+#     for i in range(100):
+#         print(i)
 
-if __name__ == "__main__":
-    foo()
+# if __name__ == "__main__":
+#     foo()
+
+# from pyshell import *
+# def f():
+#     # $ls > @s$
+#     # $grep --color=auto .py < @s > @s$
+#     # $grep --color=auto pyshell < @s$
+
+#     # p = Process('ls')
+#     # # No input
+#     # s = Stream()
+#     # p.pipe(s)
+    
+#     # p = Process('grep', '--color=auto', '.py')
+#     # s.set_stdout(p)
+#     # s = Stream()
+#     # p.pipe(s)
+
+#     # p = Process('grep', '--color=auto', '.py')
+#     # s.set_stdout(p)
+#     # # No new stream output
+#     # # No output control
+
+#     s = Stream()
+#     Process('ls').pipe(s)
+#     for test in ['.py', 'pyshell', 'lexer']:
+#         p = Process('grep', test)
+#         s.set_stdout(p)
+#         s = Stream()
+#         p.pipe(s)
+
+#     s.set_stdout(Process('cat'))
+
+#     # $ls | grep hi$
+# f()
+
+from pyshell import *
+import inspect
+
+# def f():
+#     # Process('ls').pipe(Process('grep', '--color=auto', '\.py'))
+#     p2 = Process('grep', '--color=auto', '\.py')
+#     try:
+#         p2.stdin = s
+#     except (UnboundLocalError, NameError):
+#         s = Stream()
+#         p2.stdin = s
+
+#     p = Process('ls')
+#     try:
+#         p.stdout = s
+#     except (UnboundLocalError, NameError):
+#         s = Stream()
+#         p.stdout = s
+
+
+# f()
+p = Process('ls', '-al')
+p

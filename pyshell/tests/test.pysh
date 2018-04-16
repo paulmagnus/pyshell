@@ -1,1 +1,4 @@
-$ls -al$
+def f():
+    $ls -al$
+
+f()

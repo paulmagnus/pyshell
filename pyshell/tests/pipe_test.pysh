@@ -1,1 +1,4 @@
-$ls | grep --color=auto test$
+def f():
+    $ls | grep --color=auto test$
+
+f()

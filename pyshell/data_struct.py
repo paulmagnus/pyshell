@@ -9,6 +9,7 @@ class ast:
         self.column = 0
         self.endColumn = 0
         self.line = ""
+        self.varname = None
 
         # Set line number and position for non empty nodes
         if isinstance(p, yacc.YaccProduction):

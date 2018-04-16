@@ -1,2 +1,4 @@
-$ls > @s$
-$tee stream_out < @s$
+def f():
+    $ls > @s$
+    $tee stream_out < @s$
+f()

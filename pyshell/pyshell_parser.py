@@ -27,13 +27,19 @@ def p_nonempty_block(p):
 
 def p_statement_complex(p):
     '''statement_complex : suite
-                         | statement_multi NL'''
+                         | line NL'''
     p[0] = p[1]
+
+def p_line(p):
+    '''line : statement_multi
+            | statement_shell'''
+    p[0] = ast(p, "LINE", 1)
 
 def p_statement_single(p):
     '''statement_multi : shellblock
                        | python_code'''
     p[0] = p[1]
+    # p[0] = ast(p, "STATEMENT_SINGLE", 1)
 
 def p_statement_multi(p):
     '''statement_multi : python_code statement_shell'''
@@ -59,17 +65,13 @@ def p_suite_block(p):
     p[0] = ast(p, "SUITE_BLOCK", 2)
 
 def p_shellblock(p):
-    '''shellblock : SHELL_DELIMITER statement SHELL_DELIMITER'''
+    '''shellblock : SHELL_DELIMITER proc SHELL_DELIMITER
+                  | SHELL_DELIMITER procin SHELL_DELIMITER'''
     p[0] = ast(p, "SHELLBLOCK", 2)
 
 def p_empty(p):
     '''empty : %prec EPSILON'''
     p[0] = ast(p, "EMPTY")
-
-def p_statement(p):
-    '''statement : proc
-                 | procin'''
-    p[0] = ast(p, "STATEMENT", 1)
 
 def p_procin(p):
     '''procin : command STREAM_IN instream procout
@@ -101,7 +103,8 @@ def p_procout(p):
     '''procout : pipeout
                | streamout
                | fileout'''
-    p[0] = ast(p, "PROCOUT", 1)
+    p[0] = p[1]
+    # p[0] = ast(p, "PROCOUT", 1)
 
 def p_pipe(p):
     '''pipeout : PIPE empty proc empty empty empty
@@ -114,9 +117,9 @@ def p_bothpipe(p):
     p[0] = ast(p, "BOTHPIPE", 2)
 
 def p_streamout(p):
-    '''streamout : STREAM_OUT empty VARNAME empty empty empty
-                 | STREAM_OUT LPAREN VARNAME COMMA VARNAME RPAREN
-                 | ERROUT empty empty empty VARNAME empty'''
+    '''streamout : STREAM_OUT empty var empty empty empty
+                 | STREAM_OUT LPAREN var COMMA var RPAREN
+                 | ERROUT empty empty empty var empty'''
     p[0] = ast(p, "STREAMOUT", 3, 5)
 
 def p_streamout_both(p):
@@ -135,7 +138,8 @@ def p_instream(p):
     '''instream : WORD
                 | var
                 | STRING'''
-    p[0] = ast(p, "INSTREAM", 1)
+    p[0] = p[1]
+    # p[0] = ast(p, "INSTREAM", 1)
 
 def p_file(p):
     '''file : WORD

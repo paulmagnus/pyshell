@@ -1,11 +1,28 @@
-import sys, re, os, pickle
+import sys, re, os, pickle, logging
 from data_struct import ast
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(message)s')
 
 tmp_path = './'
 line_num = 0
 lines = {
     # python line : pyshell line
 }
+
+log_tabs = ''
+
+def log(function):
+    """ This decorator logs when the process starts and ends. """
+    def wrapper(*args, **kwargs):
+        global log_tabs
+        logging.debug(log_tabs + "Starting " + function.__name__)
+        log_tabs += '  '
+        result = function(*args, **kwargs)
+        log_tabs = log_tabs[:-2] # Remove the two spaces
+        logging.debug(log_tabs + "Ending " + function.__name__)
+        return result
+    return wrapper
 
 def translate(parsetree, filename):
 
@@ -29,9 +46,12 @@ def translate(parsetree, filename):
         elif re.match(r"^[^/].+$", path):
             path = os.getcwd() + "/" + path
 
+    # Generate variable names
+    generate_command_variables(parsetree)
+
     # TRANSLATE
     try:
-        with open(tmp_path + filename, 'w+') as python_file:
+        with open(tmp_path + filename, 'w+', encoding='utf-8') as python_file:
             toPython(parsetree, python_file)
         export_map(filename)
     except IOError:
@@ -40,7 +60,24 @@ def translate(parsetree, filename):
         remove_files()
         sys.exit(1)
 
-    # return overloads
+phi = '\u03C6'
+
+def generate_variable():
+    var_name = phi + str(generate_variable.varnumber)
+    generate_variable.varnumber += 1
+    return var_name
+
+generate_variable.varnumber = 0
+
+def generate_command_variables(parsetree):
+    for command in parsetree.flatten('COMMAND'):
+        command.varname = generate_variable()
+
+################################################################################
+#
+# Python conversion
+#
+################################################################################
 
 def toPython(child, f, tabs=""):
     functions[child.label](child, f, tabs)
@@ -55,16 +92,26 @@ def export_map(filename):
     with open(tmp_path + filename, 'wb') as f:
         pickle.dump(lines, f)
 
+################################################################################
+#
+# Conversion functions
+#
+################################################################################
+
 def c_EMPTY(child, f, tabs):
     pass
+
+################################################################################
+#
+# Python constructs
+#
+################################################################################
 
 def c_PROGRAMFILE(child, f, tabs):
     # 0: shellblock
 
     f.write(tabs + 'import sys\n')
     advance(child)
-    # f.write(tabs + 'sys.path.append("' + path + '")\n')
-    # advance(child)
     
     # add pyshell to the search path
     script_path = re.match(r'(?P<path>.*/)[^/]+',
@@ -72,7 +119,7 @@ def c_PROGRAMFILE(child, f, tabs):
     f.write(tabs + 'sys.path.append("' + script_path + '")\n')
     advance(child)
 
-    f.write(tabs + 'from process import Process\n')
+    f.write(tabs + 'import process as ' + phi + '\n')
     advance(child)
 
     toPython(child[0], f, tabs)
@@ -87,28 +134,67 @@ def c_BLOCK(child, f, tabs):
         f.write('\n' + tabs)
     toPython(child[1], f, tabs)
 
-# def c_STATEMENT_NO_RESULT(child, f, tabs):
-#     # 0: statement
-#     f.write(tabs)
-#     toPython(child[0], f, tabs)
-#     f.write('\n')
+def c_SUITE_BLOCK(child, f, tabs):
+    # 0: block
+    f.write('    ')
+    toPython(child[0], f, tabs+'    ')
 
-# def c_SHELLBLOCK_RUN(child, f, tabs):
-#     # 0: shellblock
+def c_PYTHON(child, f, tabs):
+    # 0: python code 1: further python code
+    f.write(child[0])
+    f.write(' ')
+    toPython(child[1], f, tabs)
 
-#     toPython(child[0], f, tabs)
-#     f.write('.run()')
-    
+def c_STATEMENT_MULTI(child, f, tabs):
+    # 0: statement1 1: other statemnets
+    toPython(child[0], f, tabs)
+    toPython(child[1], f, tabs)
+
+def c_LINE(child, f, tabs):
+    # 0: statement
+    if child[0].label != 'SHELLBLOCK':
+        for c in child.flatten('SHELLBLOCK'):
+            toPython(c, f, tabs)
+
+    toPython(child[0], f, tabs)
+
+################################################################################
+#
+# Shell constructs
+#
+################################################################################
+
 def c_SHELLBLOCK(child, f, tabs):
     # 0: statement
 
     toPython(child[0], f, tabs)
 
-def c_STATEMENT(child, f, tabs):
-    toPython(child[0], f, tabs)
+    # Replace the shell block with the variable as Python code
+    child.label = 'PYTHON'
+    child.children = [child.varname, ast(None, 'EMPTY')]
 
 def c_PROCIN(child, f, tabs):
-    pass
+    # 0: command 1: instream 2: procout
+    toPython(child[0], f, tabs)
+
+    # TODO: Move this code into c_STREAM along with parsing of STREAM
+    # Create the stream if it does not already exist
+    f.write('try:\n')
+    f.write(tabs + '    ' + phi + phi + ' = ')
+    toPython(child[1], f, tabs)
+    f.write('\n' + tabs + 'except (UnboundLocalError, NameError):\n')
+    f.write(tabs + '    ')
+    toPython(child[1], f, tabs)
+    f.write(' = ' + phi + '.Stream()\n')
+
+    f.write(tabs + child[0].varname + '.stdin = ')
+    toPython(child[1], f, tabs)
+    f.write('\n' + tabs)
+
+    if child[2].label != 'EMPTY':
+        toPython(child[2], f, tabs)
+
+    child.parent.varname = child.varname
 
 def c_PROC(child, f, tabs):
     # 0: command 1: procout
@@ -118,14 +204,22 @@ def c_PROC(child, f, tabs):
     if child[1].label != "EMPTY":
         toPython(child[1], f, tabs)
 
+    child.parent.varname = child.varname
+
 def c_COMMAND(child, f, tabs):
     # 0: command name 1: arglist
+
+    child.parent.varname = child.varname
     
-    f.write("Process('" + child[0] + "'")
+    f.write(child.varname + ' = ' + phi + ".Process('" + child[0] + "'")
     if child[1].label != "EMPTY":
         f.write(", ")
         toPython(child[1], f, tabs)
-    f.write(")")
+    f.write(")\n" + tabs)
+
+    # # Repalce with python code
+    # child.label = 'PYTHON'
+    # child.children = [child.varname, ast(None, 'EMPTY')]
 
 def c_ARGLIST(child, f, tabs):
     # 0: arg 1: arglist
@@ -142,83 +236,70 @@ def c_ARG(child, f, tabs):
     else:
         toPython(child[0], f, tabs)
 
-def c_PROCOUT(child, f, tabs):
-    # 0: output
-    toPython(child[0], f, tabs)
-
 def c_PIPE(child, f, tabs):
     # 0: stdout pipe target 1: stderr pipe target
-    f.write(".pipe(")
-    if child[0].label != "EMPTY":
-        f.write("stdout=")
+    if child[0].label != 'EMPTY':
         toPython(child[0], f, tabs)
-        if child[1].label != "EMPTY":
-            f.write(", ")
+        f.write(child.parent.varname + '.stdout = ' + child[0].varname)
 
-    if child[1].label != "EMPTY":
-        f.write("stderr=")
+    if child[1].label != 'EMPTY':
         toPython(child[1], f, tabs)
-    
-    f.write(")")
+        f.write(child.parent.varname + '.stderr = ' + child[1].varname)
 
 def c_VAR(child, f, tabs):
     # 0: VARNAME
     f.write(child[0])
 
-# def c_CONDITIONAL(child, f, tabs):
-#     # 0: expression 1: suite 2: conditional_extension
+def c_STREAMOUT(child, f, tabs):
+    # 0: stdout 1: stderr
+    
+    if child[0].label != 'EMPTY':
 
-#     f.write(tabs + 'if (')
-#     toPython(child[0], f, tabs)
-#     f.write('):\n')
-#     advance(child)
-#     toPython(child[1], f, tabs+'\t')
-#     toPython(child[2], f, tabs)
+        # Create the stream if it does not already exist
+        f.write('try:\n')
+        f.write(tabs + '    ' + phi + phi + ' = ')
+        toPython(child[0], f, tabs)
+        f.write('\n' + tabs + 'except (UnboundLocalError, NameError):\n')
+        f.write(tabs + '    ')
+        toPython(child[0], f, tabs)
+        f.write(' = ' + phi + '.Stream()\n')
 
-def c_SUITE_BLOCK(child, f, tabs):
-    # 0: block
-    f.write('    ')
-    toPython(child[0], f, tabs+'    ')
+        # Link the stream as stdout
+        f.write(tabs + child.parent.varname + '.stdout = ')
+        toPython(child[0], f, tabs)
+        f.write('\n' + tabs)
 
-def c_PYTHON(child, f, tabs):
-    # 0: python code 1: further python code
-    f.write(child[0])
-    f.write(' ')
-    toPython(child[1], f, tabs)
+    if child[1].label != 'EMPTY':
 
-# def c_FOR(child, f, tabs):
-#     # 0: python 1: expression 2: suite
+        # Create the stream if it does not already exist
+        f.write('try:\n')
+        f.write(tabs + '    ' + phi + phi + ' = ')
+        toPython(child[1], f, tabs)
+        f.write('\n' + tabs + 'except (UnboundLocalError, NameError):\n')
+        f.write(tabs + '    ')
+        toPython(child[1], f, tabs)
+        f.write(' = ' + phi + 'Stream()\n')
 
-#     f.write(tabs + 'for ' + child[0] + ' in ')
-#     toPython(child[1], f, tabs)
-#     f.write(':\n')
-#     advance(child)
-#     toPython(child[2], f, tabs+'\t')
-
-def c_STATEMENT_MULTI(child, f, tabs):
-    # 0: statement1 1: other statemnets
-    toPython(child[0], f, tabs)
-    toPython(child[1], f, tabs)
+        # Link the stream as stdout
+        f.write(tabs + child.parent.varname + '.stderr = ')
+        toPython(child[1], f, tabs)
+        f.write('\n' + tabs)
 
 functions = {
     "EMPTY"              : c_EMPTY,
     "PROGRAMFILE"        : c_PROGRAMFILE,
     "SHELLBLOCK"         : c_SHELLBLOCK,
-    "STATEMENT"          : c_STATEMENT,
     "PROCIN"             : c_PROCIN,
     "PROC"               : c_PROC,
     "COMMAND"            : c_COMMAND,
     "ARGLIST"            : c_ARGLIST,
     "ARG"                : c_ARG,
-    "PROCOUT"            : c_PROCOUT,
     "PIPE"               : c_PIPE,
     "BLOCK"              : c_BLOCK,
-    # "STATEMENT_NO_RESULT": c_STATEMENT_NO_RESULT,
     "VAR"                : c_VAR,
-    # "CONDITIONAL"        : c_CONDITIONAL,
     "SUITE_BLOCK"        : c_SUITE_BLOCK,
     "PYTHON"             : c_PYTHON,
-    # "FORLOOP"            : c_FOR,
-    # "SHELLBLOCK_RUN"     : c_SHELLBLOCK_RUN,
     "STATEMENT_MULTI"    : c_STATEMENT_MULTI,
+    "LINE"               : c_LINE,
+    "STREAMOUT"          : c_STREAMOUT,
 }

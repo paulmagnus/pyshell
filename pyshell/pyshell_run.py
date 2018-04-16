@@ -1,4 +1,5 @@
 import sys, re, os
+from pyshell import Process, Stream
 
 tmp_path = "./"
 
@@ -16,6 +17,7 @@ def run(filename):
         print("Error: Python executable does not exist", file=sys.stderr)
         remove_files()
 
-    os.system('python3 ' + name)
-
-
+    # if Process('pylint', name):
+    Process('python3', name)
+    # else:
+    #     print('pylint errors')

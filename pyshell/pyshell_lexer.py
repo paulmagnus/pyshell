@@ -89,6 +89,11 @@ def t_shell_VARNAME(t):
     t.value = t.value[1:]
     return t
 
+def t_CONTLINE(t):
+    r'\\[\s\t]*\n[\s\t]*'
+    t.lexer.lineno += t.value.count('\n')
+    return t
+
 # skip blank lines at the beginning
 def t_pass_start(t):
     r'^([ \t]|\n|\#.*)+'

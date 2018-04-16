@@ -118,15 +118,15 @@ def redirect(function, *args,
 
     return result
 
-def get_current_function_name():
-    return inspect.stack()[1][3]
+# def get_current_function_name():
+#     return inspect.stack()[1][3]
 
-def is_function_attribute_defined(attr):
-    fn = inspect.stack()[1][0]
+# def is_function_attribute_defined(attr):
+#     fn = inspect.stack()[1][0]
 
-    print(inspect.getframeinfo(fn))
+#     print(inspect.getframeinfo(fn))
 
-    return hasattr(fn, attr)
+#     return hasattr(fn, attr)
 
 class Process:
 
@@ -449,7 +449,7 @@ class Stream:
 
         self._running = True
         
-        if self.stdin is not None:
+        if self.stdin is not None and isinstance(self.stdin, (Process, Stream)):
             self._stdin.run()
 
         if self.stdout is not None:
