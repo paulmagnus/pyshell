@@ -1,3 +1,0 @@
- from pyshell.procedure import Procedure
-
- Procedure("ls").write()

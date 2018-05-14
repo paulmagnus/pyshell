@@ -148,7 +148,7 @@ def c_PROGRAMFILE(child, f, tabs):
     f.write(tabs + 'sys.path.append("' + script_path + '")\n')
     advance(child)
 
-    f.write(tabs + 'import process as ' + phi + '\n')
+    f.write(tabs + 'import pyshell as ' + phi + '\n')
     advance(child)
 
     toPython(child[0], f, tabs)

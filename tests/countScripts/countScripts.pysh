@@ -1,0 +1,8 @@
+#!/home/pmagnus/pyshell/pyshell/bin/pyshell
+import sys
+
+def f():
+    for name in $find / -type f | (cat, grep -v 'Permission denied' > @sys.stderr)$:
+        $file -b @name$
+
+f()

@@ -16,7 +16,7 @@ def run(filename):
 
     script_dir = os.path.dirname(os.path.realpath(__file__))
 
-    os.system(script_dir + '/bin/.run_python.sh ' + name + ' ' +
+    os.system(script_dir + '/bin/run_python ' + name + ' ' +
               extract_base_directory(filename))
 
     remove_files(filename)

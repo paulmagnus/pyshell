@@ -16,13 +16,12 @@
 print_help ()
 {
     printf "Usage: run_python.sh FILE DIRECTORY\n"
-    printf "This script runs the python program FILE using python2.7 with the"
+    printf "This script runs the python program FILE using python3 with the"
     printf " current\n"
     printf "directory being DIRECTORY.\n"
     printf "\n"
-    printf "Written by Paul Magnus"
-    printf " '20\n"
-    printf "Summer 2017\n"
+    printf "Written by Paul Magnus\n"
+    printf "Spring 2018\n"
 }
 
 # parse arguments
