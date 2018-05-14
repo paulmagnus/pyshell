@@ -1,12 +1,36 @@
+################################################################################
+#
+# pyshell_parser.py
+#
+# This is the parser file for the PyShell language. This contains the grammar
+# rules using the tokens defined in pyshell_lexer.py. See
+# http://www.dabeaz.com/ply/ply.html for more detailed information on the
+# syntax for the context free grammar and its use within the ply package.
+# Using the ply structure, we generate an abstract syntax tree defined within
+# data_struct.py.
+#
+################################################################################
+
+
+# PYTHON MODULES
 import re, sys
 import ply.yacc as yacc
+
+# LOCAL FILES
 import pyshell_lexer
 from data_struct import ast
 
+# Get the tokens from the lexer
 tokens = pyshell_lexer.tokens
 
-# Note: The rules for the context-free grammar are defined in the docstring
-# of each function. Changing these docstrings will change how this operates.
+################################################################################
+#
+#     WARNING!
+#
+# The rules for the context-free grammar are defined in the docstring of each
+# function. Changing these docstrings will change how this operates.
+#
+################################################################################
 
 precedence = (
     ('nonassoc', 'EPSILON'),
@@ -15,10 +39,32 @@ precedence = (
 # Start rule
 start = "programfile"
 
+
+################################################################################
+# PROGRAMFILE
+# The program file rule incorporates the entire file.
+################################################################################
+
 def p_programfile(p):
     '''programfile : nonempty_block
                    | empty'''
     p[0] = ast(p, "PROGRAMFILE", 1)
+
+    
+################################################################################
+# EMPTY
+# The empty rule allows for a rule to have an optional component.
+################################################################################
+
+def p_empty(p):
+    '''empty : %prec EPSILON'''
+    p[0] = ast(p, "EMPTY")
+
+
+################################################################################
+# PYTHON STRUCTURE
+# These rules define the general syntax for the structure of Python statements.
+################################################################################
 
 def p_nonempty_block(p):
     '''nonempty_block : statement_complex empty
@@ -64,25 +110,28 @@ def p_suite_block(p):
     '''suite : INDENT nonempty_block DEDENT'''
     p[0] = ast(p, "SUITE_BLOCK", 2)
 
+    
+################################################################################
+# SHELLBLOCK
+# This is the container for all shell script statements.
+################################################################################
+
 def p_shellblock(p):
     '''shellblock : SHELL_DELIMITER proc SHELL_DELIMITER
                   | SHELL_DELIMITER procin SHELL_DELIMITER'''
     p[0] = ast(p, "SHELLBLOCK", 2)
 
-def p_empty(p):
-    '''empty : %prec EPSILON'''
-    p[0] = ast(p, "EMPTY")
 
-def p_procin(p):
-    '''procin : command STREAM_IN instream procout
-              | command STREAM_IN instream empty'''
-    p[0] = ast(p, "PROCIN", 1, 3, 4)
+################################################################################
+# PROCESS
+# These rules describe a basic command process.
+################################################################################
 
 def p_proc(p):
     '''proc : command empty
             | command procout'''
     p[0] = ast(p, "PROC", 1, 2)
-
+    
 def p_command(p):
     '''command : WORD arglist
                | WORD empty'''
@@ -96,7 +145,7 @@ def p_arglist(p):
 def p_arg(p):
     '''arg : WORD
            | var
-           | STRING'''
+           | string'''
     p[0] = ast(p, "ARG", 1)
 
 def p_procout(p):
@@ -104,17 +153,17 @@ def p_procout(p):
                | streamout
                | fileout'''
     p[0] = p[1]
-    # p[0] = ast(p, "PROCOUT", 1)
 
-def p_pipe(p):
-    '''pipeout : PIPE empty proc empty empty empty
-               | PIPE LPAREN proc COMMA proc RPAREN
-               | ERRPIPE empty empty empty proc empty'''
-    p[0] = ast(p, "PIPE", 3, 5)
 
-def p_bothpipe(p):
-    '''pipeout : BOTHPIPE proc'''
-    p[0] = ast(p, "BOTHPIPE", 2)
+################################################################################
+# FILE INTERACTION
+# These rules deal with the PyShell syntax for interacting with files.
+################################################################################
+# TODO: Change all instances of stream into file
+def p_procin(p):
+    '''procin : command STREAM_IN instream procout
+              | command STREAM_IN instream empty'''
+    p[0] = ast(p, "PROCIN", 1, 3, 4)
 
 def p_streamout(p):
     '''streamout : STREAM_OUT empty var empty empty empty
@@ -137,29 +186,72 @@ def p_file_append(p):
 def p_instream(p):
     '''instream : WORD
                 | var
-                | STRING'''
+                | string'''
     p[0] = p[1]
     # p[0] = ast(p, "INSTREAM", 1)
 
 def p_file(p):
     '''file : WORD
             | var
-            | STRING'''
+            | string'''
     p[0] = ast(p, "FILE", 1)
+
+
+################################################################################
+# PIPES
+# These rules define how pipes are created
+################################################################################
+
+def p_pipe(p):
+    '''pipeout : PIPE empty proc empty empty empty
+               | PIPE LPAREN proc COMMA proc RPAREN
+               | ERRPIPE empty empty empty proc empty'''
+    p[0] = ast(p, "PIPE", 3, 5)
+
+def p_bothpipe(p):
+    '''pipeout : BOTHPIPE proc'''
+    p[0] = ast(p, "BOTHPIPE", 2)
+
+    
+################################################################################
+# Miscellaneous
+################################################################################
+
+def p_string(p):
+    '''string : STRING'''
+    p[0] = ast(p, "STRING", 1)
 
 def p_var(p):
     '''var : VARNAME'''
     p[0] = ast(p, "VAR", 1)
 
+
+#----------------------------ERROR HANDLING------------------------------------#
+
+#------------------------------------------------------------------------------#
+# p_error(p:LexToken)                                                          #
+#   Displays an error message when parse errors are encountered.               #
+#                                                                              #
+#   PyShell : SyntaxError                                                      #
+#   Line NUM, Colum NUM                                                        #
+#                                                                              #
+#   code code error code                                                       #
+#             ^^^^^                                                            #
+#   If there is an error rule defined in the grammar (see definitions below),  #
+#   the parser will attempt to resynchronize itself by finding the next        #
+#   terminal that follows the error token in the rule and continue parsing     #
+#   input from that point, allowing it to catch more than one syntax error     #
+#   in a file. If the error is followed by a nonterminal, or fails             #
+#   to encounter the next terminal, the parser will be unable to resynchronize #
+#   itself and will either stop parsing or mistakenly identify good code as    #
+#   as syntax errors.                                                          #
+#------------------------------------------------------------------------------#
 def p_error(p):
     # Invalid character - Lexer takes care of this error
-    print('p =',p)
     if not p:
-        # TODO: Remove this print statement when done debugging
-        print("Debugging: Invalid character")
         return
 
-    print("pyshell : Syntax Error", file=sys.stderr)
+    print("PyShell : Syntax Error", file=sys.stderr)
 
     # Get the line from the source code
     source = p.lexer.lexdata.split('\n')
@@ -206,3 +298,5 @@ def p_error(p):
         print('Unexpected new line.', file=sys.stderr)
         
     exit(1)
+
+# TODO: Add other error handling types (see CSPy files)

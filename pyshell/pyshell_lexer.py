@@ -1,11 +1,53 @@
+################################################################################
+#
+# pyshell_lexer.py
+#
+# This is the lexer for the PyShell language. The ply LEX and YACC syntax is
+# used. More information on the ply package and its usage can be found at
+# http://www.dabeaz.com/ply/ply.html
+#
+# Written by Paul Magnus '18 in Spring 2018
+#
+################################################################################
+
 import sys
 
+
+################################################################################
+#
+#     Lexing States
+#
 # These are the lexing states. Each state controls which
 # tokens are used.
+#
+# The shell state is used to determine if the lexer is currently inside of a
+# shell script statement.
+#
+# The indent state keeps track of the current indentation level.
+#
+################################################################################
+
 states = (
     ('shell', 'exclusive'),
     ('indent', 'exclusive'),
 )
+
+
+################################################################################
+#
+#     Tokens
+#
+# This declaration and definition of the tokens. All tokens are listed within
+# the tokens list. These tokens are then defined below using the form
+#     t_name
+# If the token is for the shell state, then it is instead
+#     t_shell_name
+# If the token is to be used for all states, then the form is
+#     t_ANY_name
+# Regular expressions then determine the exact rules for matching each token.
+# More specifics can be found at http://www.dabeaz.com/ply/ply.html
+#
+################################################################################
 
 tokens = [
     # SHELL TOKENS
@@ -16,8 +58,6 @@ tokens = [
     "RPAREN",                   # )
     "COMMA",                    # ,
     "SHELL_DELIMITER",          # $
-
-    # COMPLEX SHELL TOKENS
     "FILEOUT",                  # ->
     "FILEAPPEND",               # >>
     "ERRPIPE",                  # !|
@@ -45,8 +85,6 @@ t_shell_STREAM_IN = r'<'
 t_shell_LPAREN = r'\('
 t_shell_RPAREN = r'\)'
 t_shell_COMMA = r','
-
-# COMPLEX SHELL TOKENS
 t_shell_FILEOUT = r'\->'
 t_shell_FILEAPPEND = r'>>'
 t_shell_ERRPIPE = r'\!\|'
@@ -55,7 +93,7 @@ t_shell_ERROUT = r'\!>'
 t_shell_BOTHOUT = r'\&>'
 
 # SHELL CONSTRUCTS
-t_shell_WORD = r'(([^\s\|><\(\),\-\!\&\$])|' + \
+t_shell_WORD = r'(([^\s\|><\(\),\-\!\&\$\'\"])|' + \
                r'(\-(?![>]))|' + \
                r'(\!(?![\|>]))|' + \
                r'(\&(?![\|>]))|' + \
@@ -63,10 +101,14 @@ t_shell_WORD = r'(([^\s\|><\(\),\-\!\&\$])|' + \
 
 t_ANY_NL = r'\n'
 
+# Ignore spaces and tabs if they are not already taken care of
+# by another token
 t_ANY_ignore_WS =  r'[ \t]'
 
+# Matches both single quote and double quote strings
 t_ANY_STRING = r'((?<!\\)\'.*?(?<!\\)\')|((?<!\\)\".*?(?<!\\)\")'
 
+# Matches a single Python 'word'
 t_PYTHON = r'[^\$\'\"\s]+'
 
 def t_DOCSTRING(t):
@@ -119,6 +161,7 @@ def t_pass(t):
     r'\n[ \t]*(?=[\n\#])'
     t.lexer.lineno += 1
 
+# ignore single line comments
 def t_comment(t):
     r'\#[^n]*'
     pass
@@ -188,5 +231,3 @@ def t_error(t):
 
 def t_indent_error(t):
     print("Lex indent error on Line " + str(t.lineno), file=sys.stderr)
-
-# lexer = lex.lex()

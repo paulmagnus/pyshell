@@ -1,15 +1,36 @@
-import sys, re, os, pickle, logging
+################################################################################
+#
+# pyshell_translate.py
+#
+# The translator for the PyShell language. Takes in an abstract syntax tree
+# and then translates the nodes of the tree into a Python3 executable. The
+# translator also makes a linemap file that has a lookup table for conversion
+# between the lines of the generated Python file and the original PyShell file.
+#
+# Written by Paul Magnus in Spring 2018
+#
+################################################################################
+
+import sys
+import re
+import os
+import pickle
+import logging
+
 from data_struct import ast
+from pyshell_files import get_tmp_path, get_python_file, get_linemap_name, \
+    remove_files
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(message)s')
+# Logging settings for DEBUGGING
+# logging.basicConfig(level=logging.DEBUG, format='%(message)s')
 
-tmp_path = './'
+# Line information for creation of the linemap file
 line_num = 0
 lines = {
     # python line : pyshell line
 }
 
+# Logging for debugging
 log_tabs = ''
 
 def log(function):
@@ -24,44 +45,57 @@ def log(function):
         return result
     return wrapper
 
+
+################################################################################
+# translate(parsetree:AST, filename:string)
+# Translates the code from the parsetree to Python, writes the output to file.
+################################################################################
+
 def translate(parsetree, filename):
 
-    find_path = re.compile('(?P<p>[^/]+)/(?P<n>[^/]+).pysh')
-    found_path = find_path.search(filename)
+    # Determine the location of the given file
+    # find_path = re.compile('(?P<p>[^/]+)/(?P<n>[^/]+).pysh')
+    # found_path = find_path.search(filename)
 
-    global path
-    if found_path:
-        filename = '.' + found_path.group('n') + '.py'
-        path = found_path.group("p") + "/"
-    else:
-        filename = '.' + filename[:-5] + '.py'
-        path = ""
+    # global path
+    # path = extract_base_directory(filename)
+    # if found_path:
+    #     filename = '.' + found_path.group('n') + '.py'
+    #     path = found_path.group("p") + "/"
+    # else:
+    #     filename = '.' + filename[:-5] + '.py'
+    #     path = ""
 
-    if path != "":
-        # replace ./ in path if it exists
-        if re.match(r"^\./.+$", path):
-            # first character is a .
-            # replace with current working directory (cwd)
-            path = os.getcwd() + path[1:]
-        elif re.match(r"^[^/].+$", path):
-            path = os.getcwd() + "/" + path
+    # if path != "":
+    #     # replace ./ in path if it exists
+    #     if re.match(r"^\./.+$", path):
+    #         # first character is a .
+    #         # replace with current working directory (cwd)
+    #         path = os.getcwd() + path[1:]
+    #     elif re.match(r"^[^/].+$", path):
+    #         path = os.getcwd() + "/" + path
 
     # Generate variable names
     generate_command_variables(parsetree)
 
     # TRANSLATE
     try:
-        with open(tmp_path + filename, 'w+', encoding='utf-8') as python_file:
+        with open(get_python_file(filename), 'w+',
+                  encoding='utf-8') as python_file:
             toPython(parsetree, python_file)
         export_map(filename)
-    except IOError:
-        print("Can't translate " + tmp_path + filename + " due to IOError.",
-              file = sys.stderr)
-        remove_files()
+    except IOError as e:
+        print(e)
+        print("Can't translate " + get_python_file(filename) +
+              " due to IOError.", file = sys.stderr)
+        remove_files(filename)
         sys.exit(1)
 
+# This is the character that will be used for all PyShell specific variables
+# so that we avoid collision with other Python variables
 phi = '\u03C6'
 
+# Generate a new PyShell specific variable
 def generate_variable():
     var_name = phi + str(generate_variable.varnumber)
     generate_variable.varnumber += 1
@@ -88,8 +122,7 @@ def advance(child):
     lines[line_num] = child.lineNum
 
 def export_map(filename):
-    filename = filename[:-3] + "_linemap"
-    with open(tmp_path + filename, 'wb') as f:
+    with open(get_linemap_name(filename), 'wb') as f:
         pickle.dump(lines, f)
 
 ################################################################################
@@ -98,13 +131,9 @@ def export_map(filename):
 #
 ################################################################################
 
-def c_EMPTY(child, f, tabs):
-    pass
-
 ################################################################################
-#
-# Python constructs
-#
+# PROGRAMFILE
+# The program file incorporates the entire file
 ################################################################################
 
 def c_PROGRAMFILE(child, f, tabs):
@@ -114,7 +143,7 @@ def c_PROGRAMFILE(child, f, tabs):
     advance(child)
     
     # add pyshell to the search path
-    script_path = re.match(r'(?P<path>.*/)[^/]+',
+    script_path = re.match(r'(?P<path>.*/)pyshell[^/]+',
                            os.path.realpath(__file__)).group('path')
     f.write(tabs + 'sys.path.append("' + script_path + '")\n')
     advance(child)
@@ -127,27 +156,26 @@ def c_PROGRAMFILE(child, f, tabs):
     # End the file with a newline
     f.write('\n')
 
+
+################################################################################
+# EMPTY
+# The empty rule allows for a rule to have an optional component
+################################################################################
+    
+def c_EMPTY(child, f, tabs):
+    pass
+
+
+################################################################################
+# PYTHON STRUCTURE
+# These functions convert the general structure of a Python file
+################################################################################
+
 def c_BLOCK(child, f, tabs):
     # 0: statment_complex 1: nonempty_block
     toPython(child[0], f, tabs)
     if child[1].label != 'EMPTY':
         f.write('\n' + tabs)
-    toPython(child[1], f, tabs)
-
-def c_SUITE_BLOCK(child, f, tabs):
-    # 0: block
-    f.write('    ')
-    toPython(child[0], f, tabs+'    ')
-
-def c_PYTHON(child, f, tabs):
-    # 0: python code 1: further python code
-    f.write(child[0])
-    f.write(' ')
-    toPython(child[1], f, tabs)
-
-def c_STATEMENT_MULTI(child, f, tabs):
-    # 0: statement1 1: other statemnets
-    toPython(child[0], f, tabs)
     toPython(child[1], f, tabs)
 
 def c_LINE(child, f, tabs):
@@ -158,10 +186,32 @@ def c_LINE(child, f, tabs):
 
     toPython(child[0], f, tabs)
 
+def c_STATEMENT_MULTI(child, f, tabs):
+    # 0: statement1 1: other statemnets
+    toPython(child[0], f, tabs)
+    toPython(child[1], f, tabs)
+
+def c_PYTHON(child, f, tabs):
+    # 0: python code 1: further python code
+    f.write(child[0])
+    f.write(' ')
+    toPython(child[1], f, tabs)
+
+def c_SUITE_BLOCK(child, f, tabs):
+    # 0: block
+    f.write('    ')
+    toPython(child[0], f, tabs+'    ')
+
+
 ################################################################################
 #
 # Shell constructs
 #
+################################################################################
+
+################################################################################
+# SHELLBLOCK
+# This converts the container for shell script statements
 ################################################################################
 
 def c_SHELLBLOCK(child, f, tabs):
@@ -172,6 +222,54 @@ def c_SHELLBLOCK(child, f, tabs):
     # Replace the shell block with the variable as Python code
     child.label = 'PYTHON'
     child.children = [child.varname, ast(None, 'EMPTY')]
+
+
+################################################################################
+# PROCESS
+# These convert basic command processes
+################################################################################
+
+def c_PROC(child, f, tabs):
+    # 0: command 1: procout
+
+    toPython(child[0], f, tabs)
+
+    if child[1].label != "EMPTY":
+        toPython(child[1], f, tabs)
+
+    child.parent.varname = child.varname
+
+def c_COMMAND(child, f, tabs):
+    # 0: command name 1: arglist
+
+    child.parent.varname = child.varname
+    
+    f.write(child.varname + ' = ' + phi + ".Process('" + child[0] + "'")
+    if child[1].label != "EMPTY":
+        f.write(", ")
+        toPython(child[1], f, tabs)
+    f.write(")\n" + tabs)
+
+def c_ARGLIST(child, f, tabs):
+    # 0: arg 1: arglist
+    toPython(child[0], f, tabs)
+    
+    if child[1].label != "EMPTY":
+        f.write(", ")
+        toPython(child[1], f, tabs)
+
+def c_ARG(child, f, tabs):
+    # 0: argument
+    if not isinstance(child[0], ast):
+        f.write("'" + child[0] + "'")
+    else:
+        toPython(child[0], f, tabs)
+
+
+################################################################################
+# FILE INTERACTION
+# These translations deal with files
+################################################################################
 
 def c_PROCIN(child, f, tabs):
     # 0: command 1: instream 2: procout
@@ -195,60 +293,6 @@ def c_PROCIN(child, f, tabs):
         toPython(child[2], f, tabs)
 
     child.parent.varname = child.varname
-
-def c_PROC(child, f, tabs):
-    # 0: command 1: procout
-
-    toPython(child[0], f, tabs)
-
-    if child[1].label != "EMPTY":
-        toPython(child[1], f, tabs)
-
-    child.parent.varname = child.varname
-
-def c_COMMAND(child, f, tabs):
-    # 0: command name 1: arglist
-
-    child.parent.varname = child.varname
-    
-    f.write(child.varname + ' = ' + phi + ".Process('" + child[0] + "'")
-    if child[1].label != "EMPTY":
-        f.write(", ")
-        toPython(child[1], f, tabs)
-    f.write(")\n" + tabs)
-
-    # # Repalce with python code
-    # child.label = 'PYTHON'
-    # child.children = [child.varname, ast(None, 'EMPTY')]
-
-def c_ARGLIST(child, f, tabs):
-    # 0: arg 1: arglist
-    toPython(child[0], f, tabs)
-    
-    if child[1].label != "EMPTY":
-        f.write(", ")
-        toPython(child[1], f, tabs)
-
-def c_ARG(child, f, tabs):
-    # 0: argument
-    if not isinstance(child[0], ast):
-        f.write("'" + child[0] + "'")
-    else:
-        toPython(child[0], f, tabs)
-
-def c_PIPE(child, f, tabs):
-    # 0: stdout pipe target 1: stderr pipe target
-    if child[0].label != 'EMPTY':
-        toPython(child[0], f, tabs)
-        f.write(child.parent.varname + '.stdout = ' + child[0].varname)
-
-    if child[1].label != 'EMPTY':
-        toPython(child[1], f, tabs)
-        f.write(child.parent.varname + '.stderr = ' + child[1].varname)
-
-def c_VAR(child, f, tabs):
-    # 0: VARNAME
-    f.write(child[0])
 
 def c_STREAMOUT(child, f, tabs):
     # 0: stdout 1: stderr
@@ -285,21 +329,77 @@ def c_STREAMOUT(child, f, tabs):
         toPython(child[1], f, tabs)
         f.write('\n' + tabs)
 
+def c_BOTHOUT(child, f, tabs):
+    raise NotImplementedError
+
+def c_FILEOUT(child, f, tabs):
+    raise NotImplementedError
+
+def c_FILEAPPEND(child, f, tabs):
+    raise NotImplementedError
+
+def c_FILE(child, f, tabs):
+    raise NotImplementedError
+
+
+################################################################################
+# PIPES
+# These are the conversions for pipes
+################################################################################
+
+def c_PIPE(child, f, tabs):
+    # 0: stdout pipe target 1: stderr pipe target
+    if child[0].label != 'EMPTY':
+        toPython(child[0], f, tabs)
+        f.write(child.parent.varname + '.stdout = ' + child[0].varname)
+        # f.write('\n' + tabs)
+
+    if child[1].label != 'EMPTY':
+        toPython(child[1], f, tabs)
+        f.write(child.parent.varname + '.stderr = ' + child[1].varname)
+        # f.write('\n' + tabs)
+
+def c_BOTHPIPE(child, f, tabs):
+    raise NotImplementedError
+
+
+################################################################################
+# Miscellaneous
+################################################################################
+
+def c_STRING(child, f, tabs):
+    f.write(child[0])
+
+def c_VAR(child, f, tabs):
+    # 0: VARNAME
+    f.write(child[0])
+
+
+################################################################################
+# Translation lookup table
+################################################################################
+
 functions = {
-    "EMPTY"              : c_EMPTY,
     "PROGRAMFILE"        : c_PROGRAMFILE,
+    "EMPTY"              : c_EMPTY,
+    "BLOCK"              : c_BLOCK,
+    "LINE"               : c_LINE,
+    "STATEMENT_MULTI"    : c_STATEMENT_MULTI,
+    "PYTHON"             : c_PYTHON,
+    "SUITE_BLOCK"        : c_SUITE_BLOCK,
     "SHELLBLOCK"         : c_SHELLBLOCK,
-    "PROCIN"             : c_PROCIN,
     "PROC"               : c_PROC,
     "COMMAND"            : c_COMMAND,
     "ARGLIST"            : c_ARGLIST,
     "ARG"                : c_ARG,
-    "PIPE"               : c_PIPE,
-    "BLOCK"              : c_BLOCK,
-    "VAR"                : c_VAR,
-    "SUITE_BLOCK"        : c_SUITE_BLOCK,
-    "PYTHON"             : c_PYTHON,
-    "STATEMENT_MULTI"    : c_STATEMENT_MULTI,
-    "LINE"               : c_LINE,
+    "PROCIN"             : c_PROCIN,
     "STREAMOUT"          : c_STREAMOUT,
+    "BOTHOUT"            : c_BOTHOUT,
+    "FILEOUT"            : c_FILEOUT,
+    "FILEAPPEND"         : c_FILEAPPEND,
+    "FILE"               : c_FILE,
+    "PIPE"               : c_PIPE,
+    "BOHTPIPE"           : c_BOTHPIPE,
+    "STRING"             : c_STRING,
+    "VAR"                : c_VAR,
 }

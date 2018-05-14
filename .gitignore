@@ -11,3 +11,7 @@ tramp
 ### Python ###
 __pycache__
 .pyc
+
+### Hidden files ###
+pyshell/.*
+pyshell/tests/.*

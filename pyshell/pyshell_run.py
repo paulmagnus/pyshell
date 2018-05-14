@@ -1,23 +1,22 @@
-import sys, re, os
-from pyshell import Process, Stream
+import sys
+import re
+import os
+import getpass
 
-tmp_path = "./"
+from pyshell_files import get_tmp_path, extract_base_directory, \
+    get_python_file, remove_files
 
 def run(filename):
 
-    find_path = re.compile('(?P<p>[\S]+)/(?P<n>[\S]+).pysh')
-    found_path = find_path.search(filename)
-
-    if found_path:
-        name = tmp_path + "/." + found_path.group("n") + ".py"
-    else:
-        name = tmp_path + "/." + filename[:-5] + ".py"
+    name = get_python_file(filename)
 
     if not os.path.isfile(name):
         print("Error: Python executable does not exist", file=sys.stderr)
-        remove_files()
+        remove_files(filename)
 
-    # if Process('pylint', name):
-    Process('python3', name)
-    # else:
-    #     print('pylint errors')
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+
+    os.system(script_dir + '/bin/.run_python.sh ' + name + ' ' +
+              extract_base_directory(filename))
+
+    remove_files(filename)

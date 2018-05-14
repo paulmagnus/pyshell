@@ -12,28 +12,6 @@ import os
 import inspect
 import traceback
 
-# from pyshell.stream import Stream
-# from pyshell.stream import OutStream
-
-# __all__ = ['Process',
-#            # Errors
-#            'ProcessError',
-#            'ProcessRunningError',
-#            'ProcessStartedError',
-#            'ProcessNotStartedError',
-#            'ProcessTerminatedError',
-#            'ProcessNotRunningError',
-           
-#            # Decorators
-#            'process_not_started',
-#            'process_started',
-#            'process_running',
-           
-#            # Constants
-#            'PIPE',
-#            'DEVNULL',
-#            'STDOUT']
-
 # logging levels:
 # CRITICAL  50
 # ERROR     40
@@ -41,8 +19,7 @@ import traceback
 # INFO      20
 # DEBUG     10
 # NOTSET     0
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(message)s')
 
 PIPE = sub.PIPE
 DEVNULL = sub.DEVNULL
@@ -52,29 +29,6 @@ STDOUT = sub.STDOUT
 INIT = 0
 RUNNING = 1
 TERMINATED = 2
-
-class ProcessError(Exception):
-    """ Base class for all process related exceptions. """
-    pass
-
-class ProcessStateError(ProcessError):
-    """ The exception for when the current operation is not usable with
-    the current state of the process. """
-    pass
-
-# Decorators
-
-# This method is unused at the moment
-def process_states(*states):
-    """ This decorator verifies that the process is in one of the states given
-    by the list states at the moment that the method is called. """
-    def decorator(function):
-        def wrapper(*args, **kwargs):
-            if args[0].state not in states:
-                raise ProcessStateError
-            return function(*args, **kwargs)
-        return wrapper
-    return decorator
 
 tabs = ''
 
@@ -89,44 +43,6 @@ def log(function):
         logging.debug(tabs + "Ending " + function.__name__)
         return result
     return wrapper
-
-# TODO: Note this is not thread safe at all
-def redirect(function, *args,
-             stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, **kwargs):
-    # save sys.stdout and sys.stderr
-    old_stdin = sys.stdin
-    old_stdout = sys.stdout
-    old_stderr = sys.stderr
-
-    # redirect stdout and stderr as needed
-    sys.stdin = stdin
-    sys.stdout = stdout
-    sys.stderr = stderr
-
-    result = function(*args, **kwargs)
-
-    # return sys.stdout and sys.stderr
-    sys.stdin = old_stdin
-    sys.stdout = old_stdout
-    sys.stderr = old_stderr
-
-    if not isinstance(result, int):
-        # TODO: Write a better error message
-        raise TypeError("Return code from '" +
-                        str(function.__name__) +
-                        "' must be an integer")
-
-    return result
-
-# def get_current_function_name():
-#     return inspect.stack()[1][3]
-
-# def is_function_attribute_defined(attr):
-#     fn = inspect.stack()[1][0]
-
-#     print(inspect.getframeinfo(fn))
-
-#     return hasattr(fn, attr)
 
 class Process:
 
