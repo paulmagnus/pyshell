@@ -244,7 +244,8 @@ def c_COMMAND(child, f, tabs):
 
     child.parent.varname = child.varname
     
-    f.write(child.varname + ' = ' + phi + ".Process('" + child[0] + "'")
+    f.write(child.varname + ' = ' + phi + ".Process(")
+    toPython(child[0], f, tabs)
     if child[1].label != "EMPTY":
         f.write(", ")
         toPython(child[1], f, tabs)
@@ -260,10 +261,7 @@ def c_ARGLIST(child, f, tabs):
 
 def c_ARG(child, f, tabs):
     # 0: argument
-    if not isinstance(child[0], ast):
-        f.write("'" + child[0] + "'")
-    else:
-        toPython(child[0], f, tabs)
+    toPython(child[0], f, tabs)
 
 
 ################################################################################
@@ -275,17 +273,17 @@ def c_PROCIN(child, f, tabs):
     # 0: command 1: instream 2: procout
     toPython(child[0], f, tabs)
 
-    # TODO: Move this code into c_STREAM along with parsing of STREAM
-    # Create the stream if it does not already exist
-    f.write('try:\n')
-    f.write(tabs + '    ' + phi + phi + ' = ')
-    toPython(child[1], f, tabs)
-    f.write('\n' + tabs + 'except (UnboundLocalError, NameError):\n')
-    f.write(tabs + '    ')
-    toPython(child[1], f, tabs)
-    f.write(' = ' + phi + '.Stream()\n')
+    if child[0][0].label == 'VAR':
+        # Create the stream if it does not already exist
+        f.write('try:\n')
+        f.write(tabs + '    ' + phi + phi + ' = ')
+        toPython(child[1], f, tabs)
+        f.write('\n' + tabs + 'except (UnboundLocalError, NameError):\n')
+        f.write(tabs + '    ')
+        toPython(child[1], f, tabs)
+        f.write(' = ' + phi + '.Stream()\n' + tabs)
 
-    f.write(tabs + child[0].varname + '.stdin = ')
+    f.write(child[0].varname + '.stdin = ')
     toPython(child[1], f, tabs)
     f.write('\n' + tabs)
 
@@ -299,47 +297,58 @@ def c_STREAMOUT(child, f, tabs):
     
     if child[0].label != 'EMPTY':
 
-        # Create the stream if it does not already exist
-        f.write('try:\n')
-        f.write(tabs + '    ' + phi + phi + ' = ')
-        toPython(child[0], f, tabs)
-        f.write('\n' + tabs + 'except (UnboundLocalError, NameError):\n')
-        f.write(tabs + '    ')
-        toPython(child[0], f, tabs)
-        f.write(' = ' + phi + '.Stream()\n')
+        if child[0][0].label == 'VAR':
+            # Create the stream if it does not already exist
+            f.write('try:\n')
+            f.write(tabs + '    ' + phi + phi + ' = ')
+            toPython(child[0], f, tabs)
+            f.write('\n' + tabs + 'except (UnboundLocalError, NameError):\n')
+            f.write(tabs + '    ')
+            toPython(child[0], f, tabs)
+            f.write(' = ' + phi + '.Stream()\n' + tabs)
 
         # Link the stream as stdout
-        f.write(tabs + child.parent.varname + '.stdout = ')
+        f.write(child.parent.varname + '.stdout = ')
         toPython(child[0], f, tabs)
         f.write('\n' + tabs)
 
     if child[1].label != 'EMPTY':
 
-        # Create the stream if it does not already exist
-        f.write('try:\n')
-        f.write(tabs + '    ' + phi + phi + ' = ')
-        toPython(child[1], f, tabs)
-        f.write('\n' + tabs + 'except (UnboundLocalError, NameError):\n')
-        f.write(tabs + '    ')
-        toPython(child[1], f, tabs)
-        f.write(' = ' + phi + 'Stream()\n')
+        if child[0][0].label == 'VAR':
+            # Create the stream if it does not already exist
+            f.write('try:\n')
+            f.write(tabs + '    ' + phi + phi + ' = ')
+            toPython(child[1], f, tabs)
+            f.write('\n' + tabs + 'except (UnboundLocalError, NameError):\n')
+            f.write(tabs + '    ')
+            toPython(child[1], f, tabs)
+            f.write(' = ' + phi + 'Stream()\n' + tabs)
 
         # Link the stream as stdout
-        f.write(tabs + child.parent.varname + '.stderr = ')
+        f.write(child.parent.varname + '.stderr = ')
         toPython(child[1], f, tabs)
         f.write('\n' + tabs)
 
 def c_BOTHOUT(child, f, tabs):
-    raise NotImplementedError
+    # 0: out file
 
-def c_FILEOUT(child, f, tabs):
-    raise NotImplementedError
+    if child[0][0] == 'VAR':
+        # Create the stream if it does not already exist
+        f.write('try:\n')
+        f.write(tabs + '    ' + phi + phi + ' = ')
+        toPython(child[0], f, tabs)
+        f.write('\n' + tabs + 'except (UnboundLocalError, NameError):\n')
+        f.write(tabs + '    ')
+        toPython(child[0], f, tabs)
+        f.write(' = ' + phi + '.Stream()\n' + tabs)
+    
+    # Link the stream
+    f.write(child.parent.varname + '.stdout = ')
+    toPython(child[0], f, tabs)
+    f.write('\n' + tabs)
 
-def c_FILEAPPEND(child, f, tabs):
-    raise NotImplementedError
-
-def c_FILE(child, f, tabs):
-    raise NotImplementedError
+    f.write(child.parent.varname + '.stderr = ' +
+            child.parent.varname + '.stdout\n' + tabs)
 
 
 ################################################################################
@@ -352,15 +361,20 @@ def c_PIPE(child, f, tabs):
     if child[0].label != 'EMPTY':
         toPython(child[0], f, tabs)
         f.write(child.parent.varname + '.stdout = ' + child[0].varname)
-        # f.write('\n' + tabs)
+        f.write('\n' + tabs)
 
     if child[1].label != 'EMPTY':
         toPython(child[1], f, tabs)
         f.write(child.parent.varname + '.stderr = ' + child[1].varname)
-        # f.write('\n' + tabs)
+        f.write('\n' + tabs)
 
 def c_BOTHPIPE(child, f, tabs):
-    raise NotImplementedError
+    # 0: out proc
+    toPython(child[0], f, tabs)
+    f.write(child.parent.varname + '.stdout = ' + child[0].varname + '\n')
+    f.write(tabs + child.parent.varname + '.stderr = ' + 
+            child.parent.varname + '.stdout\n' + tabs)
+    
 
 
 ################################################################################
@@ -368,11 +382,16 @@ def c_BOTHPIPE(child, f, tabs):
 ################################################################################
 
 def c_STRING(child, f, tabs):
+    # 0: STRING
     f.write(child[0])
 
 def c_VAR(child, f, tabs):
     # 0: VARNAME
     f.write(child[0])
+
+def c_WORD(child, f, tabs):
+    # 0: WORD
+    f.write("'" + child[0] + "'")
 
 
 ################################################################################
@@ -395,11 +414,9 @@ functions = {
     "PROCIN"             : c_PROCIN,
     "STREAMOUT"          : c_STREAMOUT,
     "BOTHOUT"            : c_BOTHOUT,
-    "FILEOUT"            : c_FILEOUT,
-    "FILEAPPEND"         : c_FILEAPPEND,
-    "FILE"               : c_FILE,
     "PIPE"               : c_PIPE,
     "BOHTPIPE"           : c_BOTHPIPE,
     "STRING"             : c_STRING,
     "VAR"                : c_VAR,
+    "WORD"               : c_WORD,
 }

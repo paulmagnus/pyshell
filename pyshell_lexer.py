@@ -58,8 +58,7 @@ tokens = [
     "RPAREN",                   # )
     "COMMA",                    # ,
     "SHELL_DELIMITER",          # $
-    "FILEOUT",                  # ->
-    "FILEAPPEND",               # >>
+    # "FILEAPPEND",               # >>
     "ERRPIPE",                  # !|
     "BOTHPIPE",                 # &|
     "ERROUT",                   # !>
@@ -85,8 +84,7 @@ t_shell_STREAM_IN = r'<'
 t_shell_LPAREN = r'\('
 t_shell_RPAREN = r'\)'
 t_shell_COMMA = r','
-t_shell_FILEOUT = r'\->'
-t_shell_FILEAPPEND = r'>>'
+# t_shell_FILEAPPEND = r'>>'
 t_shell_ERRPIPE = r'\!\|'
 t_shell_BOTHPIPE = r'\&\|'
 t_shell_ERROUT = r'\!>'

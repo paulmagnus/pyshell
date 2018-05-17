@@ -133,8 +133,8 @@ def p_proc(p):
     p[0] = ast(p, "PROC", 1, 2)
     
 def p_command(p):
-    '''command : WORD arglist
-               | WORD empty'''
+    '''command : arg arglist
+               | arg empty'''
     p[0] = ast(p, "COMMAND", 1, 2)
 
 def p_arglist(p):
@@ -143,15 +143,14 @@ def p_arglist(p):
     p[0] = ast(p, "ARGLIST", 1, 2)
 
 def p_arg(p):
-    '''arg : WORD
+    '''arg : word
            | var
            | string'''
     p[0] = ast(p, "ARG", 1)
 
 def p_procout(p):
     '''procout : pipeout
-               | streamout
-               | fileout'''
+               | streamout'''
     p[0] = p[1]
 
 
@@ -161,40 +160,19 @@ def p_procout(p):
 ################################################################################
 # TODO: Change all instances of stream into file
 def p_procin(p):
-    '''procin : command STREAM_IN instream procout
-              | command STREAM_IN instream empty'''
+    '''procin : command STREAM_IN arg procout
+              | command STREAM_IN arg empty'''
     p[0] = ast(p, "PROCIN", 1, 3, 4)
 
 def p_streamout(p):
-    '''streamout : STREAM_OUT empty var empty empty empty
-                 | STREAM_OUT LPAREN var COMMA var RPAREN
-                 | ERROUT empty empty empty var empty'''
+    '''streamout : STREAM_OUT empty arg empty empty empty
+                 | STREAM_OUT LPAREN arg COMMA arg RPAREN
+                 | ERROUT empty empty empty arg empty'''
     p[0] = ast(p, "STREAMOUT", 3, 5)
 
 def p_streamout_both(p):
-    '''streamout : BOTHOUT VARNAME'''
+    '''streamout : BOTHOUT arg'''
     p[0] = ast(p, "BOTHOUT", 2)
-
-def p_fileout(p):
-    '''fileout : FILEOUT file'''
-    p[0] = ast(p, "FILEOUT", 2)
-
-def p_file_append(p):
-    '''fileout : FILEAPPEND file'''
-    p[0] = ast(p, "FILEAPPEND", 2)
-
-def p_instream(p):
-    '''instream : WORD
-                | var
-                | string'''
-    p[0] = p[1]
-    # p[0] = ast(p, "INSTREAM", 1)
-
-def p_file(p):
-    '''file : WORD
-            | var
-            | string'''
-    p[0] = ast(p, "FILE", 1)
 
 
 ################################################################################
@@ -224,6 +202,10 @@ def p_string(p):
 def p_var(p):
     '''var : VARNAME'''
     p[0] = ast(p, "VAR", 1)
+
+def p_word(p):
+    '''word : WORD'''
+    p[0] = ast(p, "WORD", 1)
 
 
 #----------------------------ERROR HANDLING------------------------------------#

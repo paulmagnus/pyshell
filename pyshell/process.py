@@ -90,7 +90,9 @@ class Process:
     def stdout(self, stdout):
         self._stdout = stdout
 
-        if self._stdout.stdin is not self:
+        if (isinstance(self._stdout, (Process, Stream)) and
+            self._stdout.stdin is not self):
+
             self._stdout.stdin = self
             self._stdout.stdin_type = Stream.STDOUT
 
@@ -102,7 +104,9 @@ class Process:
     def stderr(self, stderr):
         self._stderr = stderr
 
-        if self._stderr is None or self._stderr.stdin is not self:
+        if (isinstance(self._stderr, (Process, Stream)) and
+            self._stderr.stdin is not self):
+
             self._stderr.stdin = self
             self._stderr.stdin_type = Stream.STDERR
 
@@ -121,12 +125,15 @@ class Process:
     @flushed.setter
     def flushed(self, _):
         self._flushed = ((self._stdout is None or
-                         self._stdout.flushed) and
+                          not isinstance(self._stdout, (Process, Stream)) or
+                          self._stdout.flushed) and
                          (self._stderr is None or
+                          not isinstance(self._stderr, (Process, Stream)) or
                           self._stderr.flushed))
 
         if self.flushed:
-            if self._stdin is not None:
+            if (self._stdin is not None and
+                isinstance(self._stdout, (Process, Stream))):
                 self._stdin.flush()
             else:
                 self.run()
@@ -157,9 +164,11 @@ class Process:
         self._begin_process()
 
         # Run all output
-        if self._stdout is not None:
+        if (self._stdout is not None and
+            isinstance(self._stdout, (Process, Stream))):
             self._stdout.run()
-        if self._stderr is not None:
+        if (self._stderr is not None and
+            isinstance(self._stderr, (Process, Stream))):
             self._stderr.run()
 
     @property
@@ -200,8 +209,15 @@ class Process:
     def _begin_process(self):
         self._running = True
 
+        if isinstance(self._stdin, str):
+            stdin = open(self._stdin, 'r')
+        else:
+            stdin = self._stdin
+
         if self._stdout is None:
             stdout = None
+        elif isinstance(self._stdout, str):
+            stdout = open(self._stdout, 'w')
         else:
             stdout = Process.PIPE
 
@@ -209,6 +225,8 @@ class Process:
             stderr = None
         elif self._stderr is self._stdout:
             stderr = Process.STDOUT
+        elif isinstance(self._stderr, str):
+            stderr = open(self._stderr, 'w')
         else:
             stderr = Process.PIPE
 
@@ -219,7 +237,7 @@ class Process:
         # Begin the process running
         try:
             self._proc = sub.Popen(self._proc_list,
-                                   stdin=self._stdin,
+                                   stdin=stdin,
                                    stdout=stdout,
                                    stderr=stderr)
         except TypeError as e:
@@ -234,10 +252,12 @@ class Process:
             else:
                 raise
 
-        if self.stdout is not None:
+        if self.stdout is not None and isinstance(self._stdout,
+                                                  (Stream, Process)):
             self._stdout.stdin = self._proc.stdout
 
-        if self.stderr is not None:
+        if self.stderr is not None and isinstance(self._stderr,
+                                                  (Stream, Process)):
             self._stderr.stdin = self._proc.stderr
             
         if self.stdout is None and self.stderr is None:

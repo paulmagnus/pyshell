@@ -48,6 +48,7 @@ def get_linemap_name(pyshell_filename):
         '_linemap'
 
 def remove_files(pyshell_filename):
+    return
     try:
         os.remove(get_python_file(pyshell_filename))
         os.remove(get_linemap_name(pyshell_filename))
